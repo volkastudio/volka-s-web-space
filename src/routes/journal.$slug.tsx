@@ -15,7 +15,6 @@ import { useReadTracking } from "@/lib/analytics/use-read-tracking";
 import { track } from "@/lib/analytics/tracker";
 import { getPostDetail } from "@/lib/posts.functions";
 import { getStaticPost } from "@/data/posts";
-import { canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/journal/$slug")({
   loader: async ({ params }) => {
@@ -36,7 +35,6 @@ export const Route = createFileRoute("/journal/$slug")({
         { property: "og:image", content: post?.cover_image || "" },
         { property: "og:type", content: "article" },
       ],
-      links: post ? [canonicalLink(`/journal/${post.slug}`)] : [],
     };
   },
   component: JournalArticlePage,

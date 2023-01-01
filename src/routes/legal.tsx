@@ -6,7 +6,7 @@ import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { useI18n } from "@/i18n/context";
-import { absoluteUrl, canonicalLink } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/seo";
 
 export const Route = createFileRoute("/legal")({
   component: LegalPage,
@@ -28,7 +28,6 @@ export const Route = createFileRoute("/legal")({
       { property: "og:url", content: absoluteUrl("/legal") },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [canonicalLink("/legal")],
   }),
 });
 

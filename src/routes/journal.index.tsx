@@ -14,7 +14,6 @@ import { getPostsList } from "@/lib/posts.functions";
 import { getStaticPosts, getStaticPost } from "@/data/posts";
 import { useStudioSocials } from "@/lib/studio-socials";
 import type { ResolvedPost } from "@/lib/post-schema";
-import { canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/journal/")({
   loader: async () => {
@@ -38,7 +37,6 @@ export const Route = createFileRoute("/journal/")({
       },
       { property: "og:type", content: "website" },
     ],
-    links: [canonicalLink("/journal")],
   }),
 });
 

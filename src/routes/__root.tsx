@@ -14,6 +14,8 @@ import { PageTransition, type TransitionPreset } from "@/components/page-transit
 import { I18nProvider, useI18n } from "@/i18n/context";
 import { getVisitorPrefs } from "@/lib/locale/prefs.functions";
 import { DEFAULT_PREFS } from "@/lib/locale/prefs";
+import { localeFromHref } from "@/lib/locale/url";
+import { seoLinks } from "@/lib/seo";
 import { usePageTracking } from "@/lib/analytics/use-page-tracking";
 import { getPublicSiteSettings } from "@/lib/admin/settings.functions";
 import { ArrowUpRight, RotateCcw } from "lucide-react";
@@ -129,7 +131,13 @@ function LangSync() {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  // The language comes from the address: "/en/..." is English, everything else French. The same
+  // step builds the canonical and hreflang links for the page being shown (see lib/seo.ts).
+  beforeLoad: ({ location }) => {
+    const urlLocale = localeFromHref(location.publicHref);
+    return { urlLocale, seoLinks: seoLinks(location.pathname, urlLocale) };
+  },
+  head: ({ match }) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -145,11 +153,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
       { rel: "icon", href: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
-      // hreflang alternates arrive with the /en/... URLs (Phase 15, stage B). Until then both
-      // languages share one URL, so declaring two alternates for it would be wrong.
-
-
-
+      // Canonical + hreflang (fr, en, x-default) for public pages. One place for every page.
+      ...(match.context?.seoLinks ?? []),
     ],
   }),
   // Language and currency for the first paint (cookie → browser/country → defaults).
@@ -177,24 +182,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
-  // SSR default: French is primary (D3). LangSync component updates this on the client.
+  // The language follows the address ("/en/..." is English), so the first paint is already right.
+  const router = useRouter();
+  const lang = localeFromHref(router.state.location.publicHref);
   return (
-    <html lang="fr">
+    <html lang={lang}>
       <head>
         <script
           dangerouslySetInnerHTML={{
-            // 1. Add `.js` for SSR-safe motion reveals.
-            // 2. Restore locale from cookie/localStorage before first paint (avoids flash).
-            __html: `
-              document.documentElement.classList.add('js');
-              try {
-                var m = document.cookie.match(/(?:^|; )volka_locale=(fr|en)/);
-                var loc = m ? m[1] : null;
-                if (loc === 'en' || loc === 'fr') {
-                  document.documentElement.lang = loc;
-                }
-              } catch(e) {}
-            `.trim(),
+            // Add `.js` for SSR-safe motion reveals. The language is no longer read from a cookie
+            // here: the address decides it.
+            __html: "document.documentElement.classList.add('js');",
           }}
         />
         <noscript>
@@ -229,6 +227,7 @@ function AnalyticsListener() {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { prefs, appearance } = Route.useLoaderData();
+  const { urlLocale } = Route.useRouteContext();
 
   // Read page-transition settings from appearance site_settings
   const transitionEnabled = (appearance as Record<string, unknown> | null)?.['transitionEnabled'] !== false;
@@ -236,7 +235,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider defaultLocale="fr" initialPrefs={prefs}>
+      <I18nProvider defaultLocale="fr" locale={urlLocale} initialPrefs={prefs}>
         {/* Analytics router navigation tracking */}
         <AnalyticsListener />
         {/* Keeps html[lang] in sync with the active locale and invalidates router loaders */}

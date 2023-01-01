@@ -6,7 +6,6 @@ import { TealBackground } from "@/components/teal-background";
 import { getPublicAuditCapacity } from "@/lib/audit/audit.functions";
 import type { AuditCapacityStatus } from "@/lib/audit/audit.server";
 import { useI18n } from "@/i18n/context";
-import { canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/audit/")({
   // Never invent numbers: if the real capacity cannot be loaded, show no counter at all.
@@ -33,7 +32,6 @@ export const Route = createFileRoute("/audit/")({
       },
       { property: "og:image", content: "/images/audit-showcase.jpg" },
     ],
-    links: [canonicalLink("/audit")],
   }),
   component: AuditLandingPage,
 });

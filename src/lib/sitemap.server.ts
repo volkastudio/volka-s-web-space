@@ -12,7 +12,7 @@
 import { initialCaseStudies } from "@/data/case-studies";
 import { offers } from "@/data/offers";
 import { initialPosts } from "@/data/posts";
-import { SITE_URL } from "@/lib/seo";
+import { localizedUrl } from "@/lib/seo";
 
 type Entry = {
   path: string;
@@ -116,21 +116,32 @@ export async function handleSitemap(): Promise<Response> {
       })),
   ];
 
+  // Every page is listed twice (French at the plain path, English under /en), and each entry
+  // points to both versions so search engines pair them up.
   const body = entries
-    .map((e) => {
-      const loc = e.path === "/" ? `${SITE_URL}/` : `${SITE_URL}${e.path}`;
-      return [
-        "  <url>",
-        `    <loc>${xmlEscape(loc)}</loc>`,
-        ...(e.lastmod ? [`    <lastmod>${e.lastmod}</lastmod>`] : []),
-        `    <changefreq>${e.changefreq}</changefreq>`,
-        `    <priority>${e.priority.toFixed(1)}</priority>`,
-        "  </url>",
-      ].join("\n");
+    .flatMap((e) => {
+      const fr = localizedUrl(e.path, "fr");
+      const en = localizedUrl(e.path, "en");
+      const alternates = [
+        `    <xhtml:link rel="alternate" hreflang="fr" href="${xmlEscape(fr)}"/>`,
+        `    <xhtml:link rel="alternate" hreflang="en" href="${xmlEscape(en)}"/>`,
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(fr)}"/>`,
+      ];
+      return [fr, en].map((loc) =>
+        [
+          "  <url>",
+          `    <loc>${xmlEscape(loc)}</loc>`,
+          ...alternates,
+          ...(e.lastmod ? [`    <lastmod>${e.lastmod}</lastmod>`] : []),
+          `    <changefreq>${e.changefreq}</changefreq>`,
+          `    <priority>${e.priority.toFixed(1)}</priority>`,
+          "  </url>",
+        ].join("\n"),
+      );
     })
     .join("\n");
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${body}\n</urlset>\n`;
 
   return new Response(xml, {
     status: 200,

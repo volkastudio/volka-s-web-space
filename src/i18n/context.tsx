@@ -4,6 +4,7 @@ import { en } from "./en";
 import type { Locale, Translations } from "./types";
 import type { Offer } from "@/data/offers";
 import { formatStartingPrice, formatStartingPriceStructured, type FormattedPrice } from "@/lib/locale/format";
+import { localizePath, splitLocalePath } from "@/lib/locale/url";
 import {
   CURRENCY_COOKIE,
   LOCALE_COOKIE,
@@ -45,10 +46,16 @@ function writeCookie(name: string, value: string) {
 
 export function I18nProvider({
   children,
+  locale: urlLocale,
   defaultLocale = "fr", // French is primary (Studio in Cotonou, Bénin) per Decision D3
   initialPrefs,
 }: {
   children: ReactNode;
+  /**
+   * The language of the address being shown ("/en/..." is English, anything else French).
+   * The URL is the single source of truth, so a page always renders in the language it is served in.
+   */
+  locale?: Locale | undefined;
   defaultLocale?: Locale;
   /**
    * Resolved on the server from the request (cookie → browser/country → defaults),
@@ -56,22 +63,21 @@ export function I18nProvider({
    */
   initialPrefs?: Pick<VisitorPrefs, "locale" | "currency"> | undefined;
 }) {
-  const [locale, setLocaleState] = useState<Locale>(initialPrefs?.locale ?? defaultLocale);
+  const locale: Locale = urlLocale ?? defaultLocale;
   const [currency, setCurrencyState] = useState<Currency>(initialPrefs?.currency ?? "EUR");
 
   useEffect(() => {
     document.documentElement.lang = locale;
-    // Runs once on mount; later changes go through setLocale.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [locale]);
 
-  // A manual choice is stored in a cookie, so the server renders it on the next request.
+  // Switching language means going to the same page at the other address. The choice is also kept
+  // in a cookie, so a later visit to the plain address does not send the visitor back.
   const setLocale = (newLocale: Locale) => {
-    setLocaleState(newLocale);
-    if (typeof document !== "undefined") {
-      writeCookie(LOCALE_COOKIE, newLocale);
-      document.documentElement.lang = newLocale;
-    }
+    if (typeof window === "undefined" || newLocale === locale) return;
+    writeCookie(LOCALE_COOKIE, newLocale);
+    const { path } = splitLocalePath(window.location.pathname);
+    const target = `${localizePath(path, newLocale)}${window.location.search}${window.location.hash}`;
+    window.location.assign(target);
   };
 
   const setCurrency = (newCurrency: Currency) => {

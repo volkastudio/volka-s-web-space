@@ -9,7 +9,6 @@ import { getStaticCaseStudy, getNextStaticCaseStudy } from "@/data/case-studies"
 import { getCaseStudyDetail } from "@/lib/cases.functions";
 import { useI18n } from "@/i18n/context";
 import { useReadTracking } from "@/lib/analytics/use-read-tracking";
-import { canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/cases/$slug")({
   loader: async ({ params }) => {
@@ -33,7 +32,6 @@ export const Route = createFileRoute("/cases/$slug")({
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
-      links: [canonicalLink(`/cases/${study.slug}`)],
     };
   },
   component: CaseStudyPage,

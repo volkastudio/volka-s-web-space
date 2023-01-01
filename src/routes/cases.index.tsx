@@ -13,7 +13,6 @@ import { getStaticCaseStudies, getStaticCaseStudy } from "@/data/case-studies";
 import { getCaseStudiesList } from "@/lib/cases.functions";
 import { easeVolkaOut } from "@/lib/motion";
 import { useI18n } from "@/i18n/context";
-import { canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/cases/")({
   loader: async () => {
@@ -38,7 +37,6 @@ export const Route = createFileRoute("/cases/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [canonicalLink("/cases")],
   }),
 });
 

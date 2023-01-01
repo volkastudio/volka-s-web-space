@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { localeRedirectTarget } from "./lib/locale/url";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -57,6 +58,20 @@ export default {
       if (url.pathname === "/sitemap.xml" && (request.method === "GET" || request.method === "HEAD")) {
         const { handleSitemap } = await import("./lib/sitemap.server");
         return await handleSitemap();
+      }
+
+      // First visit on a French address from an English browser (or with an English choice saved):
+      // send the visitor to the /en version. Search engines are never redirected.
+      const redirectTo = localeRedirectTarget(request);
+      if (redirectTo) {
+        return new Response(null, {
+          status: 302,
+          headers: {
+            location: redirectTo,
+            vary: "Accept-Language, Cookie, User-Agent",
+            "cache-control": "private, no-store",
+          },
+        });
       }
 
       // Instagram Webhook (Phase IG-1/IG-2)

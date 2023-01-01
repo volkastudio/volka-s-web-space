@@ -18,7 +18,7 @@ import { getStaticCaseStudies, getStaticCaseStudy } from "@/data/case-studies";
 import { getFeaturedCaseStudies } from "@/lib/cases.functions";
 import { offers, getLocalizedOffer } from "@/data/offers";
 import { useI18n } from "@/i18n/context";
-import { absoluteUrl, canonicalLink } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -44,7 +44,6 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: absoluteUrl("/") },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [canonicalLink("/")],
     scripts: [
       {
         type: "application/ld+json",

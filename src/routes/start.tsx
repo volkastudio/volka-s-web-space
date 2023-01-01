@@ -24,7 +24,6 @@ import { offers } from "@/data/offers";
 import { useI18n } from "@/i18n/context";
 import { easeVolkaOut } from "@/lib/motion";
 import { track } from "@/lib/analytics/tracker";
-import { canonicalLink } from "@/lib/seo";
 
 const searchSchema = z.object({
   offer: z.string().optional(),
@@ -51,7 +50,6 @@ export const Route = createFileRoute("/start")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [canonicalLink("/start")],
   }),
 });
 
