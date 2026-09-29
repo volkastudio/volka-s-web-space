@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep Volka as a single-page editorial agency site; this preserves its direct, portfolio-led positioning.
+- Use the supplied Volka palette and Cormorant Garamond/DM Sans pairing; these are the brand's authoritative visual system.
