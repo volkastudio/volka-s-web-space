@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight, Menu, X } from "lucide-react";
 import { useState } from "react";
+
+import { caseStudies } from "@/data/case-studies";
 
 import heroImage from "@/assets/volka-hero.jpg";
 import brandImage from "@/assets/volka-work-brand.jpg";
@@ -54,11 +56,11 @@ function Index() {
             VOLKA
           </a>
           <nav className="hidden items-center gap-8 text-xs font-medium uppercase tracking-[0.14em] md:flex" aria-label="Main navigation">
-            <a className="transition-colors hover:text-mint" href="#work">Work</a>
+            <Link className="transition-colors hover:text-mint" to="/cases">Case studies</Link>
             <a className="transition-colors hover:text-mint" href="#services">Services</a>
             <a className="transition-colors hover:text-mint" href="#about">Studio</a>
             <Button asChild variant="volka" size="volka">
-              <a href="#contact">Start a project <ArrowUpRight /></a>
+              <Link to="/start">Start a project <ArrowUpRight /></Link>
             </Button>
           </nav>
           <Button
@@ -75,10 +77,10 @@ function Index() {
         {menuOpen && (
           <nav className="absolute inset-x-0 top-20 z-30 mx-5 border border-primary-foreground/20 bg-primary p-6 md:hidden" aria-label="Mobile navigation">
             <div className="flex flex-col gap-5 font-display text-3xl">
-              <a onClick={closeMenu} href="#work">Work</a>
+              <Link onClick={closeMenu} to="/cases">Case studies</Link>
               <a onClick={closeMenu} href="#services">Services</a>
               <a onClick={closeMenu} href="#about">Studio</a>
-              <a onClick={closeMenu} href="#contact">Start a project</a>
+              <Link onClick={closeMenu} to="/start">Start a project</Link>
             </div>
           </nav>
         )}
@@ -124,31 +126,34 @@ function Index() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 flex items-end justify-between border-b border-primary-foreground/20 pb-6">
             <div>
-              <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-mint">Selected capabilities</p>
+              <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-mint">Selected work</p>
               <h2 className="font-display text-5xl font-medium md:text-7xl">Work that earns attention.</h2>
             </div>
-            <span className="hidden text-xs uppercase tracking-[0.16em] text-primary-foreground/60 md:block">01 — 02</span>
+            <Link to="/cases" className="hidden text-xs uppercase tracking-[0.16em] text-primary-foreground/60 hover:text-mint md:block">
+              All case studies
+            </Link>
           </div>
           <div className="grid gap-10 md:grid-cols-2">
-            <article>
-              <div className="aspect-[4/3] overflow-hidden bg-primary">
-                <img src={brandImage} alt="A premium identity system being designed in the studio" width={1408} height={1056} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]" />
-              </div>
-              <div className="mt-5 flex items-start justify-between gap-4">
-                <div><h3 className="font-display text-3xl">Brand identity</h3><p className="mt-1 text-sm text-primary-foreground/60">Strategy · Identity · Direction</p></div>
-                <ArrowUpRight className="mt-2 size-5 text-gold" />
-              </div>
-            </article>
-            <article className="md:mt-20">
-              <div className="aspect-[4/3] overflow-hidden bg-primary">
-                <img src={digitalImage} alt="A creative team reviewing a responsive website" width={1408} height={1056} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]" />
-              </div>
-              <div className="mt-5 flex items-start justify-between gap-4">
-                <div><h3 className="font-display text-3xl">Digital presence</h3><p className="mt-1 text-sm text-primary-foreground/60">Web design · Development · Growth</p></div>
-                <ArrowUpRight className="mt-2 size-5 text-gold" />
-              </div>
-            </article>
+            {caseStudies.slice(0, 2).map((study, index) => (
+              <article key={study.slug} className={index === 1 ? "md:mt-20" : ""}>
+                <Link to="/cases/$slug" params={{ slug: study.slug }} className="group block">
+                  <div className="aspect-[4/3] overflow-hidden bg-primary">
+                    <img src={study.image} alt={study.imageAlt} width={1600} height={1200} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                  </div>
+                  <div className="mt-5 flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="font-display text-3xl">{study.client}</h3>
+                      <p className="mt-1 text-sm text-primary-foreground/60">{study.discipline} · {study.sector}</p>
+                    </div>
+                    <ArrowUpRight className="mt-2 size-5 text-gold transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </div>
+                </Link>
+              </article>
+            ))}
           </div>
+          <Link to="/cases" className="mt-12 inline-flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em] md:hidden">
+            All case studies <ArrowUpRight className="size-4" />
+          </Link>
         </div>
       </section>
 
@@ -205,7 +210,7 @@ function Index() {
           <div className="mt-8 flex flex-col gap-10 border-b border-primary-foreground/20 pb-16 md:flex-row md:items-end md:justify-between">
             <h2 className="max-w-4xl font-display text-6xl font-medium leading-[0.9] md:text-8xl">Let’s make it look inevitable.</h2>
             <Button asChild variant="volka" size="volka" className="shrink-0">
-              <a href="https://www.instagram.com/volkastudio" target="_blank" rel="noreferrer">Start a conversation <ArrowUpRight /></a>
+              <Link to="/start">Start a project <ArrowUpRight /></Link>
             </Button>
           </div>
           <footer className="flex flex-col gap-5 pt-8 text-xs uppercase tracking-[0.14em] text-primary-foreground/60 md:flex-row md:items-center md:justify-between">
