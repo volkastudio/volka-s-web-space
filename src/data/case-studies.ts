@@ -177,8 +177,7 @@ export const caseStudies: CaseStudy[] = [
 
 export const getCaseStudy = (slug: string) => caseStudies.find((study) => study.slug === slug);
 
-export const getNextCaseStudy = (slug: string) => {
+export const getNextCaseStudy = (slug: string): CaseStudy => {
   const index = caseStudies.findIndex((study) => study.slug === slug);
-  if (index === -1) return caseStudies[0];
-  return caseStudies[(index + 1) % caseStudies.length];
+  return caseStudies[(index + 1) % caseStudies.length]!;
 };
