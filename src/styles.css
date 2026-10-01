@@ -167,10 +167,90 @@
 }
 
 @keyframes volka-rise {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes volka-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes volka-line {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes volka-drift {
+  from { transform: scale(1.08); }
+  to { transform: scale(1); }
+}
+
 @utility animate-volka-rise {
-  animation: volka-rise 700ms ease-out both;
+  animation: volka-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-volka-fade {
+  animation: volka-fade 1200ms ease-out both;
+}
+
+@utility animate-volka-drift {
+  animation: volka-drift 2400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Hero entrance stagger */
+@utility animate-delay-100 {
+  animation-delay: 100ms;
+}
+@utility animate-delay-200 {
+  animation-delay: 200ms;
+}
+@utility animate-delay-350 {
+  animation-delay: 350ms;
+}
+@utility animate-delay-500 {
+  animation-delay: 500ms;
+}
+@utility animate-delay-700 {
+  animation-delay: 700ms;
+}
+
+/* Animated underline for text links */
+@utility link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Horizontal rule that draws itself in on scroll */
+.reveal-line {
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: volka-line 1100ms cubic-bezier(0.22, 1, 0.36, 1) 200ms forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-volka-rise,
+  .animate-volka-fade,
+  .animate-volka-drift,
+  .reveal-line {
+    animation: none;
+  }
+  .link-underline::after {
+    transition: none;
+  }
 }

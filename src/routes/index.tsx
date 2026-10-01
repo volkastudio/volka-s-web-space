@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight, Menu, X } from "lucide-react";
 import { useState } from "react";
 
+import { Reveal } from "@/components/reveal";
 import { caseStudies } from "@/data/case-studies";
 
 import heroImage from "@/assets/volka-hero.jpg";
@@ -46,9 +47,9 @@ function Index() {
           width={1920}
           height={1088}
           fetchPriority="high"
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          className="absolute inset-0 h-full w-full animate-volka-drift object-cover object-center"
         />
-        <div className="absolute inset-0 bg-primary/60" />
+        <div className="absolute inset-0 animate-volka-fade bg-primary/60" />
         <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/80 to-transparent" />
 
         <header className="relative z-20 mx-auto flex max-w-7xl items-center justify-between px-5 py-6 md:px-10 lg:px-14">
@@ -56,9 +57,9 @@ function Index() {
             VOLKA
           </a>
           <nav className="hidden items-center gap-8 text-xs font-medium uppercase tracking-[0.14em] md:flex" aria-label="Main navigation">
-            <Link className="transition-colors hover:text-mint" to="/cases">Case studies</Link>
-            <a className="transition-colors hover:text-mint" href="#services">Services</a>
-            <a className="transition-colors hover:text-mint" href="#about">Studio</a>
+            <Link className="link-underline transition-colors hover:text-mint" to="/cases">Case studies</Link>
+            <a className="link-underline transition-colors hover:text-mint" href="#services">Services</a>
+            <a className="link-underline transition-colors hover:text-mint" href="#about">Studio</a>
             <Button asChild variant="volka" size="volka">
               <Link to="/start">Start a project <ArrowUpRight /></Link>
             </Button>
@@ -89,15 +90,16 @@ function Index() {
           <p className="mb-5 animate-volka-rise text-xs font-medium uppercase tracking-[0.2em] text-mint">
             Independent digital studio · Cotonou, Bénin
           </p>
-          <h1 className="max-w-5xl animate-volka-rise font-display text-6xl font-semibold leading-[0.88] md:text-8xl lg:text-[7.4rem]">
+          <h1 className="max-w-5xl animate-volka-rise animate-delay-100 font-display text-6xl font-semibold leading-[0.88] md:text-8xl lg:text-[7.4rem]">
             Ambition should<br />look the part.
           </h1>
-          <div className="mt-8 flex flex-col gap-7 border-t border-primary-foreground/25 pt-7 md:flex-row md:items-end md:justify-between">
+          <div className="reveal-line mt-8 border-t border-primary-foreground/25" />
+          <div className="flex animate-volka-rise animate-delay-350 flex-col gap-7 pt-7 md:flex-row md:items-end md:justify-between">
             <p className="max-w-xl text-lg font-light leading-relaxed text-primary-foreground/85 md:text-xl">
               We build brands, websites, and digital systems for businesses ready to be seen differently.
             </p>
-            <a href="#work" className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em]">
-              See our approach <span className="flex size-10 items-center justify-center border border-primary-foreground/35"><ArrowDown className="size-4" /></span>
+            <a href="#work" className="group flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em]">
+              See our approach <span className="flex size-10 items-center justify-center border border-primary-foreground/35 transition-colors duration-300 group-hover:border-mint group-hover:bg-mint group-hover:text-primary"><ArrowDown className="size-4 animate-bounce" /></span>
             </a>
           </div>
         </div>
