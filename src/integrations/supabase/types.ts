@@ -29,6 +29,13 @@ export type Database = {
           referral_source: string | null
           timeline: string
           vision: string
+          internal_notes: string | null
+          ip_hash: string | null
+          locale: string | null
+          notified_at: string | null
+          notify_error: string | null
+          status: string
+          user_agent: string | null
         }
         Insert: {
           budget_range: string
@@ -44,6 +51,13 @@ export type Database = {
           referral_source?: string | null
           timeline: string
           vision: string
+          internal_notes?: string | null
+          ip_hash?: string | null
+          locale?: string | null
+          notified_at?: string | null
+          notify_error?: string | null
+          status?: string
+          user_agent?: string | null
         }
         Update: {
           budget_range?: string
@@ -59,6 +73,85 @@ export type Database = {
           referral_source?: string | null
           timeline?: string
           vision?: string
+          internal_notes?: string | null
+          ip_hash?: string | null
+          locale?: string | null
+          notified_at?: string | null
+          notify_error?: string | null
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      admin_users: {
+        Row: {
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          user_id?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      case_studies: {
+        Row: {
+          id: string
+          slug: string
+          kind: 'concept' | 'client'
+          status: 'draft' | 'published'
+          sort_order: number
+          featured: boolean
+          client: string
+          year: string
+          location: string
+          offer: string | null
+          cover_path: string | null
+          gallery: Json
+          translations: Json
+          published_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          kind?: 'concept' | 'client'
+          status?: 'draft' | 'published'
+          sort_order?: number
+          featured?: boolean
+          client: string
+          year: string
+          location: string
+          offer?: string | null
+          cover_path?: string | null
+          gallery?: Json
+          translations: Json
+          published_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          kind?: 'concept' | 'client'
+          status?: 'draft' | 'published'
+          sort_order?: number
+          featured?: boolean
+          client?: string
+          year?: string
+          location?: string
+          offer?: string | null
+          cover_path?: string | null
+          gallery?: Json
+          translations?: Json
+          published_at?: string | null
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -67,7 +160,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

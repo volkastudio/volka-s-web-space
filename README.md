@@ -8,37 +8,39 @@ Studio website for Volka — a brand and web design studio based in Cotonou, Bé
 - **Styling**: Tailwind CSS v4
 - **UI components**: shadcn/ui (Radix primitives)
 - **Database / Auth**: Supabase
-- **Package manager**: Bun
-- **Target deploy**: Vercel (Node runtime)
+- **Mail**: SMTP via nodemailer (server-side only)
+- **Package manager**: npm (CI uses `npm ci` with `package-lock.json`)
+- **Target deploy**: Vercel (Nitro auto-detects it); any Node host works with `NITRO_PRESET=node-server`
 
 ## Setup
 
 ```bash
 # 1. Clone and install
-bun install
+npm install
 
 # 2. Configure environment
 cp .env.example .env
 # Fill in your Supabase URL, keys, and SMTP credentials
 
 # 3. Start dev server
-bun dev
+npm run dev
 ```
 
 ## Scripts
 
 | Command | Description |
 |---|---|
-| `bun dev` | Start dev server |
-| `bun build` | Production build |
-| `bun preview` | Preview production build locally |
-| `bun typecheck` | TypeScript type-check without emitting |
-| `bun lint` | ESLint |
-| `bun format` | Prettier |
+| `npm run dev` | Start dev server |
+| `npm run build` | Production build |
+| `npm run preview` | Preview production build locally |
+| `npm run typecheck` | TypeScript type-check without emitting |
+| `npm run lint` | ESLint |
+| `npm run format` | Prettier |
+| `npm test` | Unit tests (Vitest) |
 
 ## Environment variables
 
-See `.env.example` for all required variables. Never commit `.env`.
+See `.env.example` for all variables. Never commit `.env`. Server secrets (service-role key, SMTP password, `SECRET_SALT`) must never be prefixed with `VITE_`.
 
 ## Project structure
 
@@ -48,8 +50,10 @@ src/
   components/     # Shared UI components
   data/           # Static typed data (case studies, offers)
   integrations/   # Third-party clients (Supabase)
-  lib/            # Utilities and server functions
+  lib/            # Utilities, inquiry pipeline and server functions
   styles.css      # Global styles and design tokens
+supabase/
+  migrations/     # SQL migrations (apply in order)
 ```
 
 ## Implementation phases

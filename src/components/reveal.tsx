@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { motion, useInView, useReducedMotion } from "motion/react";
+import { useRef, type ReactNode } from "react";
+import { easeVolkaOut } from "@/lib/motion";
 
 type RevealProps = {
   children: ReactNode;
@@ -10,50 +12,29 @@ type RevealProps = {
 };
 
 /**
- * Scroll-triggered reveal. Elements start hidden and slide up into place
- * when they enter the viewport. Respects prefers-reduced-motion.
+ * Scroll-triggered reveal powered by Motion.
+ * SSR-safe: starts visible on the server via .motion-safe-hidden fallback,
+ * animates in seamlessly on the client.
+ * Respects prefers-reduced-motion automatically.
  */
-export function Reveal({ children, className = "", delay = 0, distance = 28 }: RevealProps) {
+export function Reveal({ children, className = "", delay = 0, distance = 32 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setVisible(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setVisible(true);
-            observer.disconnect();
-          }
-        }
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  const style: CSSProperties = {
-    opacity: visible ? 1 : 0,
-    transform: visible ? "translateY(0)" : `translateY(${distance}px)`,
-    transitionProperty: "opacity, transform",
-    transitionDuration: "900ms",
-    transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
-    transitionDelay: `${delay}ms`,
-    willChange: "opacity, transform",
-  };
+  const shouldReduce = useReducedMotion();
+  const isInView = useInView(ref, { once: true, margin: "0px 0px -8% 0px" });
 
   return (
-    <div ref={ref} className={className} style={style}>
+    <motion.div
+      ref={ref}
+      className={`motion-safe-hidden ${className}`}
+      initial={{ opacity: 0, y: shouldReduce ? 0 : distance }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{
+        duration: 0.85,
+        delay: delay / 1000,
+        ease: easeVolkaOut,
+      }}
+    >
       {children}
-    </div>
+    </motion.div>
   );
 }

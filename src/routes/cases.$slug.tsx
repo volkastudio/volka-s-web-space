@@ -5,19 +5,22 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getCaseStudy, getNextCaseStudy } from "@/data/case-studies";
+import { getCaseStudyDetail } from "@/lib/cases.functions";
+import { useI18n } from "@/i18n/context";
 
 export const Route = createFileRoute("/cases/$slug")({
-  loader: ({ params }) => {
-    const study = getCaseStudy(params.slug);
-    if (!study) throw notFound();
-    return { study, next: getNextCaseStudy(params.slug) };
+  loader: async ({ params }) => {
+    const res = await getCaseStudyDetail({ data: { slug: params.slug } });
+    if (!res || !res.study) throw notFound();
+    return res;
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
       return { meta: [{ title: "Case study not found — Volka Studio" }, { name: "robots", content: "noindex" }] };
     }
     const { study } = loaderData;
-    const title = `${study.client} — ${study.discipline} case study | Volka`;
+    const label = study.kind === "concept" ? "concept project" : "case study";
+    const title = `${study.client} — ${study.discipline} ${label} | Volka`;
     return {
       meta: [
         { title },
@@ -34,14 +37,19 @@ export const Route = createFileRoute("/cases/$slug")({
 });
 
 function CaseNotFound() {
+  const { t } = useI18n();
   return (
     <main className="bg-background text-foreground">
       <SiteHeader />
       <section className="mx-auto max-w-7xl px-5 py-32 md:px-10 lg:px-14">
-        <h1 className="font-display text-6xl">This project isn&rsquo;t here.</h1>
-        <p className="mt-6 text-muted-foreground">It may have been renamed or retired.</p>
+        <h1 className="font-display text-6xl">
+          {t.locale === "fr" ? "Ce projet n\u2019est pas ici." : "This project isn\u2019t here."}
+        </h1>
+        <p className="mt-6 text-muted-foreground">
+          {t.locale === "fr" ? "Il a peut-\u00eatre \u00e9t\u00e9 renomm\u00e9 ou retir\u00e9." : "It may have been renamed or retired."}
+        </p>
         <Button asChild variant="volka" size="volka" className="mt-10">
-          <Link to="/cases">See all case studies</Link>
+          <Link to="/cases">{t.caseStudy.allCases}</Link>
         </Button>
       </section>
       <SiteFooter />
@@ -51,6 +59,7 @@ function CaseNotFound() {
 
 function CaseStudyPage() {
   const { study, next } = Route.useLoaderData();
+  const { t } = useI18n();
 
   return (
     <main className="bg-background text-foreground">
@@ -59,19 +68,27 @@ function CaseStudyPage() {
       <section className="border-b border-border px-5 py-14 md:px-10 md:py-20 lg:px-14">
         <div className="mx-auto max-w-7xl">
           <Link to="/cases" className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="size-4" /> All case studies
+            <ArrowLeft className="size-4" /> {t.caseStudy.allCases}
           </Link>
-          <p className="mt-10 text-xs font-medium uppercase tracking-[0.2em] text-gold">{study.discipline}</p>
+          <p className="mt-10 text-xs font-medium uppercase tracking-[0.2em] text-gold">
+            {study.discipline}
+            {study.kind === "concept" ? ` · ${t.work.conceptLabel}` : ""}
+          </p>
           <h1 className="mt-6 max-w-5xl font-display text-6xl font-medium leading-[0.92] md:text-8xl">{study.client}</h1>
           <p className="mt-6 max-w-2xl text-xl font-light leading-relaxed text-muted-foreground">{study.tagline}</p>
+          {study.kind === "concept" && (
+            <p className="mt-6 max-w-2xl border-l-2 border-gold pl-4 text-sm leading-relaxed text-muted-foreground">
+              {t.caseStudy.conceptDisclaimer}
+            </p>
+          )}
 
           <dl className="mt-14 grid gap-8 border-t border-border pt-8 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              ["Sector", study.sector],
-              ["Location", study.location],
-              ["Year", study.year],
-              ["Engagement", study.offer],
-            ].map(([label, value]) => (
+            {([
+              [t.caseStudy.metaSector, study.sector],
+              [t.caseStudy.metaLocation, study.location],
+              [t.caseStudy.metaYear, study.year],
+              [t.caseStudy.metaEngagement, study.offer],
+            ] as [string, string][]).map(([label, value]) => (
               <div key={label}>
                 <dt className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{label}</dt>
                 <dd className="mt-2 font-display text-2xl">{value}</dd>
@@ -83,19 +100,27 @@ function CaseStudyPage() {
 
       <section className="px-5 pt-10 md:px-10 lg:px-14">
         <div className="mx-auto max-w-7xl">
-          <div className="aspect-[16/10] overflow-hidden bg-muted">
-            <img src={study.image} alt={study.imageAlt} width={1600} height={1200} fetchPriority="high" className="h-full w-full object-cover" />
+          <div className="aspect-[16/10] overflow-hidden rounded-sm bg-muted">
+            <img
+              src={study.image}
+              alt={study.imageAlt}
+              width={1600}
+              height={1200}
+              fetchPriority="high"
+              style={{ viewTransitionName: `case-cover-${study.slug}` }}
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </section>
 
       <section className="px-5 py-20 md:px-10 md:py-28 lg:px-14">
         <div className="mx-auto max-w-7xl">
-          {[
-            ["The context", study.context],
-            ["The challenge", study.challenge],
-            ["The execution", study.execution],
-          ].map(([heading, body]) => (
+          {([
+            [t.caseStudy.sectionContext, study.context],
+            [t.caseStudy.sectionChallenge, study.challenge],
+            [t.caseStudy.sectionExecution, study.execution],
+          ] as [string, string][]).map(([heading, body]) => (
             <article key={heading} className="grid gap-5 border-t border-border py-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-12">
               <h2 className="font-display text-3xl md:text-4xl">{heading}</h2>
               <p className="max-w-3xl text-lg font-light leading-relaxed text-muted-foreground">{body}</p>
@@ -103,7 +128,7 @@ function CaseStudyPage() {
           ))}
 
           <div className="grid gap-5 border-t border-border py-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-12">
-            <h2 className="font-display text-3xl md:text-4xl">What we delivered</h2>
+            <h2 className="font-display text-3xl md:text-4xl">{t.caseStudy.sectionDelivered}</h2>
             <div className="grid gap-10 sm:grid-cols-2">
               <ul className="space-y-3">
                 {study.deliverables.map((item) => (
@@ -114,7 +139,7 @@ function CaseStudyPage() {
                 ))}
               </ul>
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Services</p>
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{t.caseStudy.servicesLabel}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {study.services.map((service) => (
                     <span key={service} className="border border-border px-3 py-1.5 text-xs uppercase tracking-[0.12em] text-muted-foreground">
@@ -130,7 +155,9 @@ function CaseStudyPage() {
 
       <section className="bg-mint px-5 py-20 md:px-10 md:py-28 lg:px-14">
         <div className="mx-auto max-w-7xl">
-          <p className="text-xs font-medium uppercase tracking-[0.2em]">The impact</p>
+          <p className="text-xs font-medium uppercase tracking-[0.2em]">
+            {study.kind === "concept" ? t.caseStudy.targetOutcomes : t.caseStudy.theImpact}
+          </p>
           <div className="mt-10 grid border-y border-primary/25 md:grid-cols-3">
             {study.results.map((result, index) => (
               <div key={result.label} className={`py-10 md:px-8 ${index > 0 ? "border-t border-primary/25 md:border-l md:border-t-0" : ""}`}>
@@ -139,18 +166,25 @@ function CaseStudyPage() {
               </div>
             ))}
           </div>
-          <blockquote className="mt-14 max-w-4xl">
-            <p className="font-display text-4xl leading-[1.15] md:text-5xl">&ldquo;{study.quote.text}&rdquo;</p>
-            <footer className="mt-6 text-xs font-medium uppercase tracking-[0.16em] text-foreground/70">
-              {study.quote.author} · {study.quote.role}
-            </footer>
-          </blockquote>
+          {study.kind === "concept" && (
+            <p className="mt-6 max-w-2xl text-xs leading-relaxed text-foreground/70">
+              {t.caseStudy.conceptMetricsNote}
+            </p>
+          )}
+          {study.quote && (
+            <blockquote className="mt-14 max-w-4xl">
+              <p className="font-display text-4xl leading-[1.15] md:text-5xl">&ldquo;{study.quote.text}&rdquo;</p>
+              <footer className="mt-6 text-xs font-medium uppercase tracking-[0.16em] text-foreground/70">
+                {study.quote.author} · {study.quote.role}
+              </footer>
+            </blockquote>
+          )}
         </div>
       </section>
 
       <section className="bg-forest px-5 py-20 text-primary-foreground md:px-10 md:py-24 lg:px-14">
         <div className="mx-auto max-w-7xl">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-mint">Next project</p>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-mint">{t.caseStudy.nextProject}</p>
           <Link to="/cases/$slug" params={{ slug: next.slug }} className="group mt-8 flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="font-display text-5xl md:text-7xl">{next.client}</h2>

@@ -10,19 +10,41 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteRouteImport } from './routes/admin.route'
 import { Route as StartRouteImport } from './routes/start'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as CasesIndexRouteImport } from './routes/cases.index'
 import { Route as CasesSlugRouteImport } from './routes/cases.$slug'
+import { Route as AdminCasesIndexRouteImport } from './routes/admin.cases.index'
+import { Route as AdminCasesIdRouteImport } from './routes/admin.cases.$id'
+import { Route as AdminInquiriesIndexRouteImport } from './routes/admin.inquiries.index'
+import { Route as AdminInquiriesIdRouteImport } from './routes/admin.inquiries.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StartRoute = StartRouteImport.update({
   id: '/start',
   path: '/start',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const CasesIndexRoute = CasesIndexRouteImport.update({
   id: '/cases/',
@@ -34,36 +56,110 @@ const CasesSlugRoute = CasesSlugRouteImport.update({
   path: '/cases/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCasesIndexRoute = AdminCasesIndexRouteImport.update({
+  id: '/cases/',
+  path: '/cases/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminCasesIdRoute = AdminCasesIdRouteImport.update({
+  id: '/cases/$id',
+  path: '/cases/$id',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminInquiriesIndexRoute = AdminInquiriesIndexRouteImport.update({
+  id: '/inquiries/',
+  path: '/inquiries/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminInquiriesIdRoute = AdminInquiriesIdRouteImport.update({
+  id: '/inquiries/$id',
+  path: '/inquiries/$id',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/start': typeof StartRoute
+  '/admin/login': typeof AdminLoginRoute
   '/cases/$slug': typeof CasesSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/cases/': typeof CasesIndexRoute
+  '/admin/cases/$id': typeof AdminCasesIdRoute
+  '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
+  '/admin/cases/': typeof AdminCasesIndexRoute
+  '/admin/inquiries/': typeof AdminInquiriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/start': typeof StartRoute
+  '/admin/login': typeof AdminLoginRoute
   '/cases/$slug': typeof CasesSlugRoute
+  '/admin': typeof AdminIndexRoute
   '/cases': typeof CasesIndexRoute
+  '/admin/cases/$id': typeof AdminCasesIdRoute
+  '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
+  '/admin/cases': typeof AdminCasesIndexRoute
+  '/admin/inquiries': typeof AdminInquiriesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/start': typeof StartRoute
+  '/admin/login': typeof AdminLoginRoute
   '/cases/$slug': typeof CasesSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/cases/': typeof CasesIndexRoute
+  '/admin/cases/$id': typeof AdminCasesIdRoute
+  '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
+  '/admin/cases/': typeof AdminCasesIndexRoute
+  '/admin/inquiries/': typeof AdminInquiriesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/start' | '/cases/$slug' | '/cases/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/start'
+    | '/admin/login'
+    | '/cases/$slug'
+    | '/admin/'
+    | '/cases/'
+    | '/admin/cases/$id'
+    | '/admin/inquiries/$id'
+    | '/admin/cases/'
+    | '/admin/inquiries/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/start' | '/cases/$slug' | '/cases'
-  id: '__root__' | '/' | '/start' | '/cases/$slug' | '/cases/'
+  to:
+    | '/'
+    | '/start'
+    | '/admin/login'
+    | '/cases/$slug'
+    | '/admin'
+    | '/cases'
+    | '/admin/cases/$id'
+    | '/admin/inquiries/$id'
+    | '/admin/cases'
+    | '/admin/inquiries'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/start'
+    | '/admin/login'
+    | '/cases/$slug'
+    | '/admin/'
+    | '/cases/'
+    | '/admin/cases/$id'
+    | '/admin/inquiries/$id'
+    | '/admin/cases/'
+    | '/admin/inquiries/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   StartRoute: typeof StartRoute
   CasesSlugRoute: typeof CasesSlugRoute
   CasesIndexRoute: typeof CasesIndexRoute
@@ -78,12 +174,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/start': {
       id: '/start'
       path: '/start'
       fullPath: '/start'
       preLoaderRoute: typeof StartRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/cases/': {
       id: '/cases/'
@@ -99,11 +216,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CasesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/cases/': {
+      id: '/admin/cases/'
+      path: '/cases'
+      fullPath: '/admin/cases/'
+      preLoaderRoute: typeof AdminCasesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/cases/$id': {
+      id: '/admin/cases/$id'
+      path: '/cases/$id'
+      fullPath: '/admin/cases/$id'
+      preLoaderRoute: typeof AdminCasesIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/inquiries/': {
+      id: '/admin/inquiries/'
+      path: '/inquiries'
+      fullPath: '/admin/inquiries/'
+      preLoaderRoute: typeof AdminInquiriesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/inquiries/$id': {
+      id: '/admin/inquiries/$id'
+      path: '/inquiries/$id'
+      fullPath: '/admin/inquiries/$id'
+      preLoaderRoute: typeof AdminInquiriesIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminCasesIdRoute: typeof AdminCasesIdRoute
+  AdminInquiriesIdRoute: typeof AdminInquiriesIdRoute
+  AdminCasesIndexRoute: typeof AdminCasesIndexRoute
+  AdminInquiriesIndexRoute: typeof AdminInquiriesIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminLoginRoute: AdminLoginRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminCasesIdRoute: AdminCasesIdRoute,
+  AdminInquiriesIdRoute: AdminInquiriesIdRoute,
+  AdminCasesIndexRoute: AdminCasesIndexRoute,
+  AdminInquiriesIndexRoute: AdminInquiriesIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   StartRoute: StartRoute,
   CasesSlugRoute: CasesSlugRoute,
   CasesIndexRoute: CasesIndexRoute,

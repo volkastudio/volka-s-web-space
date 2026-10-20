@@ -1,3 +1,13 @@
+/*
+ * Self-hosted fonts (no CDN dependency, no layout shift).
+ * Packages: @fontsource/cormorant-garamond, @fontsource-variable/dm-sans
+ */
+@import "@fontsource/cormorant-garamond/400.css";
+@import "@fontsource/cormorant-garamond/500.css";
+@import "@fontsource/cormorant-garamond/600.css";
+@import "@fontsource/cormorant-garamond/500-italic.css";
+@import "@fontsource-variable/dm-sans";
+
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -10,11 +20,11 @@
  * The @theme inline block maps CSS custom properties to Tailwind utility
  * classes (e.g. --color-primary -> bg-primary, text-primary).
  *
- * The :root and .dark blocks define the actual color values using oklch.
+ * The :root block defines the actual color values using oklch.
  * All colors MUST use oklch format.
  *
  * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 1. Add the variable to :root
  * 2. Register it in @theme inline as --color-<name>: var(--<name>)
  */
 
@@ -46,11 +56,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  /* Admin UI colours — used by the sidebar component in Phase 5 */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -59,46 +65,52 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* Brand colours */
   --color-forest: var(--forest);
   --color-mint: var(--mint);
   --color-paper: var(--paper);
   --color-ivory: var(--ivory);
   --color-gold: var(--gold);
+  /* Fonts */
   --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-sans: "DM Sans", sans-serif;
+  --font-sans: "DM Sans Variable", "DM Sans", sans-serif;
 }
 
 :root {
   --radius: 0.25rem;
+  /* Backgrounds & surfaces */
   --background: oklch(0.985 0.016 103.4);
   --foreground: oklch(0.18 0.033 171.7);
   --card: oklch(0.97 0.018 77.7);
   --card-foreground: oklch(0.18 0.033 171.7);
   --popover: oklch(0.985 0.016 103.4);
   --popover-foreground: oklch(0.18 0.033 171.7);
+  /* Brand primary: deep forest green */
   --primary: oklch(0.28 0.055 172.6);
   --primary-foreground: oklch(0.985 0.016 103.4);
+  /* Secondary: soft mint */
   --secondary: oklch(0.82 0.055 168.8);
   --secondary-foreground: oklch(0.22 0.045 172.6);
+  /* Muted */
   --muted: oklch(0.93 0.017 85.8);
   --muted-foreground: oklch(0.48 0.018 81.2);
+  /* Accent: gold */
   --accent: oklch(0.69 0.151 65.8);
   --accent-foreground: oklch(0.18 0.033 171.7);
+  /* Destructive */
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
+  /* Borders & inputs */
   --border: oklch(0.82 0.018 85.8);
   --input: oklch(0.82 0.018 85.8);
   --ring: oklch(0.69 0.151 65.8);
+  /* Named brand colours */
   --forest: oklch(0.18 0.033 148.2);
   --mint: oklch(0.82 0.055 168.8);
   --paper: oklch(0.985 0.016 103.4);
   --ivory: oklch(0.97 0.018 77.7);
   --gold: oklch(0.69 0.151 65.8);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  /* Admin sidebar (Phase 5) — neutral blue-slate to distinguish from brand */
   --sidebar: oklch(0.984 0.003 247.858);
   --sidebar-foreground: oklch(0.129 0.042 264.695);
   --sidebar-primary: oklch(0.208 0.042 265.755);
@@ -109,6 +121,9 @@
   --sidebar-ring: oklch(0.704 0.04 256.788);
 }
 
+/* No dark mode for the public site — the brand IS its own palette.
+   A real dark mode may be added in a future phase. The .dark class
+   is defined here only so shadcn admin components degrade gracefully. */
 .dark {
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
@@ -129,11 +144,6 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.208 0.042 265.755);
   --sidebar-foreground: oklch(0.984 0.003 247.858);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -243,10 +253,58 @@
   animation: volka-line 1100ms cubic-bezier(0.22, 1, 0.36, 1) 200ms forwards;
 }
 
+/* ─── Liquid Glass Effects ─── */
+
+@keyframes liquid-glow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.12) translate(8px, -6px);
+  }
+}
+
+@utility animate-liquid-glow {
+  animation: liquid-glow 8s ease-in-out infinite;
+}
+
+@utility glass-panel {
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  background: oklch(1 0 0 / 6%);
+  border: 1px solid oklch(1 0 0 / 12%);
+  box-shadow: 0 8px 32px 0 oklch(0 0 0 / 15%), inset 0 1px 1px 0 oklch(1 0 0 / 25%);
+}
+
+@utility glass-panel-forest {
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  background: oklch(0.18 0.033 148.2 / 55%);
+  border: 1px solid oklch(0.82 0.055 168.8 / 20%);
+  box-shadow: 0 12px 36px 0 oklch(0.07 0.02 148.2 / 40%), inset 0 1px 1px 0 oklch(1 0 0 / 20%);
+}
+
+@utility glass-pill {
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  background: oklch(1 0 0 / 8%);
+  border: 1px solid oklch(1 0 0 / 16%);
+  box-shadow: 0 4px 16px 0 oklch(0 0 0 / 8%), inset 0 1px 0 0 oklch(1 0 0 / 30%);
+}
+
+/* Fallback for SSR when JavaScript is not yet loaded */
+html:not(.js) .motion-safe-hidden {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-volka-rise,
   .animate-volka-fade,
   .animate-volka-drift,
+  .animate-liquid-glow,
   .reveal-line {
     animation: none;
   }

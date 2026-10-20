@@ -1,17 +1,25 @@
-import atlantiqueImage from "@/assets/case-atlantique.jpg";
-import koraImage from "@/assets/case-kora-pay.jpg";
-import sikaImage from "@/assets/case-maison-sika.jpg";
-import terraImage from "@/assets/case-terra-studio.jpg";
+import koroFoodsImage from "@/assets/case-koro-foods.jpg";
+import sayoImage from "@/assets/case-sayo.jpg";
+import thePalmImage from "@/assets/case-the-palm.jpg";
+import atelierNoirImage from "@/assets/case-atelier-noir.jpg";
+import type { OfferId } from "@/data/offers";
 
 export type CaseStudy = {
   slug: string;
+  /**
+   * "concept": a fictional client and brief created by Volka to show its process.
+   *            Results are illustrative targets, not measured outcomes.
+   * "client":  real delivered work. Only use this once the client has agreed to be
+   *            named and the numbers and quote are real.
+   */
+  kind: "concept" | "client";
   client: string;
   tagline: string;
   discipline: string;
   sector: string;
   year: string;
   location: string;
-  offer: string;
+  offer: OfferId;
   image: string;
   imageAlt: string;
   summary: string;
@@ -20,13 +28,16 @@ export type CaseStudy = {
   execution: string;
   services: string[];
   deliverables: string[];
+  /** Target outcomes for concepts; measured results for real client work. */
   results: { value: string; label: string }[];
-  quote: { text: string; author: string; role: string };
+  /** Real testimonials only. Leave undefined for concept projects. */
+  quote?: { text: string; author: string; role: string };
 };
 
 export const caseStudies: CaseStudy[] = [
   {
     slug: "koro-foods",
+    kind: "concept",
     client: "Kòrò Foods",
     tagline: "A pantry brand with the poise of an export house.",
     discipline: "Brand identity",
@@ -34,7 +45,7 @@ export const caseStudies: CaseStudy[] = [
     year: "2025",
     location: "Cotonou, Bénin",
     offer: "Autorité",
-    image: sikaImage,
+    image: koroFoodsImage,
     imageAlt: "Kòrò Foods packaging system in cream and gold on a deep green surface",
     summary:
       "A regional food producer with excellent products and packaging that undersold every one of them.",
@@ -57,27 +68,23 @@ export const caseStudies: CaseStudy[] = [
       { value: "2", label: "New export markets opened" },
       { value: "+38%", label: "Average basket value in retail" },
     ],
-    quote: {
-      text: "We did not change the product. We changed how seriously people take it before they taste it.",
-      author: "Adéṣínà Kòrò",
-      role: "Founder, Kòrò Foods",
-    },
   },
   {
-    slug: "kora-pay",
-    client: "Kora Pay",
+    slug: "sayo",
+    kind: "concept",
+    client: "Sayo",
     tagline: "Making a young fintech feel like an institution.",
     discipline: "Digital platform",
     sector: "Financial services",
     year: "2025",
     location: "Lagos, Nigeria",
     offer: "Expansion",
-    image: koraImage,
-    imageAlt: "Kora Pay mobile app shown on two phones with a calm green and cream interface",
+    image: sayoImage,
+    imageAlt: "Sayo mobile app shown on two phones with a calm green and cream interface",
     summary:
       "A personal finance app that needed to earn trust in the first eight seconds of use.",
     context:
-      "Kora Pay had strong retention among users who made it past onboarding, and heavy drop-off before it. The interface was capable but spoke like a prototype.",
+      "Sayo had strong retention among users who made it past onboarding, and heavy drop-off before it. The interface was capable but spoke like a prototype.",
     challenge:
       "Financial confidence is a design problem. The product had to feel calm, legible and unmistakably safe on low-end Android devices and patchy networks alike.",
     execution:
@@ -94,14 +101,10 @@ export const caseStudies: CaseStudy[] = [
       { value: "+62%", label: "Weekly active users in four months" },
       { value: "4.7", label: "Average app store rating" },
     ],
-    quote: {
-      text: "Volka gave us the credibility our engineering already deserved.",
-      author: "Ngozi Eze",
-      role: "Head of Product, Kora Pay",
-    },
   },
   {
     slug: "the-palm-hotel",
+    kind: "concept",
     client: "The Palm",
     tagline: "A coastal hotel, booked direct.",
     discipline: "Digital platform",
@@ -109,7 +112,7 @@ export const caseStudies: CaseStudy[] = [
     year: "2024",
     location: "Grand-Popo, Bénin",
     offer: "Autorité",
-    image: atlantiqueImage,
+    image: thePalmImage,
     imageAlt: "The Palm hotel website on a laptop in a warm tropical lobby at golden hour",
     summary:
       "A beautiful property losing a fifth of every booking to platform commission.",
@@ -131,14 +134,10 @@ export const caseStudies: CaseStudy[] = [
       { value: "−19%", label: "Commission paid to platforms" },
       { value: "1.4s", label: "Median page load on mobile" },
     ],
-    quote: {
-      text: "Guests now arrive having already decided. The site does the convincing.",
-      author: "Mariam Dossou",
-      role: "General Manager, The Palm",
-    },
   },
   {
     slug: "atelier-noir",
+    kind: "concept",
     client: "Atelier Noir",
     tagline: "A portfolio that closes commissions.",
     discipline: "Brand identity",
@@ -146,7 +145,7 @@ export const caseStudies: CaseStudy[] = [
     year: "2024",
     location: "Abidjan, Côte d'Ivoire",
     offer: "Présence",
-    image: terraImage,
+    image: atelierNoirImage,
     imageAlt: "Atelier Noir architecture portfolio website on a large monitor in a concrete office",
     summary:
       "An architecture practice whose work outclassed every way it was being presented.",
@@ -167,11 +166,6 @@ export const caseStudies: CaseStudy[] = [
       { value: "2×", label: "Average project value" },
       { value: "0", label: "Developer hours needed to publish a project" },
     ],
-    quote: {
-      text: "For the first time, the portfolio matches the buildings.",
-      author: "Koffi N'Guessan",
-      role: "Principal, Atelier Noir",
-    },
   },
 ];
 
