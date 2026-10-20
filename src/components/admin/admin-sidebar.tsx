@@ -56,13 +56,20 @@ export function AdminSidebar({ unreadInquiriesCount = 0 }: AdminSidebarProps) {
         {/* Brand Header */}
         <div className="border-b border-primary-foreground/10 p-6">
           <div className="flex items-center justify-between">
-            <Link to="/admin" className="block">
-              <span className="font-display text-2xl font-light tracking-[0.12em] text-primary-foreground">
-                VOLKA
-              </span>
-              <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.25em] text-gold">
-                Studio Admin
-              </span>
+            <Link to="/admin" className="flex items-center gap-2.5">
+              <img
+                src="/volka-icon-light.png"
+                alt=""
+                className="size-7 object-contain"
+              />
+              <div>
+                <span className="font-display text-2xl font-light tracking-[0.12em] text-primary-foreground">
+                  VOLKA
+                </span>
+                <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.25em] text-gold">
+                  Studio Admin
+                </span>
+              </div>
             </Link>
             <div className="flex items-center gap-1.5 rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-medium text-gold">
               <span className="size-1.5 rounded-full bg-gold animate-pulse" />

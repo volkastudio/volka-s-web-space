@@ -102,8 +102,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      // Fonts are self-hosted via @fontsource — no CDN link needed
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      // Favicons & Touch icons
+      { rel: "icon", href: "/favicon.ico", sizes: "32x32" },
+      { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { rel: "icon", href: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
       // hreflang alternates for FR (root) and EN (/en/* — future routing)
       { rel: "alternate", hrefLang: "fr", href: "/" },
       { rel: "alternate", hrefLang: "en", href: "/" },

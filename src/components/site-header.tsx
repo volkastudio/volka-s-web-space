@@ -54,8 +54,19 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" | 
   return (
     <header className={wrapperClass}>
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-10 lg:px-14">
-        <Link to="/" className="text-xl font-semibold tracking-[0.12em]" aria-label="Volka home">
-          VOLKA
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 text-xl font-semibold tracking-[0.12em]"
+          aria-label="Volka home"
+        >
+          <img
+            src={isDark ? "/volka-icon-light.png" : "/volka-icon-dark.png"}
+            alt=""
+            width={20}
+            height={20}
+            className="size-5 shrink-0 object-contain"
+          />
+          <span>VOLKA</span>
         </Link>
         <nav
           className="hidden items-center gap-7 text-xs font-medium uppercase tracking-[0.14em] md:flex"
