@@ -19,6 +19,7 @@ import {
   reorderCases,
   setCaseStatus,
   deleteCase,
+  setFeatured,
 } from "@/lib/admin/cases.functions";
 import type { CaseStudyRecord } from "@/lib/case-study-schema";
 
@@ -122,6 +123,22 @@ function AdminCasesIndexPage() {
       console.error("Reorder failed:", err);
       setError("Reorder failed. Refreshing...");
       fetchCases();
+    }
+  };
+
+  const handleToggleFeatured = async (item: CaseStudyRecord) => {
+    const nextFeatured = !item.featured;
+    try {
+      setActionLoading(item.id);
+      setError(null);
+      await setFeatured({ data: { id: item.id, featured: nextFeatured } });
+      setCases((prev) =>
+        prev.map((c) => (c.id === item.id ? { ...c, featured: nextFeatured } : c)),
+      );
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to update featured status");
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -314,16 +331,20 @@ function AdminCasesIndexPage() {
                         </div>
                       </td>
 
-                      {/* Featured */}
+                      {/* Featured — click to toggle */}
                       <td className="px-4 py-4">
-                        {study.featured ? (
-                          <span className="inline-flex items-center gap-1 text-gold">
-                            <Star className="size-3.5 fill-gold" />
-                            <span>Featured</span>
+                        <button
+                          type="button"
+                          disabled={isActioning}
+                          onClick={() => handleToggleFeatured(study)}
+                          title={study.featured ? "Remove from homepage" : "Feature on homepage"}
+                          className={`inline-flex items-center gap-1 transition-opacity hover:opacity-80 ${study.featured ? "text-gold" : "text-muted-foreground/30 hover:text-gold/60"}`}
+                        >
+                          <Star className={`size-3.5 ${study.featured ? "fill-gold" : ""}`} />
+                          <span className="text-[10px] font-semibold uppercase tracking-wider">
+                            {study.featured ? "Featured" : "—"}
                           </span>
-                        ) : (
-                          <span className="text-muted-foreground/50">—</span>
-                        )}
+                        </button>
                       </td>
 
                       {/* Status Toggle */}

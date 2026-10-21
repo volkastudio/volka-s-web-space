@@ -106,7 +106,7 @@ function Index() {
 
         <div
           id="top"
-          className="relative z-10 mx-auto flex min-h-[calc(92svh-96px)] max-w-7xl flex-col justify-end px-5 pb-12 md:px-10 md:pb-16 lg:px-14"
+          className="relative z-10 mx-auto flex min-h-[calc(92svh-96px)] max-w-7xl flex-col justify-end px-5 pb-12 pt-24 md:px-10 md:pb-16 md:pt-0 lg:px-14"
         >
           <motion.p
             className="mb-5 text-xs font-medium uppercase tracking-[0.2em] text-mint"

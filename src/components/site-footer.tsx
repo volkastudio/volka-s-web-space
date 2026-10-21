@@ -24,40 +24,40 @@ export function SiteFooter() {
             </Link>
           </Button>
         </div>
-        <nav
-          aria-label="Footer"
-          className="flex flex-wrap items-center gap-x-6 gap-y-4 pt-8 text-xs uppercase tracking-[0.14em] text-primary-foreground/60"
-        >
-          <span className="font-semibold text-primary-foreground">VOLKA</span>
-          <span>{t.footer.location}</span>
-          <a
-            href="https://www.instagram.com/volkastudio"
-            target="_blank"
-            rel="noreferrer"
-            className="transition-colors hover:text-mint"
-          >
-            Instagram
-          </a>
-          {/* Update this WhatsApp number before launch */}
-          <a
-            href="https://wa.me/22900000000?text=Bonjour%20Volka%2C%20je%20voudrais%20d%C3%A9marrer%20un%20projet."
-            target="_blank"
-            rel="noreferrer"
-            className="transition-colors hover:text-mint"
-          >
-            WhatsApp
-          </a>
-          <a href="mailto:hello@volkastudio.com" className="transition-colors hover:text-mint">
-            hello@volkastudio.com
-          </a>
-          <Link to="/legal" className="transition-colors hover:text-mint">
-            {t.footer.legalNotice}
-          </Link>
-          <div className="ml-auto flex items-center gap-4">
-            <LanguageSwitcher />
-            <span>© {new Date().getFullYear()} Volka Studio</span>
+        {/* Footer nav — top row: links; bottom row: lang + copyright */}
+        <div className="pt-8 text-xs uppercase tracking-[0.14em] text-primary-foreground/60">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <span className="font-semibold text-primary-foreground">VOLKA</span>
+            <span>{t.footer.location}</span>
+            <a
+              href="https://www.instagram.com/volkastudio"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-colors hover:text-mint"
+            >
+              Instagram
+            </a>
+            {/* Update this WhatsApp number before launch */}
+            <a
+              href="https://wa.me/22900000000?text=Bonjour%20Volka%2C%20je%20voudrais%20d%C3%A9marrer%20un%20projet."
+              target="_blank"
+              rel="noreferrer"
+              className="transition-colors hover:text-mint"
+            >
+              WhatsApp
+            </a>
+            <a href="mailto:hello@volkastudio.com" className="transition-colors hover:text-mint">
+              hello@volkastudio.com
+            </a>
+            <Link to="/legal" className="transition-colors hover:text-mint">
+              {t.footer.legalNotice}
+            </Link>
           </div>
-        </nav>
+          <div className="mt-5 flex items-center justify-between gap-4 border-t border-primary-foreground/10 pt-5">
+            <span>© {new Date().getFullYear()} Volka Studio</span>
+            <LanguageSwitcher />
+          </div>
+        </div>
       </div>
     </section>
   );

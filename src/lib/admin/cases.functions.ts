@@ -256,3 +256,31 @@ export const signUpload = createServerFn({ method: "POST" })
       token: data.token,
     };
   });
+
+export const setFeatured = createServerFn({ method: "POST" })
+  .middleware([requireAdminAuth])
+  .validator((data: { id: string; featured: boolean }) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        featured: z.boolean(),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data: input }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data, error } = await supabaseAdmin
+      .from("case_studies")
+      .update({ featured: input.featured, updated_at: new Date().toISOString() })
+      .eq("id", input.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("[setFeatured] Error:", error.message);
+      throw new Error(`Failed to update featured status: ${error.message}`);
+    }
+
+    return data as unknown as CaseStudyRecord;
+  });

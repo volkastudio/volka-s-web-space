@@ -183,6 +183,46 @@ function SelectCard({
   );
 }
 
+/** Channel card — active state uses illuminated orange icon bg on dark green */
+function ChannelCard({
+  selected,
+  onClick,
+  title,
+  icon,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  title: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      whileTap={{ scale: 0.98 }}
+      className={[
+        "flex w-full items-center gap-4 border p-4 text-left transition-all duration-200",
+        selected
+          ? "border-primary bg-primary text-primary-foreground"
+          : "border-border hover:border-primary/50 hover:bg-muted/40",
+      ].join(" ")}
+    >
+      {/* Icon circle — orange bg when active, default otherwise */}
+      <span
+        className={[
+          "flex size-9 shrink-0 items-center justify-center rounded-full border transition-colors duration-200",
+          selected
+            ? "border-gold/60 bg-gold text-primary"
+            : "border-border bg-background text-muted-foreground",
+        ].join(" ")}
+      >
+        {icon}
+      </span>
+      <span className="font-display text-xl leading-tight">{title}</span>
+    </motion.button>
+  );
+}
+
 function StartProject() {
   const { t, locale, formatPrice } = useI18n();
   const search = useSearch({ from: "/start" });
@@ -469,7 +509,7 @@ function StartProject() {
                         { value: "email", label: "Email", icon: <Mail className="size-4" /> },
                         { value: "whatsapp", label: "WhatsApp", icon: <MessageCircle className="size-4" /> },
                       ] as const).map((ch) => (
-                        <SelectCard
+                        <ChannelCard
                           key={ch.value}
                           selected={form.preferredChannel === ch.value}
                           onClick={() => set("preferredChannel", ch.value)}

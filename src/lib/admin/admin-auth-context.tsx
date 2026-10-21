@@ -35,7 +35,24 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
         .maybeSingle();
 
       if (dbError) {
+        // Check for schema/table not found errors (migration not run on remote project)
+        const isSchemaError =
+          dbError.message.includes("database error querying schema") ||
+          dbError.message.includes("relation") ||
+          dbError.message.includes("does not exist") ||
+          dbError.code === "PGRST204" ||
+          dbError.code === "42P01";
+
+        const friendlyMsg = isSchemaError
+          ? "Database schema not found. Please run the Supabase migrations on your remote project (supabase db push) and ensure the admin_users table exists."
+          : `Admin check failed: ${dbError.message}`;
+
         console.warn("[AdminAuth] Check error:", dbError.message);
+        setUser(currentUser);
+        setIsAdmin(false);
+        setError(friendlyMsg);
+        setIsLoading(false);
+        return;
       }
 
       if (data) {

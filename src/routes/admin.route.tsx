@@ -70,7 +70,7 @@ function AdminLayoutInner() {
     return <Outlet />;
   }
 
-  // Loading state
+  // Show loading screen while auth state is being verified
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-primary text-primary-foreground">

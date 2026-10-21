@@ -1,6 +1,5 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useI18n } from "@/i18n/context";
-import { easeVolkaOut } from "@/lib/motion";
 
 export function LanguageSwitcher({ className = "" }: { className?: string }) {
   const { locale, setLocale } = useI18n();
@@ -12,6 +11,19 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
       aria-label="Language selection"
       className={`relative inline-flex items-center rounded-full border border-primary-foreground/20 bg-primary-foreground/10 p-0.5 backdrop-blur-md transition-colors ${className}`}
     >
+      {/* Sliding pill — always present, positioned absolutely under the active button */}
+      <motion.div
+        className="pointer-events-none absolute inset-y-0.5 rounded-full bg-mint shadow-sm"
+        animate={{
+          left: locale === "fr" ? "2px" : "50%",
+          right: locale === "fr" ? "50%" : "2px",
+        }}
+        transition={
+          shouldReduce
+            ? { duration: 0 }
+            : { type: "spring", stiffness: 450, damping: 30 }
+        }
+      />
       {(["fr", "en"] as const).map((lang) => {
         const isActive = locale === lang;
         return (
@@ -24,17 +36,6 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
               isActive ? "text-primary" : "text-primary-foreground/70 hover:text-primary-foreground"
             }`}
           >
-            {isActive && (
-              <motion.div
-                layoutId="active-lang-pill"
-                className="absolute inset-0 -z-10 rounded-full bg-mint shadow-sm"
-                transition={
-                  shouldReduce
-                    ? { duration: 0 }
-                    : { type: "spring", stiffness: 450, damping: 30 }
-                }
-              />
-            )}
             {lang.toUpperCase()}
           </button>
         );
