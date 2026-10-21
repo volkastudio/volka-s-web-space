@@ -19,6 +19,7 @@ import { offers } from "@/data/offers";
 import { useI18n } from "@/i18n/context";
 
 import heroImage from "@/assets/volka-hero.jpg";
+import heroMobileImage from "@/assets/volka-hero-mobile.jpg";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -79,17 +80,21 @@ function Index() {
     <main className="bg-background text-foreground">
       {/* ─── Hero ─── */}
       <section className="relative min-h-[92svh] overflow-hidden bg-primary text-primary-foreground">
-        {/* Parallax hero image */}
+        {/* Parallax hero image (responsive: mobile 9:16 portrait, desktop 16:9 landscape) */}
         <Parallax speed={80} className="absolute inset-0 h-full w-full">
-          <img
-            src={heroImage}
-            alt="A creative professional entering a contemporary studio in Cotonou"
-            width={1920}
-            height={1088}
-            fetchPriority="high"
-            className="h-full w-full object-cover object-center"
-            style={{ minHeight: "110%" }}
-          />
+          <picture className="h-full w-full">
+            <source media="(max-width: 767px)" srcSet={heroMobileImage} />
+            <source media="(min-width: 768px)" srcSet={heroImage} />
+            <img
+              src={heroImage}
+              alt="A creative professional entering a contemporary studio in Cotonou"
+              width={1920}
+              height={1088}
+              fetchPriority="high"
+              className="h-full w-full object-cover object-center"
+              style={{ minHeight: "110%" }}
+            />
+          </picture>
         </Parallax>
 
         {/* Overlays */}

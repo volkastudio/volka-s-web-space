@@ -29,6 +29,9 @@ export function SiteFooter() {
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <span className="font-semibold text-primary-foreground">VOLKA</span>
             <span>{t.footer.location}</span>
+            <Link to="/journal" className="transition-colors hover:text-mint">
+              Journal
+            </Link>
             <a
               href="https://www.instagram.com/volkastudio"
               target="_blank"

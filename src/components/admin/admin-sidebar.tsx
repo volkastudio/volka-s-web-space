@@ -9,6 +9,7 @@ import {
   Menu,
   X,
   ShieldCheck,
+  BookOpen,
 } from "lucide-react";
 import { useAdminAuth } from "@/lib/admin/admin-auth-context";
 
@@ -32,6 +33,12 @@ export function AdminSidebar({ unreadInquiriesCount = 0 }: AdminSidebarProps) {
       label: "Case studies",
       to: "/admin/cases",
       icon: Briefcase,
+      exact: false,
+    },
+    {
+      label: "Journal",
+      to: "/admin/posts",
+      icon: BookOpen,
       exact: false,
     },
     {

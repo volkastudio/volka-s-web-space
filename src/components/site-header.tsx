@@ -54,6 +54,7 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" | 
 
   const navItems = [
     { label: t.nav.cases, to: "/cases" as const, hash: undefined },
+    { label: t.nav.journal, to: "/journal" as const, hash: undefined },
     { label: t.nav.services, to: "/" as const, hash: "services" },
     { label: t.nav.studio, to: "/" as const, hash: "about" },
   ];

@@ -5,6 +5,7 @@ export interface Translations {
   nav: {
     home: string;
     cases: string;
+    journal: string;
     services: string;
     studio: string;
     start: string;

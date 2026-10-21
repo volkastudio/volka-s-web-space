@@ -17,11 +17,15 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as CasesIndexRouteImport } from './routes/cases.index'
 import { Route as CasesSlugRouteImport } from './routes/cases.$slug'
+import { Route as JournalIndexRouteImport } from './routes/journal.index'
+import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as OffresSlugRouteImport } from './routes/offres.$slug'
 import { Route as AdminCasesIndexRouteImport } from './routes/admin.cases.index'
 import { Route as AdminCasesIdRouteImport } from './routes/admin.cases.$id'
 import { Route as AdminInquiriesIndexRouteImport } from './routes/admin.inquiries.index'
 import { Route as AdminInquiriesIdRouteImport } from './routes/admin.inquiries.$id'
+import { Route as AdminPostsIndexRouteImport } from './routes/admin.posts.index'
+import { Route as AdminPostsIdRouteImport } from './routes/admin.posts.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -63,6 +67,16 @@ const CasesSlugRoute = CasesSlugRouteImport.update({
   path: '/cases/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JournalIndexRoute = JournalIndexRouteImport.update({
+  id: '/journal/',
+  path: '/journal/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalSlugRoute = JournalSlugRouteImport.update({
+  id: '/journal/$slug',
+  path: '/journal/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OffresSlugRoute = OffresSlugRouteImport.update({
   id: '/offres/$slug',
   path: '/offres/$slug',
@@ -88,6 +102,16 @@ const AdminInquiriesIdRoute = AdminInquiriesIdRouteImport.update({
   path: '/inquiries/$id',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminPostsIndexRoute = AdminPostsIndexRouteImport.update({
+  id: '/posts/',
+  path: '/posts/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminPostsIdRoute = AdminPostsIdRouteImport.update({
+  id: '/posts/$id',
+  path: '/posts/$id',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,13 +120,17 @@ export interface FileRoutesByFullPath {
   '/start': typeof StartRoute
   '/admin/login': typeof AdminLoginRoute
   '/cases/$slug': typeof CasesSlugRoute
+  '/journal/$slug': typeof JournalSlugRoute
   '/offres/$slug': typeof OffresSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/cases/': typeof CasesIndexRoute
+  '/journal/': typeof JournalIndexRoute
   '/admin/cases/$id': typeof AdminCasesIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
+  '/admin/posts/$id': typeof AdminPostsIdRoute
   '/admin/cases/': typeof AdminCasesIndexRoute
   '/admin/inquiries/': typeof AdminInquiriesIndexRoute
+  '/admin/posts/': typeof AdminPostsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,13 +138,17 @@ export interface FileRoutesByTo {
   '/start': typeof StartRoute
   '/admin/login': typeof AdminLoginRoute
   '/cases/$slug': typeof CasesSlugRoute
+  '/journal/$slug': typeof JournalSlugRoute
   '/offres/$slug': typeof OffresSlugRoute
   '/admin': typeof AdminIndexRoute
   '/cases': typeof CasesIndexRoute
+  '/journal': typeof JournalIndexRoute
   '/admin/cases/$id': typeof AdminCasesIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
+  '/admin/posts/$id': typeof AdminPostsIdRoute
   '/admin/cases': typeof AdminCasesIndexRoute
   '/admin/inquiries': typeof AdminInquiriesIndexRoute
+  '/admin/posts': typeof AdminPostsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -126,13 +158,17 @@ export interface FileRoutesById {
   '/start': typeof StartRoute
   '/admin/login': typeof AdminLoginRoute
   '/cases/$slug': typeof CasesSlugRoute
+  '/journal/$slug': typeof JournalSlugRoute
   '/offres/$slug': typeof OffresSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/cases/': typeof CasesIndexRoute
+  '/journal/': typeof JournalIndexRoute
   '/admin/cases/$id': typeof AdminCasesIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
+  '/admin/posts/$id': typeof AdminPostsIdRoute
   '/admin/cases/': typeof AdminCasesIndexRoute
   '/admin/inquiries/': typeof AdminInquiriesIndexRoute
+  '/admin/posts/': typeof AdminPostsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -143,13 +179,17 @@ export interface FileRouteTypes {
     | '/start'
     | '/admin/login'
     | '/cases/$slug'
+    | '/journal/$slug'
     | '/offres/$slug'
     | '/admin/'
     | '/cases/'
+    | '/journal/'
     | '/admin/cases/$id'
     | '/admin/inquiries/$id'
+    | '/admin/posts/$id'
     | '/admin/cases/'
     | '/admin/inquiries/'
+    | '/admin/posts/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -157,13 +197,17 @@ export interface FileRouteTypes {
     | '/start'
     | '/admin/login'
     | '/cases/$slug'
+    | '/journal/$slug'
     | '/offres/$slug'
     | '/admin'
     | '/cases'
+    | '/journal'
     | '/admin/cases/$id'
     | '/admin/inquiries/$id'
+    | '/admin/posts/$id'
     | '/admin/cases'
     | '/admin/inquiries'
+    | '/admin/posts'
   id:
     | '__root__'
     | '/'
@@ -172,13 +216,17 @@ export interface FileRouteTypes {
     | '/start'
     | '/admin/login'
     | '/cases/$slug'
+    | '/journal/$slug'
     | '/offres/$slug'
     | '/admin/'
     | '/cases/'
+    | '/journal/'
     | '/admin/cases/$id'
     | '/admin/inquiries/$id'
+    | '/admin/posts/$id'
     | '/admin/cases/'
     | '/admin/inquiries/'
+    | '/admin/posts/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -187,8 +235,10 @@ export interface RootRouteChildren {
   LegalRoute: typeof LegalRoute
   StartRoute: typeof StartRoute
   CasesSlugRoute: typeof CasesSlugRoute
+  JournalSlugRoute: typeof JournalSlugRoute
   OffresSlugRoute: typeof OffresSlugRoute
   CasesIndexRoute: typeof CasesIndexRoute
+  JournalIndexRoute: typeof JournalIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -249,6 +299,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CasesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/journal/': {
+      id: '/journal/'
+      path: '/journal'
+      fullPath: '/journal/'
+      preLoaderRoute: typeof JournalIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal/$slug': {
+      id: '/journal/$slug'
+      path: '/journal/$slug'
+      fullPath: '/journal/$slug'
+      preLoaderRoute: typeof JournalSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/offres/$slug': {
       id: '/offres/$slug'
       path: '/offres/$slug'
@@ -284,6 +348,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminInquiriesIdRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/posts/': {
+      id: '/admin/posts/'
+      path: '/posts'
+      fullPath: '/admin/posts/'
+      preLoaderRoute: typeof AdminPostsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/posts/$id': {
+      id: '/admin/posts/$id'
+      path: '/posts/$id'
+      fullPath: '/admin/posts/$id'
+      preLoaderRoute: typeof AdminPostsIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
@@ -292,8 +370,10 @@ interface AdminRouteRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   AdminCasesIdRoute: typeof AdminCasesIdRoute
   AdminInquiriesIdRoute: typeof AdminInquiriesIdRoute
+  AdminPostsIdRoute: typeof AdminPostsIdRoute
   AdminCasesIndexRoute: typeof AdminCasesIndexRoute
   AdminInquiriesIndexRoute: typeof AdminInquiriesIndexRoute
+  AdminPostsIndexRoute: typeof AdminPostsIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
@@ -301,8 +381,10 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   AdminCasesIdRoute: AdminCasesIdRoute,
   AdminInquiriesIdRoute: AdminInquiriesIdRoute,
+  AdminPostsIdRoute: AdminPostsIdRoute,
   AdminCasesIndexRoute: AdminCasesIndexRoute,
   AdminInquiriesIndexRoute: AdminInquiriesIndexRoute,
+  AdminPostsIndexRoute: AdminPostsIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
@@ -315,8 +397,10 @@ const rootRouteChildren: RootRouteChildren = {
   LegalRoute: LegalRoute,
   StartRoute: StartRoute,
   CasesSlugRoute: CasesSlugRoute,
+  JournalSlugRoute: JournalSlugRoute,
   OffresSlugRoute: OffresSlugRoute,
   CasesIndexRoute: CasesIndexRoute,
+  JournalIndexRoute: JournalIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
