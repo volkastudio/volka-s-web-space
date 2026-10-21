@@ -50,8 +50,7 @@ export function SiteFooter() {
           <a href="mailto:hello@volkastudio.com" className="transition-colors hover:text-mint">
             hello@volkastudio.com
           </a>
-          {/* /legal route is Phase 8 — placeholder link */}
-          <Link to="/" className="transition-colors hover:text-mint">
+          <Link to="/legal" className="transition-colors hover:text-mint">
             {t.footer.legalNotice}
           </Link>
           <div className="ml-auto flex items-center gap-4">

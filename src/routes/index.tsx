@@ -189,9 +189,13 @@ function Index() {
         </Reveal>
       </section>
 
-      {/* ─── Marquee ribbon ─── */}
-      <section className="border-b border-border bg-background py-2">
-        <Marquee speed={40} items={t.marquee} />
+      {/* ─── Marquee ribbon: Light background, Dark Green text, Horizontal slide with instant hover pause ─── */}
+      <section className="border-y border-border/80 bg-background py-3.5 md:py-4">
+        <Marquee
+          speed={32}
+          items={t.marquee}
+          variant="light"
+        />
       </section>
 
       {/* ─── Studio ─── */}
@@ -330,7 +334,7 @@ function Index() {
         </div>
       </section>
 
-      {/* ─── Pricing (from offers.ts — single source of truth) ─── */}
+      {/* ─── Pricing / Formules (Single "En savoir plus" button, clean design) ─── */}
       <section className="relative overflow-hidden bg-mint px-5 py-20 md:px-10 md:py-28 lg:px-14">
         {/* Soft liquid ambient lighting orbs */}
         <div
@@ -382,8 +386,8 @@ function Index() {
 
                   <div className="mt-auto pt-8">
                     <Button asChild variant="volka" size="volka" className="w-full justify-between">
-                      <Link to="/start">
-                        {t.offers.selectOffer} <ArrowUpRight className="size-4" />
+                      <Link to="/offres/$slug" params={{ slug: offer.id.toLowerCase().replace(/\s+/g, "-") }}>
+                        {t.offers.learnMore} <ArrowUpRight className="size-4" />
                       </Link>
                     </Button>
                   </div>
@@ -391,6 +395,26 @@ function Index() {
               </Reveal>
             ))}
           </div>
+
+          {/* 4th offer — Accompagnement */}
+          <Reveal delay={300}>
+            <div className="mt-6 flex flex-col gap-5 border border-border/50 bg-background/50 p-8 backdrop-blur-sm md:flex-row md:items-center md:justify-between">
+              <div className="flex items-start gap-6">
+                <span className="font-display text-3xl font-medium text-primary/30">{offers[3]?.index}</span>
+                <div>
+                  <h3 className="font-display text-3xl">{offers[3]?.name}</h3>
+                  <p className="mt-1 max-w-md text-sm leading-relaxed text-foreground/65">{offers[3]?.tagline}</p>
+                </div>
+              </div>
+              <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+                <Button asChild variant="volka" size="volka">
+                  <Link to="/offres/$slug" params={{ slug: offers[3]!.id.toLowerCase().replace(/\s+/g, "-") }}>
+                    {t.offers.learnMore} <ArrowUpRight className="size-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </Reveal>
 
           <p className="mt-8 text-center text-xs text-foreground/60">{t.offers.currencyNote}</p>
         </div>

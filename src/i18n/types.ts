@@ -52,6 +52,8 @@ export interface Translations {
     subtitle: string;
     currencyNote: string;
     selectOffer: string;
+    /** CTA on home cards — links to the offer detail page */
+    learnMore: string;
   };
   form: {
     eyebrow: string;
@@ -129,5 +131,25 @@ export interface Translations {
     scopeNotSureDetail: string;
     timelines: string[];
     budgets: string[];
+  };
+  legalPage: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    lastUpdated: string;
+    publisherTitle: string;
+    publisherBody: string[];
+    hostingTitle: string;
+    hostingBody: string[];
+    ipTitle: string;
+    ipBody: string[];
+    conceptsTitle: string;
+    conceptsBody: string[];
+    privacyTitle: string;
+    privacyBody: string[];
+    cookiesTitle: string;
+    cookiesBody: string[];
+    governingTitle: string;
+    governingBody: string[];
   };
 }

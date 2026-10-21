@@ -11,11 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteRouteImport } from './routes/admin.route'
+import { Route as LegalRouteImport } from './routes/legal'
 import { Route as StartRouteImport } from './routes/start'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as CasesIndexRouteImport } from './routes/cases.index'
 import { Route as CasesSlugRouteImport } from './routes/cases.$slug'
+import { Route as OffresSlugRouteImport } from './routes/offres.$slug'
 import { Route as AdminCasesIndexRouteImport } from './routes/admin.cases.index'
 import { Route as AdminCasesIdRouteImport } from './routes/admin.cases.$id'
 import { Route as AdminInquiriesIndexRouteImport } from './routes/admin.inquiries.index'
@@ -29,6 +31,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StartRoute = StartRouteImport.update({
@@ -56,6 +63,11 @@ const CasesSlugRoute = CasesSlugRouteImport.update({
   path: '/cases/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OffresSlugRoute = OffresSlugRouteImport.update({
+  id: '/offres/$slug',
+  path: '/offres/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminCasesIndexRoute = AdminCasesIndexRouteImport.update({
   id: '/cases/',
   path: '/cases/',
@@ -80,9 +92,11 @@ const AdminInquiriesIdRoute = AdminInquiriesIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/legal': typeof LegalRoute
   '/start': typeof StartRoute
   '/admin/login': typeof AdminLoginRoute
   '/cases/$slug': typeof CasesSlugRoute
+  '/offres/$slug': typeof OffresSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/cases/': typeof CasesIndexRoute
   '/admin/cases/$id': typeof AdminCasesIdRoute
@@ -92,9 +106,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/legal': typeof LegalRoute
   '/start': typeof StartRoute
   '/admin/login': typeof AdminLoginRoute
   '/cases/$slug': typeof CasesSlugRoute
+  '/offres/$slug': typeof OffresSlugRoute
   '/admin': typeof AdminIndexRoute
   '/cases': typeof CasesIndexRoute
   '/admin/cases/$id': typeof AdminCasesIdRoute
@@ -106,9 +122,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/legal': typeof LegalRoute
   '/start': typeof StartRoute
   '/admin/login': typeof AdminLoginRoute
   '/cases/$slug': typeof CasesSlugRoute
+  '/offres/$slug': typeof OffresSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/cases/': typeof CasesIndexRoute
   '/admin/cases/$id': typeof AdminCasesIdRoute
@@ -121,9 +139,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/legal'
     | '/start'
     | '/admin/login'
     | '/cases/$slug'
+    | '/offres/$slug'
     | '/admin/'
     | '/cases/'
     | '/admin/cases/$id'
@@ -133,9 +153,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/legal'
     | '/start'
     | '/admin/login'
     | '/cases/$slug'
+    | '/offres/$slug'
     | '/admin'
     | '/cases'
     | '/admin/cases/$id'
@@ -146,9 +168,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/legal'
     | '/start'
     | '/admin/login'
     | '/cases/$slug'
+    | '/offres/$slug'
     | '/admin/'
     | '/cases/'
     | '/admin/cases/$id'
@@ -160,8 +184,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  LegalRoute: typeof LegalRoute
   StartRoute: typeof StartRoute
   CasesSlugRoute: typeof CasesSlugRoute
+  OffresSlugRoute: typeof OffresSlugRoute
   CasesIndexRoute: typeof CasesIndexRoute
 }
 
@@ -179,6 +205,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/start': {
@@ -214,6 +247,13 @@ declare module '@tanstack/react-router' {
       path: '/cases/$slug'
       fullPath: '/cases/$slug'
       preLoaderRoute: typeof CasesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offres/$slug': {
+      id: '/offres/$slug'
+      path: '/offres/$slug'
+      fullPath: '/offres/$slug'
+      preLoaderRoute: typeof OffresSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/cases/': {
@@ -272,8 +312,10 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  LegalRoute: LegalRoute,
   StartRoute: StartRoute,
   CasesSlugRoute: CasesSlugRoute,
+  OffresSlugRoute: OffresSlugRoute,
   CasesIndexRoute: CasesIndexRoute,
 }
 export const routeTree = rootRouteImport

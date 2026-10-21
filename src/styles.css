@@ -294,6 +294,87 @@
   box-shadow: 0 4px 16px 0 oklch(0 0 0 / 8%), inset 0 1px 0 0 oklch(1 0 0 / 30%);
 }
 
+/* ─── Marquee Continuous Slide with Instant Hover-Pause ─── */
+@keyframes marquee-slide {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee-slide-reverse {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-slide var(--marquee-duration, 32s) linear infinite;
+  will-change: transform;
+}
+
+.marquee-track-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-slide-reverse var(--marquee-duration, 32s) linear infinite;
+  will-change: transform;
+}
+
+/* Freezes immediately when cursor hovers anywhere over the track or container */
+.marquee-container:hover .marquee-track,
+.marquee-container:hover .marquee-track-reverse,
+.marquee-track:hover,
+.marquee-track-reverse:hover {
+  animation-play-state: paused !important;
+}
+
+/* ─── Micro-motion and floating animations ─── */
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(1.5deg);
+  }
+}
+
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility animate-float {
+  animation: float-gentle 4.5s ease-in-out infinite;
+}
+
+@utility animate-float-subtle {
+  animation: float-subtle 3.8s ease-in-out infinite;
+}
+
+@utility animate-spin-slow {
+  animation: spin-slow 18s linear infinite;
+}
+
 /* Fallback for SSR when JavaScript is not yet loaded */
 html:not(.js) .motion-safe-hidden {
   opacity: 1 !important;
@@ -305,10 +386,16 @@ html:not(.js) .motion-safe-hidden {
   .animate-volka-fade,
   .animate-volka-drift,
   .animate-liquid-glow,
-  .reveal-line {
-    animation: none;
+  .reveal-line,
+  .marquee-track,
+  .marquee-track-reverse,
+  .animate-float,
+  .animate-float-subtle,
+  .animate-spin-slow {
+    animation: none !important;
   }
   .link-underline::after {
     transition: none;
   }
 }
+

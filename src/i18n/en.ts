@@ -86,6 +86,7 @@ export const en: Translations = {
     subtitle: "Complete transparency on scope and deliverables",
     currencyNote: "Based in West Africa? Prices also available in FCFA. Contact us for a personalised quote.",
     selectOffer: "Select offer",
+    learnMore: "Learn more",
   },
   form: {
     eyebrow: "Start a project",
@@ -171,6 +172,53 @@ export const en: Translations = {
       "1 000 000 – 2 000 000 FCFA / 1 500 – 3 000 €",
       "2 000 000 – 5 000 000 FCFA / 3 000 – 7 500 €",
       "Above 5 000 000 FCFA / 7 500 €",
+    ],
+  },
+  legalPage: {
+    eyebrow: "Transparency & Standards",
+    title: "Legal Notice & Privacy",
+    subtitle: "Legal information, regulatory framework, and data protection policy of Volka Studio.",
+    lastUpdated: "Last updated: October 2026",
+    publisherTitle: "1. Site Publisher",
+    publisherBody: [
+      "This website is published and operated by Volka Studio, an independent brand identity, digital design and software engineering studio.",
+      "Headquarters: Cotonou, Republic of Benin.",
+      "Contact email: hello@volkastudio.com",
+      "Publication Director: Executive Management, Volka Studio.",
+      "Scope of activity: Strategic consulting, visual identity design, UI/UX design, high-performance web development, and digital growth systems.",
+    ],
+    hostingTitle: "2. Hosting & Infrastructure",
+    hostingBody: [
+      "The website and application services are hosted on enterprise cloud infrastructure with TLS 1.3 / SSL encryption, ensuring high availability, continuous monitoring, and data resilience.",
+      "Database and identity management services are operated in accordance with global data security standards.",
+    ],
+    ipTitle: "3. Intellectual Property & Copyright",
+    ipBody: [
+      "All intellectual assets comprising this website — including without limitation the Volka trademark, logos, color systems, design systems, layouts, typography, imagery, copywriting, and proprietary codebase — are the exclusive property of Volka Studio or licensed partners.",
+      "Any unauthorized reproduction, modification, extraction, or distribution, whether partial or complete, is strictly prohibited without prior written consent.",
+    ],
+    conceptsTitle: "4. Concept Case Studies Disclaimer",
+    conceptsBody: [
+      "Certain case studies published on this platform are designated as 'Concept' projects. These represent self-initiated design and strategic explorations developed by Volka to demonstrate our craft, methodology, and ambition.",
+      "Trademarks, brand names, and performance metrics mentioned in concept projects are used strictly for illustration purposes and do not represent formal third-party endorsements.",
+    ],
+    privacyTitle: "5. Personal Data Protection",
+    privacyBody: [
+      "Volka Studio takes client and visitor privacy with the highest degree of seriousness.",
+      "In accordance with the Digital Code of the Republic of Benin (Law No. 2017-20) and international data protection standards (including GDPR principles):",
+      "— Information submitted through our onboarding form (/start) or direct email correspondence is used exclusively to evaluate prospective projects, prepare proposals, and manage client communications.",
+      "— Personal data is never sold, leased, or transferred to third parties for advertising or commercial exploitation.",
+      "— You retain a permanent right to access, rectify, export, or delete your personal information. To exercise this right, contact: hello@volkastudio.com.",
+    ],
+    cookiesTitle: "6. Cookies & Privacy-First Browsing",
+    cookiesBody: [
+      "This website is engineered according to principles of digital minimalism and privacy. We do not use third-party advertising cookies, cross-site tracking pixels, or intrusive profiling tools.",
+      "Only essential technical storage is utilized to ensure seamless site functionality (such as remembering your language preference FR/EN).",
+    ],
+    governingTitle: "7. Governing Law & Jurisdiction",
+    governingBody: [
+      "This legal notice and website operation are governed by the laws of the Republic of Benin.",
+      "In the event of any question or dispute regarding interpretation or execution, the parties agree to seek amicable resolution first. If unresolved, jurisdiction is attributed to the competent courts of Cotonou, Benin.",
     ],
   },
 };
