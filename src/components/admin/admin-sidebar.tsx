@@ -10,6 +10,7 @@ import {
   X,
   ShieldCheck,
   BookOpen,
+  Share2,
 } from "lucide-react";
 import { useAdminAuth } from "@/lib/admin/admin-auth-context";
 
@@ -46,6 +47,12 @@ export function AdminSidebar({ unreadInquiriesCount = 0 }: AdminSidebarProps) {
       to: "/admin/inquiries",
       icon: Inbox,
       badge: unreadInquiriesCount > 0 ? unreadInquiriesCount : undefined,
+      exact: false,
+    },
+    {
+      label: "Social links",
+      to: "/admin/socials",
+      icon: Share2,
       exact: false,
     },
   ];

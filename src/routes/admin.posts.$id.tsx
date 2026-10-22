@@ -17,6 +17,9 @@ import {
   Calculator,
   PlayCircle,
   Share2,
+  Instagram,
+  Twitter,
+  Facebook,
 } from "lucide-react";
 import { getAdminPost, savePost } from "@/lib/admin/posts.functions";
 import { signUpload } from "@/lib/admin/cases.functions";
@@ -51,6 +54,9 @@ function createEmptyPost(): PostInput {
       tiktok: "",
       youtube: "",
       linkedin: "",
+      instagram: "",
+      twitter: "",
+      facebook: "",
     },
     translations: {
       fr: {
@@ -118,7 +124,14 @@ function AdminPostEditorPage() {
             cover_path: data.cover_path || "",
             tags: data.tags || [],
             reading_time_minutes: data.reading_time_minutes || 5,
-            social_links: data.social_links || { tiktok: "", youtube: "", linkedin: "" },
+            social_links: {
+              tiktok: data.social_links?.tiktok || "",
+              youtube: data.social_links?.youtube || "",
+              linkedin: data.social_links?.linkedin || "",
+              instagram: data.social_links?.instagram || "",
+              twitter: data.social_links?.twitter || "",
+              facebook: data.social_links?.facebook || "",
+            },
             translations: {
               fr: {
                 title: data.translations.fr?.title || "",
@@ -557,16 +570,48 @@ function AdminPostEditorPage() {
               <div className="flex items-center gap-2 text-gold">
                 <PlayCircle className="size-5" />
                 <h3 className="font-display text-xl font-normal text-foreground">
-                  Associated Social Content (TikTok, YouTube, LinkedIn)
+                  Associated Social Content (Instagram, YouTube, TikTok, LinkedIn, X, Facebook)
                 </h3>
               </div>
               <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                Add links to companion videos, breakdowns, or discussion threads created on this topic.
+                Add links to companion videos, breakdowns, carousels or discussion threads created on this topic.
                 They will render as interactive cards directly below the published article.
               </p>
             </div>
 
             <div className="space-y-4">
+              {/* Instagram input */}
+              <div>
+                <label className="flex items-center gap-2 text-xs font-medium text-foreground">
+                  <Instagram className="size-4 text-pink-400" />
+                  <span>Instagram Post, Reel or Carousel URL</span>
+                </label>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <input
+                    type="url"
+                    value={form.social_links.instagram || ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        social_links: { ...prev.social_links, instagram: e.target.value },
+                      }))
+                    }
+                    placeholder="https://www.instagram.com/p/..."
+                    className="w-full rounded-sm border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none"
+                  />
+                  {form.social_links.instagram?.trim() && (
+                    <a
+                      href={form.social_links.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded p-2 text-muted-foreground hover:text-gold"
+                    >
+                      <ExternalLink className="size-4" />
+                    </a>
+                  )}
+                </div>
+              </div>
+
               {/* YouTube input */}
               <div>
                 <label className="flex items-center gap-2 text-xs font-medium text-foreground">
@@ -662,10 +707,79 @@ function AdminPostEditorPage() {
                   )}
                 </div>
               </div>
+
+              {/* X / Twitter input */}
+              <div>
+                <label className="flex items-center gap-2 text-xs font-medium text-foreground">
+                  <Twitter className="size-4 text-foreground" />
+                  <span>X (Twitter) Post or Breakdown Thread URL</span>
+                </label>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <input
+                    type="url"
+                    value={form.social_links.twitter || ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        social_links: { ...prev.social_links, twitter: e.target.value },
+                      }))
+                    }
+                    placeholder="https://x.com/volkastudio/status/..."
+                    className="w-full rounded-sm border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none"
+                  />
+                  {form.social_links.twitter?.trim() && (
+                    <a
+                      href={form.social_links.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded p-2 text-muted-foreground hover:text-gold"
+                    >
+                      <ExternalLink className="size-4" />
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Facebook input */}
+              <div>
+                <label className="flex items-center gap-2 text-xs font-medium text-foreground">
+                  <Facebook className="size-4 text-blue-500" />
+                  <span>Facebook Post or Community Thread URL</span>
+                </label>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <input
+                    type="url"
+                    value={form.social_links.facebook || ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        social_links: { ...prev.social_links, facebook: e.target.value },
+                      }))
+                    }
+                    placeholder="https://www.facebook.com/..."
+                    className="w-full rounded-sm border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-gold focus:outline-none"
+                  />
+                  {form.social_links.facebook?.trim() && (
+                    <a
+                      href={form.social_links.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded p-2 text-muted-foreground hover:text-gold"
+                    >
+                      <ExternalLink className="size-4" />
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Social preview */}
-            {(form.social_links.youtube || form.social_links.tiktok || form.social_links.linkedin) && (
+            {(form.social_links.youtube ||
+              form.social_links.tiktok ||
+              form.social_links.linkedin ||
+              form.social_links.instagram ||
+              form.social_links.twitter ||
+              form.social_links.facebook) && (
               <div className="pt-4 border-t border-border/40">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-gold">
                   Live Preview of Article Footer Box:

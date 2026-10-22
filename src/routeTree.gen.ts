@@ -15,6 +15,7 @@ import { Route as LegalRouteImport } from './routes/legal'
 import { Route as StartRouteImport } from './routes/start'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminSocialsRouteImport } from './routes/admin.socials'
 import { Route as CasesIndexRouteImport } from './routes/cases.index'
 import { Route as CasesSlugRouteImport } from './routes/cases.$slug'
 import { Route as JournalIndexRouteImport } from './routes/journal.index'
@@ -55,6 +56,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSocialsRoute = AdminSocialsRouteImport.update({
+  id: '/socials',
+  path: '/socials',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const CasesIndexRoute = CasesIndexRouteImport.update({
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/legal': typeof LegalRoute
   '/start': typeof StartRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/socials': typeof AdminSocialsRoute
   '/cases/$slug': typeof CasesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/offres/$slug': typeof OffresSlugRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/legal': typeof LegalRoute
   '/start': typeof StartRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/socials': typeof AdminSocialsRoute
   '/cases/$slug': typeof CasesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/offres/$slug': typeof OffresSlugRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/legal': typeof LegalRoute
   '/start': typeof StartRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/socials': typeof AdminSocialsRoute
   '/cases/$slug': typeof CasesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/offres/$slug': typeof OffresSlugRoute
@@ -178,6 +187,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/start'
     | '/admin/login'
+    | '/admin/socials'
     | '/cases/$slug'
     | '/journal/$slug'
     | '/offres/$slug'
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/start'
     | '/admin/login'
+    | '/admin/socials'
     | '/cases/$slug'
     | '/journal/$slug'
     | '/offres/$slug'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/start'
     | '/admin/login'
+    | '/admin/socials'
     | '/cases/$slug'
     | '/journal/$slug'
     | '/offres/$slug'
@@ -283,6 +295,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/socials': {
+      id: '/admin/socials'
+      path: '/socials'
+      fullPath: '/admin/socials'
+      preLoaderRoute: typeof AdminSocialsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/cases/': {
@@ -367,6 +386,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminSocialsRoute: typeof AdminSocialsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminCasesIdRoute: typeof AdminCasesIdRoute
   AdminInquiriesIdRoute: typeof AdminInquiriesIdRoute
@@ -378,6 +398,7 @@ interface AdminRouteRouteChildren {
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
+  AdminSocialsRoute: AdminSocialsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminCasesIdRoute: AdminCasesIdRoute,
   AdminInquiriesIdRoute: AdminInquiriesIdRoute,

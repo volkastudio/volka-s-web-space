@@ -43,25 +43,25 @@ function CasesIndex() {
   const { studies } = Route.useLoaderData();
   const { locale, t } = useI18n();
 
-  const disciplines = [t.casesIndex.allWork, t.casesIndex.brandIdentity, t.casesIndex.digitalPlatform];
-  const [filter, setFilter] = useState(disciplines[0]!);
-
   // Localized list that updates reactively on locale switch
   const baseList = studies && studies.length > 0
     ? studies.map((s) => getStaticCaseStudy(s.slug, locale) || s)
     : getStaticCaseStudies(locale);
 
-  const visible = filter === disciplines[0]
+  // Dynamically extract all unique disciplines stipulated on the actual projects
+  const uniqueDisciplines = Array.from(
+    new Set(baseList.map((s) => s.discipline?.trim()).filter(Boolean))
+  ) as string[];
+
+  const disciplines = [t.casesIndex.allWork, ...uniqueDisciplines];
+  const [filter, setFilter] = useState<string>(t.casesIndex.allWork);
+
+  // Reset/normalize filter if current selection doesn't exist in active list (e.g. on locale change)
+  const activeFilter = disciplines.includes(filter) ? filter : t.casesIndex.allWork;
+
+  const visible = activeFilter === t.casesIndex.allWork
     ? baseList
-    : baseList.filter((c) => {
-        if (filter === t.casesIndex.brandIdentity) {
-          return c.discipline === "Brand identity" || c.discipline === "Identité de marque";
-        }
-        if (filter === t.casesIndex.digitalPlatform) {
-          return c.discipline === "Digital platform" || c.discipline === "Plateforme digitale";
-        }
-        return true;
-      });
+    : baseList.filter((c) => c.discipline?.trim() === activeFilter);
 
   return (
     <main className="bg-background text-foreground">
@@ -91,8 +91,8 @@ function CasesIndex() {
                   key={discipline}
                   type="button"
                   onClick={() => setFilter(discipline)}
-                  className={`border px-5 py-2.5 text-xs font-medium uppercase tracking-[0.14em] transition-all duration-300 ${
-                    filter === discipline
+                  className={`border px-5 py-2.5 text-xs font-medium uppercase tracking-[0.14em] transition-all duration-300 cursor-pointer ${
+                    activeFilter === discipline
                       ? "border-primary bg-primary text-primary-foreground shadow-sm"
                       : "border-border text-muted-foreground hover:border-primary hover:text-foreground"
                   }`}

@@ -113,6 +113,7 @@ export interface Translations {
     metaLocation: string;
     metaYear: string;
     metaEngagement: string;
+    metaPillars: string;
     /** Concept-project disclaimer paragraph */
     conceptDisclaimer: string;
     /** Section headings */

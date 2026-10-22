@@ -63,21 +63,28 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" | 
     <>
       <header className={wrapperClass}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-10 md:py-5 lg:px-14">
-          {/* Logo — icon only on mobile, icon + VOLKA text on desktop */}
+          {/* Logo — Full 'volka studio' wordmark on desktop, larger 'V' icon on mobile */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 text-xl font-semibold tracking-[0.12em]"
-            aria-label="Volka home"
+            className="flex items-center"
+            aria-label="Volka Studio home"
           >
+            {/* Desktop: Complete 'volka studio' wordmark */}
+            <img
+              src={isDark ? "/volka-wordmark-light.png" : "/volka-wordmark-dark.png"}
+              alt="Volka Studio"
+              width={200}
+              height={36}
+              className="hidden sm:block h-8 md:h-9 w-auto object-contain transition-opacity hover:opacity-90"
+            />
+            {/* Mobile: Larger 'V' monogram icon */}
             <img
               src={isDark ? "/volka-icon-light.png" : "/volka-icon-dark.png"}
               alt="Volka"
-              width={28}
-              height={28}
-              className="size-7 shrink-0 object-contain"
+              width={36}
+              height={36}
+              className="block sm:hidden size-9 object-contain transition-opacity hover:opacity-90"
             />
-            {/* Hide text on mobile so header stays compact and doesn't overlap hero text */}
-            <span className="hidden sm:inline">VOLKA</span>
           </Link>
 
           {/* Desktop nav */}
@@ -181,15 +188,15 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" | 
               <Link
                 to="/"
                 onClick={close}
-                className="flex items-center gap-2.5 text-primary-foreground"
+                className="flex items-center"
                 aria-label="Volka home"
               >
                 <img
                   src="/volka-icon-light.png"
                   alt="Volka"
-                  width={28}
-                  height={28}
-                  className="size-7 object-contain"
+                  width={36}
+                  height={36}
+                  className="size-9 object-contain"
                 />
               </Link>
               <button

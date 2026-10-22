@@ -14,6 +14,9 @@ import {
   PlayCircle,
   Database,
   Calendar,
+  Instagram,
+  Twitter,
+  Facebook,
 } from "lucide-react";
 import {
   listAdminPosts,
@@ -221,7 +224,10 @@ function AdminPostsIndexPage() {
                   const hasSocial = Boolean(
                     post.social_links.youtube?.trim() ||
                     post.social_links.tiktok?.trim() ||
-                    post.social_links.linkedin?.trim()
+                    post.social_links.linkedin?.trim() ||
+                    post.social_links.instagram?.trim() ||
+                    post.social_links.twitter?.trim() ||
+                    post.social_links.facebook?.trim()
                   );
 
                   return (
@@ -314,6 +320,30 @@ function AdminPostsIndexPage() {
                                 className="flex size-5 items-center justify-center rounded bg-sky-600/10 text-sky-400"
                               >
                                 <Linkedin className="size-3" />
+                              </span>
+                            )}
+                            {post.social_links.instagram?.trim() && (
+                              <span
+                                title={`Instagram: ${post.social_links.instagram}`}
+                                className="flex size-5 items-center justify-center rounded bg-pink-600/10 text-pink-400"
+                              >
+                                <Instagram className="size-3" />
+                              </span>
+                            )}
+                            {post.social_links.twitter?.trim() && (
+                              <span
+                                title={`X / Twitter: ${post.social_links.twitter}`}
+                                className="flex size-5 items-center justify-center rounded bg-foreground/10 text-foreground"
+                              >
+                                <Twitter className="size-3" />
+                              </span>
+                            )}
+                            {post.social_links.facebook?.trim() && (
+                              <span
+                                title={`Facebook: ${post.social_links.facebook}`}
+                                className="flex size-5 items-center justify-center rounded bg-blue-600/10 text-blue-500"
+                              >
+                                <Facebook className="size-3" />
                               </span>
                             )}
                           </div>

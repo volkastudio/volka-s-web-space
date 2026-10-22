@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowUpRight, Youtube, Linkedin, Video, PlayCircle } from "lucide-react";
+import { ArrowUpRight, Youtube, Linkedin, PlayCircle, Instagram, Twitter, Facebook } from "lucide-react";
 import type { PostSocialLinks } from "@/lib/post-schema";
 
 // Custom TikTok SVG Icon
@@ -30,8 +30,15 @@ export function SocialContentLinks({
 }: SocialContentLinksProps) {
   if (!socialLinks) return null;
 
-  const { tiktok, youtube, linkedin } = socialLinks;
-  const hasLinks = Boolean(tiktok?.trim() || youtube?.trim() || linkedin?.trim());
+  const { tiktok, youtube, linkedin, instagram, twitter, facebook } = socialLinks;
+  const hasLinks = Boolean(
+    tiktok?.trim() ||
+    youtube?.trim() ||
+    linkedin?.trim() ||
+    instagram?.trim() ||
+    twitter?.trim() ||
+    facebook?.trim()
+  );
 
   if (!hasLinks) return null;
 
@@ -56,6 +63,21 @@ export function SocialContentLinks({
         desc: "Échanges d'experts, coulisses et perspectives de marché",
         action: "Participer sur LinkedIn",
       },
+      instagram: {
+        title: "Aperçu visuel & coulisses",
+        desc: "Carrousels explicatifs, schémas et coulisses de conception",
+        action: "Voir sur Instagram",
+      },
+      twitter: {
+        title: "Thread d'analyse",
+        desc: "Fil synthétique et réactions de l'écosystème",
+        action: "Lire sur X",
+      },
+      facebook: {
+        title: "Discussion communautaire",
+        desc: "Retours d'expérience et échanges avec les pairs",
+        action: "Suivre sur Facebook",
+      },
     },
     en: {
       eyebrow: "Related formats",
@@ -76,6 +98,21 @@ export function SocialContentLinks({
         title: "Industry discussion",
         desc: "Peer debates, behind-the-scenes and strategic notes",
         action: "Join on LinkedIn",
+      },
+      instagram: {
+        title: "Visual breakdown",
+        desc: "Slide decks, visual diagrams and studio craft notes",
+        action: "View on Instagram",
+      },
+      twitter: {
+        title: "Strategic thread",
+        desc: "Executive notes, takeaways and community replies",
+        action: "Read on X",
+      },
+      facebook: {
+        title: "Community debate",
+        desc: "Discussions, case lessons and feedback with founders",
+        action: "Follow on Facebook",
       },
     },
   }[locale];
@@ -182,6 +219,93 @@ export function SocialContentLinks({
             </div>
             <div className="mt-5 flex items-center gap-1.5 text-xs font-medium text-sky-400">
               <span>{labels.linkedin.action}</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </div>
+          </a>
+        )}
+
+        {/* Instagram Card */}
+        {instagram?.trim() && (
+          <a
+            href={instagram.trim()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex flex-col justify-between rounded-lg border border-pink-500/20 bg-card/60 p-5 transition-all duration-300 hover:border-pink-500/50 hover:bg-pink-500/5 hover:-translate-y-0.5"
+          >
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="flex size-10 items-center justify-center rounded-md bg-pink-500/10 text-pink-400 transition-colors group-hover:bg-pink-500 group-hover:text-white">
+                  <Instagram className="size-5" />
+                </div>
+                <ArrowUpRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground" />
+              </div>
+              <h4 className="mt-4 font-display text-lg font-medium text-foreground">
+                {labels.instagram.title}
+              </h4>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                {labels.instagram.desc}
+              </p>
+            </div>
+            <div className="mt-5 flex items-center gap-1.5 text-xs font-medium text-pink-400">
+              <span>{labels.instagram.action}</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </div>
+          </a>
+        )}
+
+        {/* Twitter / X Card */}
+        {twitter?.trim() && (
+          <a
+            href={twitter.trim()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex flex-col justify-between rounded-lg border border-foreground/20 bg-card/60 p-5 transition-all duration-300 hover:border-foreground/50 hover:bg-foreground/5 hover:-translate-y-0.5"
+          >
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="flex size-10 items-center justify-center rounded-md bg-foreground/10 text-foreground transition-colors group-hover:bg-foreground group-hover:text-background">
+                  <Twitter className="size-5" />
+                </div>
+                <ArrowUpRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground" />
+              </div>
+              <h4 className="mt-4 font-display text-lg font-medium text-foreground">
+                {labels.twitter.title}
+              </h4>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                {labels.twitter.desc}
+              </p>
+            </div>
+            <div className="mt-5 flex items-center gap-1.5 text-xs font-medium text-foreground">
+              <span>{labels.twitter.action}</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </div>
+          </a>
+        )}
+
+        {/* Facebook Card */}
+        {facebook?.trim() && (
+          <a
+            href={facebook.trim()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex flex-col justify-between rounded-lg border border-blue-500/20 bg-card/60 p-5 transition-all duration-300 hover:border-blue-500/50 hover:bg-blue-500/5 hover:-translate-y-0.5"
+          >
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="flex size-10 items-center justify-center rounded-md bg-blue-500/10 text-blue-500 transition-colors group-hover:bg-blue-500 group-hover:text-white">
+                  <Facebook className="size-5" />
+                </div>
+                <ArrowUpRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground" />
+              </div>
+              <h4 className="mt-4 font-display text-lg font-medium text-foreground">
+                {labels.facebook.title}
+              </h4>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                {labels.facebook.desc}
+              </p>
+            </div>
+            <div className="mt-5 flex items-center gap-1.5 text-xs font-medium text-blue-500">
+              <span>{labels.facebook.action}</span>
               <span className="transition-transform group-hover:translate-x-1">→</span>
             </div>
           </a>

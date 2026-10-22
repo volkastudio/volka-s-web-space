@@ -88,7 +88,7 @@ function CaseStudyPage() {
             {study.discipline}
             {study.kind === "concept" ? ` · ${t.work.conceptLabel}` : ""}
           </p>
-          <h1 className="mt-6 max-w-5xl font-display text-6xl font-medium leading-[0.92] md:text-8xl">
+          <h1 className="mt-6 max-w-5xl font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-medium leading-[0.94] break-words [overflow-wrap:anywhere]">
             {study.client}
           </h1>
           <p className="mt-6 max-w-2xl text-xl font-light leading-relaxed text-muted-foreground">
@@ -105,7 +105,10 @@ function CaseStudyPage() {
               [t.caseStudy.metaSector, study.sector],
               [t.caseStudy.metaLocation, study.location],
               [t.caseStudy.metaYear, study.year],
-              [t.caseStudy.metaEngagement, study.offer],
+              [
+                t.caseStudy.metaPillars,
+                study.pillars && study.pillars.length > 0 ? study.pillars.join(" · ") : (study.offer || "—"),
+              ],
             ] as [string, string][]).map(([label, value]) => (
               <div key={label}>
                 <dt className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{label}</dt>

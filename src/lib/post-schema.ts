@@ -7,6 +7,9 @@ export const postSocialLinksSchema = z.object({
   tiktok: z.string().optional().default(""),
   youtube: z.string().optional().default(""),
   linkedin: z.string().optional().default(""),
+  instagram: z.string().optional().default(""),
+  twitter: z.string().optional().default(""),
+  facebook: z.string().optional().default(""),
 });
 
 export type PostSocialLinks = z.infer<typeof postSocialLinksSchema>;
@@ -33,7 +36,14 @@ export const postSchema = z.object({
   cover_path: z.string().nullable().optional(),
   tags: z.array(z.string()).default([]),
   reading_time_minutes: z.number().int().min(1).default(5),
-  social_links: postSocialLinksSchema.default({ tiktok: "", youtube: "", linkedin: "" }),
+  social_links: postSocialLinksSchema.default({
+    tiktok: "",
+    youtube: "",
+    linkedin: "",
+    instagram: "",
+    twitter: "",
+    facebook: "",
+  }),
   translations: z.object({
     fr: postTranslationSchema,
     en: postTranslationSchema.partial().optional(),
@@ -112,9 +122,14 @@ export function resolvePost(
     cover_image: getMediaUrl(record.cover_path),
     cover_alt,
     tags: record.tags || [],
-    reading_time_minutes: record.reading_time_minutes || estimateReadingTime(body_md),
-    social_links: record.social_links || { tiktok: "", youtube: "", linkedin: "" },
-    title,
+    social_links: {
+      tiktok: record.social_links?.tiktok || "",
+      youtube: record.social_links?.youtube || "",
+      linkedin: record.social_links?.linkedin || "",
+      instagram: record.social_links?.instagram || "",
+      twitter: record.social_links?.twitter || "",
+      facebook: record.social_links?.facebook || "",
+    },
     excerpt,
     body_md,
     seo_title,

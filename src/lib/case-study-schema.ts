@@ -51,6 +51,7 @@ export const caseStudySchema = z.object({
   year: z.string().min(4, "Year is required"),
   location: z.string().min(1, "Location is required"),
   offer: z.string().nullable().optional(),
+  pillars: z.array(z.string()).default([]).optional(),
   cover_path: z.string().nullable().optional(),
   gallery: z.array(galleryItemSchema).default([]),
   translations: z.object({
@@ -73,6 +74,7 @@ export interface CaseStudyRecord {
   year: string;
   location: string;
   offer: string | null;
+  pillars?: string[];
   cover_path: string | null;
   gallery: GalleryItem[];
   translations: {
@@ -94,7 +96,8 @@ export interface ResolvedCaseStudy {
   client: string;
   year: string;
   location: string;
-  offer: OfferId;
+  offer: string;
+  pillars?: string[];
   image: string;
   imageAlt: string;
   tagline: string;
@@ -154,6 +157,13 @@ export function resolveCaseStudy(
   const results = transLocale?.results || fallback?.results || [];
   const quote = transLocale?.quote || fallback?.quote;
 
+  const rawOffer = record.offer || "";
+  const rawPillars = record.pillars && record.pillars.length > 0
+    ? record.pillars
+    : rawOffer
+      ? rawOffer.split(/[,·]/).map((p) => p.trim()).filter(Boolean)
+      : [];
+
   const result: ResolvedCaseStudy = {
     id: record.id,
     slug: record.slug,
@@ -164,7 +174,8 @@ export function resolveCaseStudy(
     client: record.client,
     year: record.year,
     location: record.location,
-    offer: (record.offer as OfferId) || "Autorité",
+    offer: rawOffer,
+    pillars: rawPillars,
     image: getMediaUrl(record.cover_path),
     imageAlt,
     tagline,

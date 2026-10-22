@@ -39,7 +39,7 @@ function createEmptyCase(): CaseStudyInput {
     client: "",
     year: new Date().getFullYear().toString(),
     location: "Cotonou, Bénin",
-    offer: "Autorité",
+    offer: "Perception",
     cover_path: "",
     gallery: [],
     translations: {
@@ -856,22 +856,75 @@ function AdminCaseEditorPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="offer" className="text-xs uppercase tracking-wider text-muted-foreground">
-                Engagement / Offer
-              </Label>
-              <select
-                id="offer"
-                value={form.offer ?? "Autorité"}
-                onChange={(e) => setForm((prev) => ({ ...prev, offer: e.target.value }))}
-                className="w-full rounded-sm border border-border bg-card p-2 text-xs"
-              >
-                {offers.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {o.name} ({o.duration})
-                  </option>
-                ))}
-              </select>
+            <div className="space-y-3">
+              <div>
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+                  Piliers d'intervention (choisir un ou plusieurs) *
+                </Label>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Sélectionnez les piliers stratégiques mobilisés pour ce projet (Perception, Acquisition, Conversion, Ventes, Automatisation).
+                </p>
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                {[
+                  { id: "Perception", label: "Perception", desc: "Identité, Positionnement, Direction artistique" },
+                  { id: "Acquisition", label: "Acquisition", desc: "Stratégie de contenu, Médias sociaux, Ads" },
+                  { id: "Conversion", label: "Conversion", desc: "Site web haute conversion, UX/UI, Copywriting" },
+                  { id: "Ventes", label: "Ventes", desc: "Decks commerciaux, Supports de vente, Outils" },
+                  { id: "Automatisation", label: "Automatisation", desc: "Workflows, CRM, Process & automatisation" },
+                ].map((pillar) => {
+                  const currentPillars = (form.offer || "")
+                    .split(/[,·]/)
+                    .map((p) => p.trim())
+                    .filter(Boolean);
+                  const isSelected = currentPillars.includes(pillar.id);
+
+                  const togglePillar = () => {
+                    let updated: string[];
+                    if (isSelected) {
+                      updated = currentPillars.filter((p) => p !== pillar.id);
+                    } else {
+                      updated = [...currentPillars, pillar.id];
+                    }
+                    setForm((prev) => ({
+                      ...prev,
+                      offer: updated.join(", "),
+                    }));
+                  };
+
+                  return (
+                    <button
+                      key={pillar.id}
+                      type="button"
+                      onClick={togglePillar}
+                      className={`flex items-start gap-2.5 rounded-sm border p-3 text-left transition-all duration-200 cursor-pointer ${
+                        isSelected
+                          ? "border-gold bg-gold/10 text-foreground shadow-sm"
+                          : "border-border bg-card/60 text-muted-foreground hover:border-gold/50 hover:bg-card hover:text-foreground"
+                      }`}
+                    >
+                      <div
+                        className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-sm border text-[10px] font-bold ${
+                          isSelected
+                            ? "border-gold bg-gold text-primary"
+                            : "border-muted-foreground/40 bg-transparent"
+                        }`}
+                      >
+                        {isSelected ? "✓" : ""}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className={`text-xs font-semibold ${isSelected ? "text-gold" : "text-foreground"}`}>
+                          {pillar.label}
+                        </span>
+                        <p className="mt-0.5 text-[10px] text-muted-foreground leading-snug">
+                          {pillar.desc}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="pt-2">

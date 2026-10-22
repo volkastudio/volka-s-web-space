@@ -150,7 +150,8 @@ export const en: Translations = {
     metaSector: "Sector",
     metaLocation: "Location",
     metaYear: "Year",
-    metaEngagement: "Engagement",
+    metaEngagement: "Pillar(s)",
+    metaPillars: "Pillar(s)",
     conceptDisclaimer:
       "A concept project: a fictional client and brief, created by Volka to show how we work.",
     sectionContext: "The context",

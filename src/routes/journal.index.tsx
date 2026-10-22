@@ -10,6 +10,7 @@ import { SplitHeading } from "@/components/split-heading";
 import { useI18n } from "@/i18n/context";
 import { getPostsList } from "@/lib/posts.functions";
 import { getStaticPosts, getStaticPost } from "@/data/posts";
+import { useStudioSocials } from "@/lib/studio-socials";
 import type { ResolvedPost } from "@/lib/post-schema";
 
 export const Route = createFileRoute("/journal/")({
@@ -40,6 +41,7 @@ export const Route = createFileRoute("/journal/")({
 function JournalIndexPage() {
   const { posts: initialPosts } = Route.useLoaderData();
   const { locale, t } = useI18n();
+  const socials = useStudioSocials();
 
   const isFr = locale === "fr";
 
@@ -295,24 +297,48 @@ function JournalIndexPage() {
               {t.journal.mediaSubheading}
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-              <a
-                href="https://www.youtube.com/@volkastudio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-sm bg-red-600 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
-              >
-                <Youtube className="size-4" />
-                <span>YouTube</span>
-              </a>
-              <a
-                href="https://www.linkedin.com/company/volka-studio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-sm bg-[#0A66C2] px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
-              >
-                <Linkedin className="size-4" />
-                <span>LinkedIn</span>
-              </a>
+              {socials.youtube?.trim() && (
+                <a
+                  href={socials.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-sm bg-red-600 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
+                >
+                  <Youtube className="size-4" />
+                  <span>YouTube</span>
+                </a>
+              )}
+              {socials.linkedin?.trim() && (
+                <a
+                  href={socials.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-sm bg-[#0A66C2] px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
+                >
+                  <Linkedin className="size-4" />
+                  <span>LinkedIn</span>
+                </a>
+              )}
+              {socials.tiktok?.trim() && (
+                <a
+                  href={socials.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-sm bg-black px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90 border border-white/20"
+                >
+                  <span>TikTok</span>
+                </a>
+              )}
+              {socials.twitter?.trim() && (
+                <a
+                  href={socials.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-sm bg-neutral-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90 border border-white/20"
+                >
+                  <span>X (Twitter)</span>
+                </a>
+              )}
             </div>
           </Reveal>
         </div>

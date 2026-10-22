@@ -330,7 +330,7 @@ function Index() {
                 <Reveal key={item.number} delay={i * 80}>
                   <article className="grid gap-3 border-t border-border py-7 md:grid-cols-[70px_1fr_1.3fr] md:gap-6">
                     <span className="text-xs text-gold font-mono">{item.number}</span>
-                    <h3 className="font-display text-3xl md:text-4xl">{item.title}</h3>
+                    <h3 className="font-display text-3xl md:text-4xl font-semibold md:font-bold">{item.title}</h3>
                     <p className="max-w-md text-sm leading-relaxed text-muted-foreground">{item.description}</p>
                   </article>
                 </Reveal>
@@ -341,7 +341,7 @@ function Index() {
       </section>
 
       {/* ─── Pricing / The 3 Offers ─── */}
-      <section className="relative overflow-hidden bg-mint px-5 py-20 md:px-10 md:py-28 lg:px-14">
+      <section id="offers" className="relative overflow-hidden bg-mint px-5 py-14 sm:py-20 md:py-28 lg:px-14">
         {/* Soft liquid ambient lighting orbs */}
         <div
           aria-hidden="true"
@@ -355,12 +355,12 @@ function Index() {
 
         <div className="relative mx-auto max-w-7xl">
           <Reveal>
-            <div className="mb-12 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div className="mb-8 sm:mb-12 flex flex-col justify-between gap-4 md:flex-row md:items-end">
               <div>
                 <p className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/70">
                   {t.offers.eyebrow}
                 </p>
-                <h2 className="mt-3 font-display text-4xl font-medium md:text-6xl">
+                <h2 className="mt-3 font-display text-3xl sm:text-4xl font-medium md:text-6xl">
                   {t.offers.title}
                 </h2>
               </div>
@@ -371,14 +371,14 @@ function Index() {
           </Reveal>
 
           {/* 3-card clean architecture matching Strategy Document */}
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-5 sm:gap-6 md:grid-cols-3">
             {offers.slice(0, 3).map((offer, index) => {
               const localized = getLocalizedOffer(offer, locale);
               return (
                 <Reveal key={offer.id} delay={index * 100}>
                   <LiquidGlassCard
                     variant="light"
-                    className="flex h-full min-h-[440px] flex-col p-8 transition-shadow hover:shadow-xl"
+                    className="flex h-full min-h-0 md:min-h-[420px] flex-col p-5 sm:p-7 md:p-8 transition-shadow hover:shadow-xl"
                   >
                     <div className="flex items-center justify-between">
                       <span className="rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em]">
@@ -389,15 +389,15 @@ function Index() {
                       </span>
                     </div>
 
-                    <h3 className="mt-8 font-display text-3xl lg:text-4xl">{localized.name}</h3>
-                    <p className="mt-3 text-2xl font-light text-primary lg:text-3xl">
+                    <h3 className="mt-5 sm:mt-8 font-display text-2xl sm:text-3xl lg:text-4xl font-medium">{localized.name}</h3>
+                    <p className="mt-2 sm:mt-3 text-xl sm:text-2xl font-light text-primary lg:text-3xl">
                       {formatPrice(offer.prices)}
                     </p>
-                    <p className="mt-6 text-sm leading-relaxed text-foreground/75">
+                    <p className="mt-4 sm:mt-6 text-sm leading-relaxed text-foreground/75">
                       {localized.tagline}
                     </p>
 
-                    <div className="mt-auto pt-8 flex flex-col gap-3">
+                    <div className="mt-auto pt-6 sm:pt-8 flex flex-col gap-3">
                       <Button asChild variant="volka" size="volka" className="w-full justify-between">
                         <Link to="/start" search={{ offer: offer.id }}>
                           {localized.cta} <ArrowUpRight className="size-4" />
@@ -417,7 +417,7 @@ function Index() {
             })}
           </div>
 
-          <p className="mt-10 text-center text-xs leading-relaxed text-foreground/60 max-w-3xl mx-auto">
+          <p className="mt-8 sm:mt-10 text-center text-xs leading-relaxed text-foreground/60 max-w-3xl mx-auto">
             {t.offers.pricingNote}
           </p>
         </div>
