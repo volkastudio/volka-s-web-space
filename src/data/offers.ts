@@ -1,96 +1,220 @@
 /**
  * Single source of truth for Volka offers and pricing.
- * Used by: home page "Ways to work together", /start scope picker,
- * and as the valid set of offer IDs for case studies.
- *
- * Prices are in XOF (primary), EUR and USD (secondary).
- * Update here and nowhere else.
+ * Matches Section 10 of "The New Volka" strategy document:
+ * 1. Résoudre un problème précis (À partir de 200 000 FCFA)
+ * 2. Construire un système de croissance cohérent (À partir de 800 000 FCFA)
+ * 3. Faire progresser le système dans la durée (À partir de 150 000 FCFA/mois)
  */
 
-export type OfferId = "Présence" | "Autorité" | "Expansion" | "Accompagnement continu";
+export type OfferId =
+  | "Résoudre un problème précis"
+  | "Construire un système de croissance cohérent"
+  | "Faire progresser le système dans la durée"
+  // Backwards compatibility aliases
+  | "Présence"
+  | "Autorité"
+  | "Expansion"
+  | "Accompagnement continu";
+
+export type LocalizedOfferContent = {
+  name: string;
+  tagline: string;
+  duration: string;
+  cta: string;
+  includes: string[];
+};
 
 export type Offer = {
   id: OfferId;
-  /** Short sequential label, e.g. "01" */
+  slug: string;
   index: string;
-  /** Display name */
   name: string;
-  /** One-line positioning tagline */
   tagline: string;
   prices: {
-    xof: string; // e.g. "400 000 FCFA"
-    eur: string; // e.g. "650 €"
-    usd: string; // e.g. "$720"
+    xof: string;
+    eur: string;
+    usd: string;
   };
-  /** Delivery window shown to clients */
   duration: string;
-  /** Key deliverables, shown in the scope picker */
+  cta: string;
   includes: string[];
+  translations: {
+    fr: LocalizedOfferContent;
+    en: LocalizedOfferContent;
+  };
 };
 
 export const offers: Offer[] = [
   {
-    id: "Présence",
+    id: "Résoudre un problème précis",
+    slug: "resoudre-un-probleme-precis",
     index: "01",
-    name: "Présence",
-    tagline: "A focused, custom website and the essential digital setup to look credible everywhere.",
-    prices: { xof: "400 000 FCFA", eur: "650 €", usd: "$720" },
-    duration: "10 days",
+    name: "Résoudre un problème précis",
+    tagline: "Une intervention ciblée pour résoudre un problème concret et améliorer un mécanisme précis de votre croissance.",
+    prices: { xof: "À partir de 200 000 FCFA", eur: "À partir de 320 €", usd: "From $350" },
+    duration: "1 à 2 semaines",
+    cta: "Parler de mon projet",
     includes: [
-      "Up to 5 pages",
-      "Mobile-first responsive design",
-      "SEO fundamentals",
-      "Contact or lead form",
-      "Google Analytics setup",
+      "Diagnostic et cadrage du point de friction",
+      "Intervention sur un pilier précis (Perception, Conversion, Ventes ou Automatisation)",
+      "Livrable opérationnel clé en main",
+      "Déploiement et transfert d'usage",
+      "Garantie de bon fonctionnement",
     ],
+    translations: {
+      fr: {
+        name: "Résoudre un problème précis",
+        tagline: "Une intervention ciblée pour résoudre un problème concret et améliorer un mécanisme précis de votre croissance.",
+        duration: "1 à 2 semaines",
+        cta: "Parler de mon projet",
+        includes: [
+          "Diagnostic et cadrage du point de friction",
+          "Intervention sur un pilier précis (Perception, Conversion, Ventes ou Automatisation)",
+          "Livrable opérationnel clé en main",
+          "Déploiement et transfert d'usage",
+          "Garantie de bon fonctionnement",
+        ],
+      },
+      en: {
+        name: "Solve a specific problem",
+        tagline: "A targeted intervention to solve a concrete issue and improve a specific mechanism of your growth.",
+        duration: "1 to 2 weeks",
+        cta: "Discuss my project",
+        includes: [
+          "Diagnosis and scoping of the bottleneck",
+          "Focused intervention on one pillar (Perception, Conversion, Sales or Automation)",
+          "Turnkey operational deliverables",
+          "Deployment and team handover",
+          "Post-launch warranty",
+        ],
+      },
+    },
   },
   {
-    id: "Autorité",
+    id: "Construire un système de croissance cohérent",
+    slug: "construire-un-systeme-de-croissance-coherent",
     index: "02",
-    name: "Autorité",
-    tagline: "A complete visual identity, website, and content direction built as one coherent system.",
-    prices: { xof: "From 1 000 000 FCFA", eur: "From 1 650 €", usd: "From $1 800" },
-    duration: "18 days",
+    name: "Construire un système de croissance cohérent",
+    tagline: "Des solutions pensées ensemble pour connecter les bons éléments de votre croissance et en améliorer le fonctionnement.",
+    prices: { xof: "À partir de 800 000 FCFA", eur: "À partir de 1 250 €", usd: "From $1,350" },
+    duration: "3 à 5 semaines",
+    cta: "Construire mon système",
     includes: [
-      "Full brand identity system",
-      "Up to 10 pages",
-      "Copywriting and content direction",
-      "Social media starter kit",
-      "Brand guidelines document",
+      "Audit stratégique et cartographie du parcours client",
+      "Alignement Perception + Conversion ou Acquisition + Ventes",
+      "Plateforme web d'autorité ou système de marque complet",
+      "Tunnel WhatsApp / CRM et intégration des flux",
+      "Tableaux de bord et métriques de conversion",
     ],
+    translations: {
+      fr: {
+        name: "Construire un système de croissance cohérent",
+        tagline: "Des solutions pensées ensemble pour connecter les bons éléments de votre croissance et en améliorer le fonctionnement.",
+        duration: "3 à 5 semaines",
+        cta: "Construire mon système",
+        includes: [
+          "Audit stratégique et cartographie du parcours client",
+          "Alignement Perception + Conversion ou Acquisition + Ventes",
+          "Plateforme web d'autorité ou système de marque complet",
+          "Tunnel WhatsApp / CRM et intégration des flux",
+          "Tableaux de bord et métriques de conversion",
+        ],
+      },
+      en: {
+        name: "Build a coherent growth system",
+        tagline: "Coordinated systems designed together to connect your growth levers and streamline performance.",
+        duration: "3 to 5 weeks",
+        cta: "Build my system",
+        includes: [
+          "Strategic audit and customer journey mapping",
+          "Connecting Perception + Conversion or Acquisition + Sales",
+          "High-converting digital platform or full brand identity",
+          "WhatsApp funnel / CRM pipeline automation",
+          "Performance dashboards and tracking",
+        ],
+      },
+    },
   },
   {
-    id: "Expansion",
+    id: "Faire progresser le système dans la durée",
+    slug: "faire-progresser-le-systeme-dans-la-duree",
     index: "03",
-    name: "Expansion",
-    tagline: "An advanced digital ecosystem for businesses ready to scale with confidence.",
-    prices: { xof: "From 1 850 000 FCFA", eur: "From 3 000 €", usd: "From $3 300" },
-    duration: "Scoped to project",
+    name: "Faire progresser le système dans la durée",
+    tagline: "Un accompagnement continu pour piloter, mesurer et améliorer les mécanismes de croissance de votre entreprise.",
+    prices: { xof: "À partir de 150 000 FCFA/mois", eur: "À partir de 230 €/mois", usd: "From $250/mo" },
+    duration: "Mensuel récurrent",
+    cta: "Parlons de mes objectifs",
     includes: [
-      "Everything in Autorité",
-      "E-commerce or booking system",
-      "Multilingual (FR/EN)",
-      "Growth and conversion strategy",
-      "Ongoing support option",
+      "Pilotage et optimisation continue des leviers de croissance",
+      "Campagnes d'acquisition, création de contenu et diffusion",
+      "Optimisation constante du taux de conversion",
+      "Maintenance, évolutions et automatisations de processus",
+      "Point stratégique mensuel et reporting transparent",
     ],
-  },
-  {
-    id: "Accompagnement continu",
-    index: "04",
-    name: "Accompagnement continu",
-    tagline: "A dedicated monthly partnership — design, strategy, and execution on tap.",
-    prices: { xof: "Monthly retainer", eur: "Monthly retainer", usd: "Monthly retainer" },
-    duration: "Monthly",
-    includes: [
-      "Priority access",
-      "Monthly strategy session",
-      "Design and dev hours",
-      "Content updates and publishing",
-      "Monthly performance report",
-    ],
+    translations: {
+      fr: {
+        name: "Faire progresser le système dans la durée",
+        tagline: "Un accompagnement continu pour piloter, mesurer et améliorer les mécanismes de croissance de votre entreprise.",
+        duration: "Mensuel récurrent",
+        cta: "Parlons de mes objectifs",
+        includes: [
+          "Pilotage et optimisation continue des leviers de croissance",
+          "Campagnes d'acquisition, création de contenu et diffusion",
+          "Optimisation constante du taux de conversion",
+          "Maintenance, évolutions et automatisations de processus",
+          "Point stratégique mensuel et reporting transparent",
+        ],
+      },
+      en: {
+        name: "Continuous system growth",
+        tagline: "Ongoing advisory and execution to operate, measure, and refine your business growth engine.",
+        duration: "Monthly recurring",
+        cta: "Let's discuss objectives",
+        includes: [
+          "Ongoing management and performance optimization",
+          "Acquisition campaigns, content production and distribution",
+          "Continuous conversion rate optimization",
+          "Maintenance, workflow refinements and automation",
+          "Monthly strategic review and transparent reporting",
+        ],
+      },
+    },
   },
 ];
 
-/** Look up an offer by its ID. */
-export const getOffer = (id: OfferId): Offer =>
-  offers.find((o) => o.id === id)!;
+/** Map old slugs or IDs to current offers for backwards compatibility */
+const legacyMap: Record<string, string> = {
+  presence: "resoudre-un-probleme-precis",
+  autorite: "construire-un-systeme-de-croissance-coherent",
+  expansion: "construire-un-systeme-de-croissance-coherent",
+  "accompagnement-continu": "faire-progresser-le-systeme-dans-la-duree",
+  Présence: "resoudre-un-probleme-precis",
+  Autorité: "construire-un-systeme-de-croissance-coherent",
+  Expansion: "construire-un-systeme-de-croissance-coherent",
+  "Accompagnement continu": "faire-progresser-le-systeme-dans-la-duree",
+};
+
+/** Look up an offer by its ID or slug. */
+export const getOffer = (idOrSlug: string): Offer | undefined => {
+  const normalized = idOrSlug.toLowerCase().trim().replace(/\s+/g, "-");
+  const resolvedSlug = legacyMap[idOrSlug] || legacyMap[normalized] || normalized;
+
+  return offers.find(
+    (o) =>
+      o.id.toLowerCase() === idOrSlug.toLowerCase() ||
+      o.slug === resolvedSlug ||
+      o.slug === normalized,
+  );
+};
+
+export const getLocalizedOffer = (offer: Offer, locale: "fr" | "en" = "fr") => {
+  const t = offer.translations[locale] || offer.translations.fr;
+  return {
+    ...offer,
+    name: t.name,
+    tagline: t.tagline,
+    duration: t.duration,
+    cta: t.cta,
+    includes: t.includes,
+  };
+};

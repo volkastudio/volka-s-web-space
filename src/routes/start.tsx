@@ -231,16 +231,21 @@ function StartProject() {
 
   const { timelines, budgets } = t.startForm;
 
-  // Resolve default offer from search param (e.g. ?offer=Autorité from "En savoir plus")
+  // Resolve default offer from search param
   const defaultOffer =
-    search.offer && offers.find((o) => o.id === search.offer) ? search.offer : "Présence";
+    search.offer && offers.find((o) => o.id === search.offer)
+      ? search.offer
+      : (offers[0]?.id ?? "Résoudre un problème précis");
 
   const scopeOptions = [
-    ...offers.map((o) => ({
-      value: o.id,
-      label: o.name,
-      detail: `${formatPrice(o.prices)} · ${o.duration}`,
-    })),
+    ...offers.map((o) => {
+      const loc = o.translations[locale] || o.translations.fr;
+      return {
+        value: o.id,
+        label: loc.name,
+        detail: `${formatPrice(o.prices)} · ${loc.duration}`,
+      };
+    }),
     { value: "Not sure yet", label: t.startForm.scopeNotSure, detail: t.startForm.scopeNotSureDetail },
   ];
 
@@ -330,7 +335,16 @@ function StartProject() {
       <main className="bg-background text-foreground">
         <SiteHeader />
         <section className="mx-auto max-w-3xl px-5 py-28 md:px-10 md:py-40 lg:px-14">
-          <AnimatedCheck />
+          <div className="flex items-center gap-4">
+            <AnimatedCheck />
+            <img
+              src="/vectors/success.svg"
+              alt="Success icon"
+              width={500}
+              height={500}
+              className="size-16 object-contain"
+            />
+          </div>
           <motion.h1
             className="mt-10 font-display text-6xl leading-[0.95] md:text-7xl"
             initial={{ opacity: 0, y: 24 }}

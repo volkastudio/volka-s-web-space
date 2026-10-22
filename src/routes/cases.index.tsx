@@ -9,7 +9,7 @@ import { Reveal } from "@/components/reveal";
 import { SplitHeading } from "@/components/split-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { caseStudies } from "@/data/case-studies";
+import { getStaticCaseStudies, getStaticCaseStudy } from "@/data/case-studies";
 import { getCaseStudiesList } from "@/lib/cases.functions";
 import { easeVolkaOut } from "@/lib/motion";
 import { useI18n } from "@/i18n/context";
@@ -41,18 +41,27 @@ export const Route = createFileRoute("/cases/")({
 
 function CasesIndex() {
   const { studies } = Route.useLoaderData();
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+
   const disciplines = [t.casesIndex.allWork, t.casesIndex.brandIdentity, t.casesIndex.digitalPlatform];
   const [filter, setFilter] = useState(disciplines[0]!);
-  // Remap filter to data discipline value
-  const disciplineMap: Record<string, string> = {
-    [t.casesIndex.brandIdentity]: "Brand identity",
-    [t.casesIndex.digitalPlatform]: "Digital platform",
-  };
-  const list = studies && studies.length > 0 ? studies : caseStudies;
+
+  // Localized list that updates reactively on locale switch
+  const baseList = studies && studies.length > 0
+    ? studies.map((s) => getStaticCaseStudy(s.slug, locale) || s)
+    : getStaticCaseStudies(locale);
+
   const visible = filter === disciplines[0]
-    ? list
-    : list.filter((c) => c.discipline === disciplineMap[filter]);
+    ? baseList
+    : baseList.filter((c) => {
+        if (filter === t.casesIndex.brandIdentity) {
+          return c.discipline === "Brand identity" || c.discipline === "Identité de marque";
+        }
+        if (filter === t.casesIndex.digitalPlatform) {
+          return c.discipline === "Digital platform" || c.discipline === "Plateforme digitale";
+        }
+        return true;
+      });
 
   return (
     <main className="bg-background text-foreground">
@@ -77,7 +86,7 @@ function CasesIndex() {
 
           <Reveal delay={200}>
             <div className="mt-12 flex flex-wrap gap-3">
-                          {disciplines.map((discipline) => (
+              {disciplines.map((discipline) => (
                 <button
                   key={discipline}
                   type="button"
@@ -110,7 +119,7 @@ function CasesIndex() {
                 className={index % 2 === 1 ? "md:mt-16" : ""}
               >
                 <Link to="/cases/$slug" params={{ slug: study.slug }} className="group block">
-                  <CursorFollower label="View project">
+                  <CursorFollower label={t.work.viewProject}>
                     <div className="aspect-[4/3] overflow-hidden rounded-sm bg-muted">
                       <ImageReveal delay={index * 60}>
                         <motion.img
@@ -122,30 +131,31 @@ function CasesIndex() {
                           className="h-full w-full object-cover"
                           style={{ viewTransitionName: `case-cover-${study.slug}` }}
                           whileHover={{ scale: 1.04 }}
-                          transition={{ duration: 0.7, ease: easeVolkaOut }}
+                          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                         />
                       </ImageReveal>
                     </div>
                   </CursorFollower>
-                  <div className="mt-6 flex items-start justify-between gap-6 border-t border-border pt-5">
+
+                  <div className="mt-6 flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                        {study.discipline} · {study.year}
+                      <p className="text-xs uppercase tracking-[0.16em] text-gold">
+                        {study.discipline}
                         {study.kind === "concept" ? ` · ${t.work.conceptLabel}` : ""}
                       </p>
-                      <h2 className="mt-3 font-display text-4xl transition-colors group-hover:text-primary">
+                      <h2 className="mt-2 font-display text-4xl transition-colors group-hover:text-primary/70 md:text-5xl">
                         {study.client}
                       </h2>
-                      <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+                      <p className="mt-3 max-w-md text-sm font-light leading-relaxed text-muted-foreground">
                         {study.tagline}
                       </p>
                     </div>
                     <motion.span
                       whileHover={{ x: 4, y: -4 }}
                       transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                      className="mt-1 inline-flex"
+                      className="mt-3 inline-flex"
                     >
-                      <ArrowUpRight className="size-5 shrink-0 text-gold transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      <ArrowUpRight className="size-6 text-gold transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
                     </motion.span>
                   </div>
                 </Link>

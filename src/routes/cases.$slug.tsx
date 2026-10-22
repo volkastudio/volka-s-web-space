@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-import { getCaseStudy, getNextCaseStudy } from "@/data/case-studies";
+import { getStaticCaseStudy, getNextStaticCaseStudy } from "@/data/case-studies";
 import { getCaseStudyDetail } from "@/lib/cases.functions";
 import { useI18n } from "@/i18n/context";
 
@@ -41,14 +41,21 @@ function CaseNotFound() {
   return (
     <main className="bg-background text-foreground">
       <SiteHeader />
-      <section className="mx-auto max-w-7xl px-5 py-32 md:px-10 lg:px-14">
-        <h1 className="font-display text-6xl">
-          {t.locale === "fr" ? "Ce projet n\u2019est pas ici." : "This project isn\u2019t here."}
+      <section className="mx-auto max-w-4xl px-5 py-24 text-center md:px-10 md:py-32">
+        <img
+          src="/vectors/project_not_found.svg"
+          alt="Project not found"
+          width={500}
+          height={500}
+          className="mx-auto h-48 w-auto md:h-64 object-contain"
+        />
+        <h1 className="mt-8 font-display text-4xl font-medium md:text-6xl">
+          {t.errors.projectNotFoundTitle}
         </h1>
-        <p className="mt-6 text-muted-foreground">
-          {t.locale === "fr" ? "Il a peut-\u00eatre \u00e9t\u00e9 renomm\u00e9 ou retir\u00e9." : "It may have been renamed or retired."}
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          {t.errors.projectNotFoundMessage}
         </p>
-        <Button asChild variant="volka" size="volka" className="mt-10">
+        <Button asChild variant="volka" size="volka" className="mt-8">
           <Link to="/cases">{t.caseStudy.allCases}</Link>
         </Button>
       </section>
@@ -58,8 +65,12 @@ function CaseNotFound() {
 }
 
 function CaseStudyPage() {
-  const { study, next } = Route.useLoaderData();
-  const { t } = useI18n();
+  const { study: initialStudy, next: initialNext } = Route.useLoaderData();
+  const { locale, t } = useI18n();
+
+  // Localized resolution: reacts instantly to locale changes
+  const study = getStaticCaseStudy(initialStudy.slug, locale) || initialStudy;
+  const next = (initialNext?.slug ? getStaticCaseStudy(initialNext.slug, locale) : null) || initialNext;
 
   return (
     <main className="bg-background text-foreground">
@@ -67,15 +78,22 @@ function CaseStudyPage() {
 
       <section className="border-b border-border px-5 py-14 md:px-10 md:py-20 lg:px-14">
         <div className="mx-auto max-w-7xl">
-          <Link to="/cases" className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground hover:text-foreground">
+          <Link
+            to="/cases"
+            className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-foreground"
+          >
             <ArrowLeft className="size-4" /> {t.caseStudy.allCases}
           </Link>
           <p className="mt-10 text-xs font-medium uppercase tracking-[0.2em] text-gold">
             {study.discipline}
             {study.kind === "concept" ? ` · ${t.work.conceptLabel}` : ""}
           </p>
-          <h1 className="mt-6 max-w-5xl font-display text-6xl font-medium leading-[0.92] md:text-8xl">{study.client}</h1>
-          <p className="mt-6 max-w-2xl text-xl font-light leading-relaxed text-muted-foreground">{study.tagline}</p>
+          <h1 className="mt-6 max-w-5xl font-display text-6xl font-medium leading-[0.92] md:text-8xl">
+            {study.client}
+          </h1>
+          <p className="mt-6 max-w-2xl text-xl font-light leading-relaxed text-muted-foreground">
+            {study.tagline}
+          </p>
           {study.kind === "concept" && (
             <p className="mt-6 max-w-2xl border-l-2 border-gold pl-4 text-sm leading-relaxed text-muted-foreground">
               {t.caseStudy.conceptDisclaimer}
@@ -182,18 +200,20 @@ function CaseStudyPage() {
         </div>
       </section>
 
-      <section className="bg-forest px-5 py-20 text-primary-foreground md:px-10 md:py-24 lg:px-14">
-        <div className="mx-auto max-w-7xl">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-mint">{t.caseStudy.nextProject}</p>
-          <Link to="/cases/$slug" params={{ slug: next.slug }} className="group mt-8 flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="font-display text-5xl md:text-7xl">{next.client}</h2>
-              <p className="mt-3 max-w-xl text-primary-foreground/70">{next.tagline}</p>
-            </div>
-            <ArrowUpRight className="size-10 text-gold transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-          </Link>
-        </div>
-      </section>
+      {next && (
+        <section className="bg-forest px-5 py-20 text-primary-foreground md:px-10 md:py-24 lg:px-14">
+          <div className="mx-auto max-w-7xl">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-mint">{t.caseStudy.nextProject}</p>
+            <Link to="/cases/$slug" params={{ slug: next.slug }} className="group mt-8 flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="font-display text-5xl md:text-7xl">{next.client}</h2>
+                <p className="mt-3 max-w-xl text-primary-foreground/70">{next.tagline}</p>
+              </div>
+              <ArrowUpRight className="size-10 text-gold transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+            </Link>
+          </div>
+        </section>
+      )}
 
       <SiteFooter />
     </main>

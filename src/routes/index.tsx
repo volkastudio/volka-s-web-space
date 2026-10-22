@@ -13,9 +13,9 @@ import { SplitHeading } from "@/components/split-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-import { caseStudies } from "@/data/case-studies";
+import { getStaticCaseStudies, getStaticCaseStudy } from "@/data/case-studies";
 import { getFeaturedCaseStudies } from "@/lib/cases.functions";
-import { offers } from "@/data/offers";
+import { offers, getLocalizedOffer } from "@/data/offers";
 import { useI18n } from "@/i18n/context";
 
 import heroImage from "@/assets/volka-hero.jpg";
@@ -29,17 +29,17 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Volka — Digital agency rooted in West Africa" },
+      { title: "Volka — Systèmes de croissance & Studio digital" },
       {
         name: "description",
         content:
-          "Volka builds distinctive brands, high-performing websites, and digital systems for ambitious businesses in and around West Africa.",
+          "Volka construit les systèmes qui soutiennent la croissance des entreprises : Perception, Acquisition, Conversion, Ventes et Automatisation.",
       },
-      { property: "og:title", content: "Volka — Bold by design" },
+      { property: "og:title", content: "Volka — Les systèmes derrière la croissance" },
       {
         property: "og:description",
         content:
-          "Global standards. Local understanding. Digital work built to move ambitious businesses forward.",
+          "Nous aidons les entreprises à attirer, convertir et fidéliser leurs clients grâce à des systèmes digitaux cohérents.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
@@ -55,7 +55,7 @@ const easeOut = [0.22, 1, 0.36, 1] as [number, number, number, number];
 function ScrollArrow({ label }: { label: string }) {
   const shouldReduce = useReducedMotion();
   return (
-    <a href="#work" className="group flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em]">
+    <a href="#about" className="group flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em]">
       {label}{" "}
       <span className="flex size-10 items-center justify-center border border-primary-foreground/35 transition-colors duration-300 group-hover:border-mint group-hover:bg-mint group-hover:text-primary">
         <motion.span
@@ -72,9 +72,14 @@ function ScrollArrow({ label }: { label: string }) {
 
 function Index() {
   const { featuredStudies } = Route.useLoaderData();
-  const { t, formatPrice } = useI18n();
-  const displayedCases =
-    featuredStudies && featuredStudies.length > 0 ? featuredStudies : caseStudies;
+  const { locale, t, formatPrice } = useI18n();
+
+  // Localized case studies that switch reactively on locale toggle (supports up to 4 concepts)
+  const displayedCases = (
+    featuredStudies && featuredStudies.length > 0
+      ? featuredStudies.map((s) => getStaticCaseStudy(s.slug, locale) || s)
+      : getStaticCaseStudies(locale)
+  ).slice(0, 4);
 
   return (
     <main className="bg-background text-foreground">
@@ -98,35 +103,36 @@ function Index() {
         </Parallax>
 
         {/* Overlays */}
-        <motion.div
-          className="absolute inset-0 bg-primary/60"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.4, ease: "easeOut" }}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-primary/80 mix-blend-multiply"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/80 to-transparent" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary via-primary/30 to-primary/50"
+        />
+        {/* Subtle radial focus on headline */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(0,0,0,0)_0%,rgba(21,38,25,0.6)_100%)]"
+        />
 
-        {/* Overlay header — sits on top of the hero */}
         <SiteHeader variant="overlay" />
 
-        <div
-          id="top"
-          className="relative z-10 mx-auto flex min-h-[calc(92svh-96px)] max-w-7xl flex-col justify-end px-5 pb-12 pt-24 md:px-10 md:pb-16 md:pt-0 lg:px-14"
-        >
+        <div className="relative mx-auto flex min-h-[92svh] max-w-7xl flex-col justify-end px-5 pt-28 pb-16 md:px-10 md:pt-36 md:pb-24 lg:px-14">
           <motion.p
-            className="mb-5 text-xs font-medium uppercase tracking-[0.2em] text-mint"
-            initial={{ opacity: 0, y: 28 }}
+            className="text-xs font-medium uppercase tracking-[0.24em] text-gold"
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.3, ease: easeOut }}
+            transition={{ duration: 0.8, delay: 0.3, ease: easeOut }}
           >
             {t.hero.eyebrow}
           </motion.p>
 
-          {/* Hero headline — uses SplitHeading for the word-by-word wipe animation */}
-          <div className="overflow-hidden">
+          <div className="mt-6 max-w-5xl">
             <h1
-              aria-label={`${t.hero.titleLine1} ${t.hero.titleLine2}`}
-              className="max-w-5xl font-display text-6xl font-semibold leading-[0.88] md:text-8xl lg:text-[7.4rem]"
+              className="font-display text-5xl font-medium leading-[0.94] tracking-tight sm:text-6xl md:text-8xl lg:text-9xl"
+              style={{ textWrap: "balance" }}
             >
               {/* Line 1 */}
               <motion.span
@@ -194,13 +200,9 @@ function Index() {
         </Reveal>
       </section>
 
-      {/* ─── Marquee ribbon: Light background, Dark Green text, Horizontal slide with instant hover pause ─── */}
+      {/* ─── Marquee ribbon ─── */}
       <section className="border-y border-border/80 bg-background py-3.5 md:py-4">
-        <Marquee
-          speed={32}
-          items={t.marquee}
-          variant="light"
-        />
+        <Marquee speed={32} items={t.marquee} variant="light" />
       </section>
 
       {/* ─── Studio ─── */}
@@ -218,52 +220,51 @@ function Index() {
             >
               {t.studio.title}
             </SplitHeading>
-            <div className="mt-10 grid gap-8 md:grid-cols-2">
-              <Reveal delay={100}>
-                <p className="text-lg font-light leading-relaxed text-muted-foreground">
+            <Reveal delay={200}>
+              <div className="mt-10 grid gap-8 md:grid-cols-2">
+                <p className="text-base font-light leading-relaxed text-muted-foreground">
                   {t.studio.p1}
                 </p>
-              </Reveal>
-              <Reveal delay={200}>
-                <p className="text-lg font-light leading-relaxed text-muted-foreground">
+                <p className="text-base font-light leading-relaxed text-muted-foreground">
                   {t.studio.p2}
                 </p>
-              </Reveal>
-            </div>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
-      {/* ─── Selected work ─── */}
-      <section id="work" className="bg-forest px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14">
+      {/* ─── Selected Work (Concepts sélectionnés: up to 4 concepts) ─── */}
+      <section id="work" className="border-b border-border bg-forest px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14">
         <div className="mx-auto max-w-7xl">
           <Reveal>
-            <div className="mb-12 flex items-end justify-between border-b border-primary-foreground/20 pb-6">
+            <div className="mb-14 flex items-end justify-between">
               <div>
-                <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-mint">
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-mint">
                   {t.work.eyebrow}
                 </p>
-                <SplitHeading as="h2" className="font-display text-5xl font-medium md:text-7xl">
+                <h2 className="mt-3 font-display text-4xl font-medium md:text-6xl">
                   {t.work.title}
-                </SplitHeading>
+                </h2>
               </div>
               <Link
                 to="/cases"
-                className="hidden text-xs uppercase tracking-[0.16em] text-primary-foreground/60 hover:text-mint md:block"
+                className="hidden text-xs uppercase tracking-[0.16em] text-primary-foreground/60 transition-colors hover:text-mint md:block"
               >
                 {t.work.allCases}
               </Link>
             </div>
           </Reveal>
 
-          <div className="grid gap-10 md:grid-cols-2">
-            {displayedCases.slice(0, 2).map((study, index) => (
-              <Reveal key={study.slug} delay={index * 120}>
-                <article className={index === 1 ? "md:mt-20" : ""}>
+          {/* Up to 4 concepts grid */}
+          <div className="grid gap-12 md:grid-cols-2 md:gap-x-12 md:gap-y-16">
+            {displayedCases.map((study, index) => (
+              <Reveal key={study.slug} delay={index * 100}>
+                <article className={index % 2 === 1 ? "md:mt-16" : ""}>
                   <Link to="/cases/$slug" params={{ slug: study.slug }} className="group block">
                     <CursorFollower label={t.work.viewProject}>
                       <div className="aspect-[4/3] overflow-hidden rounded-sm bg-primary">
-                        <ImageReveal delay={index * 120}>
+                        <ImageReveal delay={index * 80}>
                           <motion.img
                             src={study.image}
                             alt={study.imageAlt}
@@ -310,7 +311,7 @@ function Index() {
         </div>
       </section>
 
-      {/* ─── Services ─── */}
+      {/* ─── Services / The 5 Pillars ─── */}
       <section id="services" className="px-5 py-20 md:px-10 md:py-28 lg:px-14">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-12 lg:grid-cols-[0.7fr_1.3fr]">
@@ -328,7 +329,7 @@ function Index() {
               {t.services.items.map((item, i) => (
                 <Reveal key={item.number} delay={i * 80}>
                   <article className="grid gap-3 border-t border-border py-7 md:grid-cols-[70px_1fr_1.3fr] md:gap-6">
-                    <span className="text-xs text-gold">{item.number}</span>
+                    <span className="text-xs text-gold font-mono">{item.number}</span>
                     <h3 className="font-display text-3xl md:text-4xl">{item.title}</h3>
                     <p className="max-w-md text-sm leading-relaxed text-muted-foreground">{item.description}</p>
                   </article>
@@ -339,7 +340,7 @@ function Index() {
         </div>
       </section>
 
-      {/* ─── Pricing / Formules (Single "En savoir plus" button, clean design) ─── */}
+      {/* ─── Pricing / The 3 Offers ─── */}
       <section className="relative overflow-hidden bg-mint px-5 py-20 md:px-10 md:py-28 lg:px-14">
         {/* Soft liquid ambient lighting orbs */}
         <div
@@ -369,59 +370,56 @@ function Index() {
             </div>
           </Reveal>
 
+          {/* 3-card clean architecture matching Strategy Document */}
           <div className="grid gap-6 md:grid-cols-3">
-            {offers.slice(0, 3).map((offer, index) => (
-              <Reveal key={offer.id} delay={index * 100}>
-                <LiquidGlassCard
-                  variant="light"
-                  className="flex h-full min-h-[420px] flex-col p-8 transition-shadow hover:shadow-xl"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em]">
-                      {offer.index}
-                    </span>
-                    <span className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
-                      {offer.duration}
-                    </span>
-                  </div>
+            {offers.slice(0, 3).map((offer, index) => {
+              const localized = getLocalizedOffer(offer, locale);
+              return (
+                <Reveal key={offer.id} delay={index * 100}>
+                  <LiquidGlassCard
+                    variant="light"
+                    className="flex h-full min-h-[440px] flex-col p-8 transition-shadow hover:shadow-xl"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em]">
+                        {offer.index}
+                      </span>
+                      <span className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                        {localized.duration}
+                      </span>
+                    </div>
 
-                  <h3 className="mt-8 font-display text-4xl">{offer.name}</h3>
-                  <p className="mt-3 text-3xl font-light text-primary">{formatPrice(offer.prices)}</p>
-                  <p className="mt-6 text-sm leading-relaxed text-foreground/75">{offer.tagline}</p>
+                    <h3 className="mt-8 font-display text-3xl lg:text-4xl">{localized.name}</h3>
+                    <p className="mt-3 text-2xl font-light text-primary lg:text-3xl">
+                      {formatPrice(offer.prices)}
+                    </p>
+                    <p className="mt-6 text-sm leading-relaxed text-foreground/75">
+                      {localized.tagline}
+                    </p>
 
-                  <div className="mt-auto pt-8">
-                    <Button asChild variant="volka" size="volka" className="w-full justify-between">
-                      <Link to="/offres/$slug" params={{ slug: offer.id.toLowerCase().replace(/\s+/g, "-") }}>
-                        {t.offers.learnMore} <ArrowUpRight className="size-4" />
+                    <div className="mt-auto pt-8 flex flex-col gap-3">
+                      <Button asChild variant="volka" size="volka" className="w-full justify-between">
+                        <Link to="/start" search={{ offer: offer.id }}>
+                          {localized.cta} <ArrowUpRight className="size-4" />
+                        </Link>
+                      </Button>
+                      <Link
+                        to="/offres/$slug"
+                        params={{ slug: offer.slug }}
+                        className="text-center text-xs uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {t.offers.learnMore}
                       </Link>
-                    </Button>
-                  </div>
-                </LiquidGlassCard>
-              </Reveal>
-            ))}
+                    </div>
+                  </LiquidGlassCard>
+                </Reveal>
+              );
+            })}
           </div>
 
-          {/* 4th offer — Accompagnement */}
-          <Reveal delay={300}>
-            <div className="mt-6 flex flex-col gap-5 border border-border/50 bg-background/50 p-8 backdrop-blur-sm md:flex-row md:items-center md:justify-between">
-              <div className="flex items-start gap-6">
-                <span className="font-display text-3xl font-medium text-primary/30">{offers[3]?.index}</span>
-                <div>
-                  <h3 className="font-display text-3xl">{offers[3]?.name}</h3>
-                  <p className="mt-1 max-w-md text-sm leading-relaxed text-foreground/65">{offers[3]?.tagline}</p>
-                </div>
-              </div>
-              <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
-                <Button asChild variant="volka" size="volka">
-                  <Link to="/offres/$slug" params={{ slug: offers[3]!.id.toLowerCase().replace(/\s+/g, "-") }}>
-                    {t.offers.learnMore} <ArrowUpRight className="size-4" />
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </Reveal>
-
-          <p className="mt-8 text-center text-xs text-foreground/60">{t.offers.currencyNote}</p>
+          <p className="mt-10 text-center text-xs leading-relaxed text-foreground/60 max-w-3xl mx-auto">
+            {t.offers.pricingNote}
+          </p>
         </div>
       </section>
 

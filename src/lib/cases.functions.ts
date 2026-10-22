@@ -1,18 +1,36 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { caseStudies, getCaseStudy, getNextCaseStudy } from "@/data/case-studies";
+import {
+  getStaticCaseStudies,
+  getStaticCaseStudy,
+  getNextStaticCaseStudy,
+} from "@/data/case-studies";
 import {
   resolveCaseStudy,
   type CaseStudyRecord,
   type ResolvedCaseStudy,
 } from "./case-study-schema";
 
+async function getEffectiveLocale(explicitLocale?: "fr" | "en"): Promise<"fr" | "en"> {
+  if (explicitLocale) return explicitLocale;
+  try {
+    const { getRequest } = await import("@tanstack/react-start/server");
+    const req = getRequest();
+    const cookie = req?.headers?.get("cookie");
+    if (cookie) {
+      const match = cookie.match(/volka_locale=(fr|en)/);
+      if (match) return match[1] as "fr" | "en";
+    }
+  } catch {}
+  return "fr";
+}
+
 export const getCaseStudiesList = createServerFn({ method: "GET" })
   .validator((data?: { locale?: "fr" | "en" }) =>
-    z.object({ locale: z.enum(["fr", "en"]).default("fr") }).optional().parse(data ?? {}),
+    z.object({ locale: z.enum(["fr", "en"]).optional() }).optional().parse(data ?? {}),
   )
   .handler(async ({ data: input = {} }) => {
-    const locale = input.locale ?? "fr";
+    const locale = await getEffectiveLocale(input?.locale);
     try {
       const { supabase } = await import("@/integrations/supabase/client");
       const { data, error } = await supabase
@@ -29,15 +47,15 @@ export const getCaseStudiesList = createServerFn({ method: "GET" })
       console.warn("[getCaseStudiesList] Falling back to static data:", err);
     }
 
-    return caseStudies as unknown as ResolvedCaseStudy[];
+    return getStaticCaseStudies(locale);
   });
 
 export const getCaseStudyDetail = createServerFn({ method: "GET" })
   .validator((data: { slug: string; locale?: "fr" | "en" }) =>
-    z.object({ slug: z.string(), locale: z.enum(["fr", "en"]).default("fr") }).parse(data),
+    z.object({ slug: z.string(), locale: z.enum(["fr", "en"]).optional() }).parse(data),
   )
   .handler(async ({ data: input }) => {
-    const locale = input.locale ?? "fr";
+    const locale = await getEffectiveLocale(input?.locale);
     try {
       const { supabase } = await import("@/integrations/supabase/client");
       const { data: allPublished, error } = await supabase
@@ -61,18 +79,18 @@ export const getCaseStudyDetail = createServerFn({ method: "GET" })
       console.warn("[getCaseStudyDetail] Falling back to static data:", err);
     }
 
-    const study = getCaseStudy(input.slug);
+    const study = getStaticCaseStudy(input.slug, locale);
     if (!study) return null;
-    const next = getNextCaseStudy(input.slug);
-    return { study: study as unknown as ResolvedCaseStudy, next: next as unknown as ResolvedCaseStudy };
+    const next = getNextStaticCaseStudy(input.slug, locale) ?? study;
+    return { study, next };
   });
 
 export const getFeaturedCaseStudies = createServerFn({ method: "GET" })
   .validator((data?: { locale?: "fr" | "en" }) =>
-    z.object({ locale: z.enum(["fr", "en"]).default("fr") }).optional().parse(data ?? {}),
+    z.object({ locale: z.enum(["fr", "en"]).optional() }).optional().parse(data ?? {}),
   )
   .handler(async ({ data: input = {} }) => {
-    const locale = input.locale ?? "fr";
+    const locale = await getEffectiveLocale(input?.locale);
     try {
       const { supabase } = await import("@/integrations/supabase/client");
       const { data, error } = await supabase
@@ -90,5 +108,5 @@ export const getFeaturedCaseStudies = createServerFn({ method: "GET" })
       console.warn("[getFeaturedCaseStudies] Falling back to static data:", err);
     }
 
-    return caseStudies as unknown as ResolvedCaseStudy[];
+    return getStaticCaseStudies(locale).slice(0, 4);
   });

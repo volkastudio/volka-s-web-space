@@ -6,16 +6,15 @@ import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-import { getOffer, offers } from "@/data/offers";
+import { getOffer, getLocalizedOffer, offers } from "@/data/offers";
 import { useI18n } from "@/i18n/context";
 
 export const Route = createFileRoute("/offres/$slug")({
   loader: ({ params }) => {
-    const offer = offers.find((o) => o.id.toLowerCase().replace(/\s+/g, "-") === params.slug);
+    const offer = getOffer(params.slug);
     if (!offer) throw notFound();
     return { offer };
   },
-  component: OfferPage,
   head: ({ loaderData }) => {
     const offer = loaderData?.offer;
     return {
@@ -23,13 +22,49 @@ export const Route = createFileRoute("/offres/$slug")({
         { title: `${offer?.name ?? "Offre"} — Volka Studio` },
         {
           name: "description",
-          content: offer?.tagline ?? "Découvrez nos formules d'engagement sur mesure.",
+          content: offer?.tagline ?? "Découvrez nos offres d'accompagnement et systèmes de croissance.",
         },
         { property: "og:type", content: "website" },
       ],
     };
   },
+  component: OfferPage,
+  notFoundComponent: OfferNotFound,
 });
+
+function OfferNotFound() {
+  const { locale } = useI18n();
+  const isFr = locale === "fr";
+
+  return (
+    <main className="min-h-screen bg-background text-foreground">
+      <SiteHeader />
+      <section className="mx-auto max-w-4xl px-5 py-24 text-center md:px-10 md:py-32">
+        <img
+          src="/vectors/project_not_found.svg"
+          alt="Offre introuvable"
+          width={500}
+          height={500}
+          className="mx-auto h-48 w-auto md:h-64 object-contain"
+        />
+        <h1 className="mt-8 font-display text-4xl font-medium md:text-6xl">
+          {isFr ? "Cette offre n'existe pas." : "This offer does not exist."}
+        </h1>
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          {isFr
+            ? "L'offre que vous cherchez a peut-être évolué ou a été remplacée."
+            : "The offer you're looking for may have been updated or moved."}
+        </p>
+        <Button asChild variant="volka" size="volka" className="mt-8">
+          <Link to="/" hash="services">
+            {isFr ? "Voir toutes nos offres" : "View all offers"}
+          </Link>
+        </Button>
+      </section>
+      <SiteFooter />
+    </main>
+  );
+}
 
 const easeOut = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -53,22 +88,19 @@ const offerAccents: Record<string, { bg: string; accent: string; orb1: string; o
     orb1: "bg-gold/10",
     orb2: "bg-mint/15",
   },
-  "04": {
-    bg: "bg-forest",
-    accent: "text-mint",
-    orb1: "bg-mint/10",
-    orb2: "bg-gold/15",
-  },
 };
 
 function OfferPage() {
-  const { offer } = Route.useLoaderData();
-  const { formatPrice } = useI18n();
+  const { offer: baseOffer } = Route.useLoaderData();
+  const { locale, formatPrice, t } = useI18n();
+  const isFr = locale === "fr";
+  const offer = getLocalizedOffer(baseOffer, locale);
   const accent = offerAccents[offer.index] ?? offerAccents["01"]!;
 
   // Adjacent offer for "next" navigation
-  const currentIdx = offers.findIndex((o) => o.id === offer.id);
-  const nextOffer = offers[(currentIdx + 1) % offers.length];
+  const currentIdx = offers.findIndex((o) => o.id === baseOffer.id);
+  const nextOffer = offers[(currentIdx + 1) % offers.length]!;
+  const localizedNext = getLocalizedOffer(nextOffer, locale);
 
   return (
     <main className="bg-background text-foreground">
@@ -99,7 +131,7 @@ function OfferPage() {
               hash="services"
               className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-primary-foreground/50 transition-colors hover:text-primary-foreground"
             >
-              <ArrowLeft className="size-3.5" /> Retour aux formules
+              <ArrowLeft className="size-3.5" /> {isFr ? "Retour aux offres" : "Back to offers"}
             </Link>
           </motion.div>
 
@@ -111,11 +143,11 @@ function OfferPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.1, ease: easeOut }}
               >
-                Formule {offer.index}
+                {isFr ? `Offre ${offer.index}` : `Offer ${offer.index}`}
               </motion.p>
 
               <motion.h1
-                className="mt-4 font-display text-6xl font-medium leading-none md:text-8xl"
+                className="mt-4 font-display text-5xl font-medium leading-none md:text-7xl lg:text-8xl"
                 initial={{ opacity: 0, y: 28 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, delay: 0.2, ease: easeOut }}
@@ -138,137 +170,110 @@ function OfferPage() {
               className="flex flex-col gap-4 lg:items-end lg:text-right"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: easeOut }}
+              transition={{ duration: 0.8, delay: 0.45, ease: easeOut }}
             >
-              <p className="text-4xl font-light md:text-5xl">{formatPrice({ xof: offer.prices.xof, eur: offer.prices.eur, usd: offer.prices.usd })}</p>
-              <div className={`flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] ${accent.accent}`}>
-                <Clock className="size-4" />
+              <span className="font-display text-4xl text-gold md:text-5xl">
+                {formatPrice(offer.prices)}
+              </span>
+              <span className="flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-primary-foreground/50">
+                <Clock className="size-3.5" />
                 {offer.duration}
-              </div>
+              </span>
+              <Button asChild variant="volka" size="volka" className="mt-4">
+                <Link to="/start" search={{ offer: offer.id }}>
+                  {offer.cta} <ArrowUpRight className="size-4" />
+                </Link>
+              </Button>
             </motion.div>
           </div>
-
-          {/* CTA */}
-          <motion.div
-            className="mt-12 flex flex-wrap gap-4"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.55, ease: easeOut }}
-          >
-            <Button asChild variant="volka" size="volka" className="bg-gold border-gold text-primary hover:bg-gold/90">
-              <Link to="/start" search={{ offer: offer.id }}>
-                Lancer ce projet <ArrowUpRight className="size-4" />
-              </Link>
-            </Button>
-          </motion.div>
         </div>
       </section>
 
-      {/* ─── What's included ─── */}
-      <section className="border-b border-border px-5 py-20 md:px-10 md:py-28 lg:px-14">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-16 lg:grid-cols-[0.65fr_1.35fr]">
-            <Reveal>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                Ce qui est inclus
-              </p>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground max-w-xs">
-                Chaque formule est livrée avec un périmètre précis et un engagement qualité sans compromis.
-              </p>
-            </Reveal>
-
-            <div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {offer.includes.map((item, i) => (
-                  <Reveal key={item} delay={i * 70}>
-                    <div className="flex items-start gap-4 border border-border p-5 transition-colors hover:border-primary">
-                      <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary">
-                        <Check className="size-3.5 text-primary-foreground" />
-                      </span>
-                      <p className="text-base leading-snug">{item}</p>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Process / how it works ─── */}
-      <section className="bg-ivory px-5 py-20 md:px-10 md:py-28 lg:px-14">
+      {/* ─── Inclusions ─── */}
+      <section className="px-5 py-20 md:px-10 md:py-28 lg:px-14">
         <div className="mx-auto max-w-7xl">
           <Reveal>
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              Comment ça fonctionne
+              {isFr ? "Ce qui est compris" : "What is included"}
             </p>
-            <h2 className="mt-4 max-w-3xl font-display text-4xl font-medium leading-tight md:text-6xl">
-              Un processus clair,<br />du brief à la livraison.
+            <h2 className="mt-4 font-display text-4xl font-medium md:text-5xl">
+              {isFr ? "Périmètre d'intervention" : "Scope of work"}
             </h2>
           </Reveal>
 
-          <div className="mt-14 grid gap-8 md:grid-cols-3">
-            {[
-              {
-                n: "01",
-                title: "Brief",
-                desc: "Vous partagez votre vision, vos objectifs et vos contraintes via notre formulaire structuré.",
-              },
-              {
-                n: "02",
-                title: "Cadrage",
-                desc: "Nous analysons votre demande et vous répondons sous un jour ouvré avec un périmètre précis et un tarif ferme.",
-              },
-              {
-                n: "03",
-                title: "Livraison",
-                desc: "On travaille selon votre formule. Chaque livrable est soigné, ponctuel, et dépasse vos attentes.",
-              },
-            ].map((step, i) => (
-              <Reveal key={step.n} delay={i * 100}>
-                <article className="border-t-2 border-primary pt-6">
-                  <p className="font-display text-5xl font-medium text-primary/20">{step.n}</p>
-                  <h3 className="mt-4 font-display text-3xl">{step.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
-                </article>
+          <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {offer.includes.map((item, idx) => (
+              <Reveal key={item} delay={idx * 60}>
+                <div className="flex h-full flex-col justify-between border border-border bg-ivory/50 p-7 transition-colors hover:border-gold">
+                  <div className="flex items-start gap-4">
+                    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold">
+                      <Check className="size-3" />
+                    </span>
+                    <p className="text-base font-light leading-relaxed text-foreground">{item}</p>
+                  </div>
+                  <span className="mt-6 text-xs text-muted-foreground/40 font-mono">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                </div>
               </Reveal>
             ))}
           </div>
+
+          <p className="mt-12 text-xs leading-relaxed text-muted-foreground">
+            {t.offers.pricingNote}
+          </p>
         </div>
       </section>
 
-      {/* ─── CTA / Next offer ─── */}
-      <section className="bg-primary px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14">
+      {/* ─── Bottom CTA ─── */}
+      <section className="border-t border-border bg-mint px-5 py-20 text-foreground md:px-10 md:py-28 lg:px-14">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
-            <Reveal>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">Prêt à commencer ?</p>
-              <h2 className="mt-4 font-display text-5xl font-medium leading-tight md:text-7xl">
-                Lancez votre projet<br />dès aujourd'hui.
-              </h2>
-            </Reveal>
+          <Reveal>
+            <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/60">
+                  {isFr ? "Prêt à démarrer ?" : "Ready to begin?"}
+                </p>
+                <h2 className="mt-4 font-display text-5xl font-medium md:text-7xl">
+                  {isFr ? "Parlons de votre projet." : "Let's discuss your project."}
+                </h2>
+                <p className="mt-4 max-w-xl text-lg font-light text-foreground/80">
+                  {isFr
+                    ? "Partagez votre situation, vos objectifs et vos contraintes. Nous vous répondrons avec une recommandation adaptée."
+                    : "Tell us about your business, objectives and bottlenecks. We'll respond with a considered recommendation."}
+                </p>
+              </div>
 
-            <Reveal delay={100}>
-              <div className="flex flex-col gap-4 md:items-end">
-                <Button asChild variant="volka" size="volka" className="bg-gold border-gold text-primary hover:bg-gold/90">
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <Button asChild variant="volka" size="volka">
                   <Link to="/start" search={{ offer: offer.id }}>
-                    Démarrer avec {offer.name} <ArrowUpRight className="size-4" />
+                    {offer.cta} <ArrowUpRight className="size-4" />
                   </Link>
                 </Button>
-                {nextOffer && (
-                  <Link
-                    to="/offres/$slug"
-                    params={{ slug: nextOffer.id.toLowerCase().replace(/\s+/g, "-") }}
-                    className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-primary-foreground/50 transition-colors hover:text-primary-foreground"
-                  >
-                    Formule suivante : {nextOffer.name} <ArrowUpRight className="size-3.5" />
-                  </Link>
-                )}
               </div>
-            </Reveal>
-          </div>
+            </div>
+          </Reveal>
         </div>
       </section>
+
+      {/* ─── Next offer band ─── */}
+      {nextOffer && (
+        <section className="border-t border-border bg-background px-5 py-14 md:px-10 lg:px-14">
+          <div className="mx-auto flex max-w-7xl items-center justify-between">
+            <span className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+              {isFr ? "Autre formule" : "Alternative offer"}
+            </span>
+            <Link
+              to="/offres/$slug"
+              params={{ slug: nextOffer.slug }}
+              className="group inline-flex items-center gap-3 text-sm font-medium uppercase tracking-[0.14em] text-foreground transition-colors hover:text-gold"
+            >
+              {localizedNext.name}
+              <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+        </section>
+      )}
 
       <SiteFooter />
     </main>

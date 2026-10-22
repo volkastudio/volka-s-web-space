@@ -16,6 +16,7 @@ export interface Translations {
     titleLine1: string;
     titleLine2: string;
     subtitle: string;
+    cta: string;
     seeApproach: string;
   };
   marquee: string[];
@@ -55,6 +56,8 @@ export interface Translations {
     selectOffer: string;
     /** CTA on home cards — links to the offer detail page */
     learnMore: string;
+    /** Note under pricing cards */
+    pricingNote: string;
   };
   form: {
     eyebrow: string;
@@ -152,5 +155,70 @@ export interface Translations {
     cookiesBody: string[];
     governingTitle: string;
     governingBody: string[];
+  };
+  /** Journal page-specific translations */
+  journal: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    allArticles: string;
+    allTopics: string;
+    minRead: string;
+    videoIncluded: string;
+    readArticle: string;
+    read: string;
+    reading: string;
+    noArticles: string;
+    backToJournal: string;
+    nextArticle: string;
+    share: string;
+    copied: string;
+    ctaEyebrow: string;
+    ctaHeadline: string;
+    ctaBody: string;
+    ctaButton: string;
+    studioLine: string;
+    mediaTitle: string;
+    mediaHeading: string;
+    mediaSubheading: string;
+  };
+  /** Error / 404 page translations */
+  errors: {
+    notFoundTitle: string;
+    notFoundMessage: string;
+    goHome: string;
+    seeOurWork: string;
+    somethingWentWrong: string;
+    pageDidNotLoad: string;
+    pageDidNotLoadMessage: string;
+    tryAgain: string;
+    projectNotFoundTitle: string;
+    projectNotFoundMessage: string;
+  };
+  errorPages: {
+    notFoundTitle: string;
+    notFoundMessage: string;
+    goHome: string;
+    seeWork: string;
+    errorTitle: string;
+    errorMessage: string;
+    tryAgain: string;
+    projectNotFoundTitle: string;
+    projectNotFoundMessage: string;
+  };
+  /** Offer detail page translations */
+  offerDetail: {
+    backToOffers: string;
+    formula: string;
+    startProject: string;
+    whatsIncluded: string;
+    whatsIncludedSubtitle: string;
+    howItWorks: string;
+    howItWorksTitle: string;
+    steps: { n: string; title: string; desc: string }[];
+    readyTitle: string;
+    readyHeadline: string;
+    startWith: string;
+    nextFormula: string;
   };
 }

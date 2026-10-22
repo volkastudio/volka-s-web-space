@@ -7,19 +7,33 @@ import {
   type ResolvedPost,
 } from "./post-schema";
 
+async function getEffectiveLocale(explicitLocale?: "fr" | "en"): Promise<"fr" | "en"> {
+  if (explicitLocale) return explicitLocale;
+  try {
+    const { getRequest } = await import("@tanstack/react-start/server");
+    const req = getRequest();
+    const cookie = req?.headers?.get("cookie");
+    if (cookie) {
+      const match = cookie.match(/volka_locale=(fr|en)/);
+      if (match) return match[1] as "fr" | "en";
+    }
+  } catch {}
+  return "fr";
+}
+
 export const getPostsList = createServerFn({ method: "GET" })
   .validator((data?: { locale?: "fr" | "en"; tag?: string }) =>
     z
       .object({
-        locale: z.enum(["fr", "en"]).default("fr"),
+        locale: z.enum(["fr", "en"]).optional(),
         tag: z.string().optional(),
       })
       .optional()
       .parse(data ?? {}),
   )
   .handler(async ({ data: input = {} }) => {
-    const locale = input.locale ?? "fr";
-    const filterTag = input.tag;
+    const locale = await getEffectiveLocale(input?.locale);
+    const filterTag = input?.tag;
 
     try {
       const { supabase } = await import("@/integrations/supabase/client");
@@ -52,10 +66,10 @@ export const getPostsList = createServerFn({ method: "GET" })
 
 export const getPostDetail = createServerFn({ method: "GET" })
   .validator((data: { slug: string; locale?: "fr" | "en" }) =>
-    z.object({ slug: z.string(), locale: z.enum(["fr", "en"]).default("fr") }).parse(data),
+    z.object({ slug: z.string(), locale: z.enum(["fr", "en"]).optional() }).parse(data),
   )
   .handler(async ({ data: input }) => {
-    const locale = input.locale ?? "fr";
+    const locale = await getEffectiveLocale(input?.locale);
     try {
       const { supabase } = await import("@/integrations/supabase/client");
       const { data: allPublished, error } = await supabase
@@ -91,15 +105,15 @@ export const getRecentPosts = createServerFn({ method: "GET" })
   .validator((data?: { locale?: "fr" | "en"; limit?: number }) =>
     z
       .object({
-        locale: z.enum(["fr", "en"]).default("fr"),
+        locale: z.enum(["fr", "en"]).optional(),
         limit: z.number().int().min(1).max(10).default(3),
       })
       .optional()
       .parse(data ?? {}),
   )
   .handler(async ({ data: input = {} }) => {
-    const locale = input.locale ?? "fr";
-    const limit = input.limit ?? 3;
+    const locale = await getEffectiveLocale(input?.locale);
+    const limit = input?.limit ?? 3;
 
     try {
       const { supabase } = await import("@/integrations/supabase/client");
