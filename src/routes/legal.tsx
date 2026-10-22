@@ -116,7 +116,7 @@ function LegalPage() {
                 hello@volkastudio.com
               </h3>
               <p className="mt-2 text-sm text-foreground/70">
-                Cotonou, République du Bénin · Réponse garantie sous 1 jour ouvré.
+                Réponse garantie sous 1 jour ouvré.
               </p>
             </div>
             <a

@@ -156,7 +156,8 @@ export const setPostStatus = createServerFn({ method: "POST" })
 
     const { data, error } = await supabaseAdmin
       .from("posts")
-      .update(updates)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .update(updates as any)
       .eq("id", input.id)
       .select()
       .single();

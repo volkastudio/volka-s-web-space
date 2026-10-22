@@ -225,10 +225,11 @@ export const setCaseStatus = createServerFn({ method: "POST" })
 
 export const signUpload = createServerFn({ method: "POST" })
   .middleware([requireAdminAuth])
-  .validator((data: { filename: string }) =>
+  .validator((data: { filename: string; contentType?: string }) =>
     z
       .object({
         filename: z.string().min(1),
+        contentType: z.string().optional(),
       })
       .parse(data),
   )

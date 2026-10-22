@@ -48,20 +48,35 @@ function CasesIndex() {
     ? studies.map((s) => getStaticCaseStudy(s.slug, locale) || s)
     : getStaticCaseStudies(locale);
 
-  // Dynamically extract all unique disciplines stipulated on the actual projects
-  const uniqueDisciplines = Array.from(
-    new Set(baseList.map((s) => s.discipline?.trim()).filter(Boolean))
-  ) as string[];
+  // Fixed canonical filter categories — these never grow unboundedly
+  // We map raw discipline values to canonical categories for filtering
+  const canonicalFilters = [
+    t.casesIndex.allWork,
+    t.casesIndex.catBranding,
+    t.casesIndex.catDigital,
+    t.casesIndex.catStrategy,
+    t.casesIndex.catContent,
+  ];
 
-  const disciplines = [t.casesIndex.allWork, ...uniqueDisciplines];
+  // Mapping: raw discipline value → canonical category label
+  function getCanonical(discipline: string | undefined): string {
+    if (!discipline) return t.casesIndex.catBranding;
+    const d = discipline.toLowerCase();
+    if (d.includes("marque") || d.includes("brand") || d.includes("identit")) return t.casesIndex.catBranding;
+    if (d.includes("digital") || d.includes("platform") || d.includes("web") || d.includes("plateforme")) return t.casesIndex.catDigital;
+    if (d.includes("stratégie") || d.includes("strategy") || d.includes("growth") || d.includes("croissance")) return t.casesIndex.catStrategy;
+    if (d.includes("content") || d.includes("contenu") || d.includes("social")) return t.casesIndex.catContent;
+    return t.casesIndex.catBranding;
+  }
+
   const [filter, setFilter] = useState<string>(t.casesIndex.allWork);
 
-  // Reset/normalize filter if current selection doesn't exist in active list (e.g. on locale change)
-  const activeFilter = disciplines.includes(filter) ? filter : t.casesIndex.allWork;
+  // Normalize filter if it drifts out of the fixed set (e.g. on locale change)
+  const activeFilter = canonicalFilters.includes(filter) ? filter : t.casesIndex.allWork;
 
   const visible = activeFilter === t.casesIndex.allWork
     ? baseList
-    : baseList.filter((c) => c.discipline?.trim() === activeFilter);
+    : baseList.filter((c) => getCanonical(c.discipline) === activeFilter);
 
   return (
     <main className="bg-background text-foreground">
@@ -86,18 +101,18 @@ function CasesIndex() {
 
           <Reveal delay={200}>
             <div className="mt-12 flex flex-wrap gap-3">
-              {disciplines.map((discipline) => (
+              {canonicalFilters.map((cat) => (
                 <button
-                  key={discipline}
+                  key={cat}
                   type="button"
-                  onClick={() => setFilter(discipline)}
+                  onClick={() => setFilter(cat)}
                   className={`border px-5 py-2.5 text-xs font-medium uppercase tracking-[0.14em] transition-all duration-300 cursor-pointer ${
-                    activeFilter === discipline
+                    activeFilter === cat
                       ? "border-primary bg-primary text-primary-foreground shadow-sm"
                       : "border-border text-muted-foreground hover:border-primary hover:text-foreground"
                   }`}
                 >
-                  {discipline}
+                  {cat}
                 </button>
               ))}
             </div>

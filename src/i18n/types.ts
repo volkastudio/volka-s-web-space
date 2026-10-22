@@ -46,6 +46,7 @@ export interface Translations {
       number: string;
       title: string;
       description: string;
+      keywords?: string[];
     }[];
   };
   offers: {
@@ -94,6 +95,11 @@ export interface Translations {
     allWork: string;
     brandIdentity: string;
     digitalPlatform: string;
+    /** Fixed canonical filter categories */
+    catBranding: string;
+    catDigital: string;
+    catStrategy: string;
+    catContent: string;
   };
   footer: {
     statement: string;

@@ -122,6 +122,7 @@ export function resolvePost(
     cover_image: getMediaUrl(record.cover_path),
     cover_alt,
     tags: record.tags || [],
+    reading_time_minutes: record.reading_time_minutes,
     social_links: {
       tiktok: record.social_links?.tiktok || "",
       youtube: record.social_links?.youtube || "",
@@ -130,6 +131,7 @@ export function resolvePost(
       twitter: record.social_links?.twitter || "",
       facebook: record.social_links?.facebook || "",
     },
+    title,
     excerpt,
     body_md,
     seo_title,

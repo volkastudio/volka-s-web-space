@@ -14,6 +14,9 @@ export const initialPosts: PostRecord[] = [
       youtube: "https://www.youtube.com/@volkastudio",
       linkedin: "https://www.linkedin.com/company/volka-studio",
       tiktok: "https://www.tiktok.com/@volkastudio",
+      instagram: "",
+      twitter: "",
+      facebook: "",
     },
     translations: {
       fr: {
@@ -111,6 +114,10 @@ An authoritative website is a compound of distinct disciplines:
     social_links: {
       youtube: "https://www.youtube.com/@volkastudio",
       tiktok: "https://www.tiktok.com/@volkastudio",
+      linkedin: "",
+      instagram: "",
+      twitter: "",
+      facebook: "",
     },
     translations: {
       fr: {
@@ -183,6 +190,10 @@ Here, your core audience browses your brand on mid-range Android devices, on met
     social_links: {
       linkedin: "https://www.linkedin.com/company/volka-studio",
       youtube: "https://www.youtube.com/@volkastudio",
+      tiktok: "",
+      instagram: "",
+      twitter: "",
+      facebook: "",
     },
     translations: {
       fr: {

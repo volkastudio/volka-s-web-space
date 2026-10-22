@@ -157,7 +157,7 @@ function JournalArticlePage() {
           {/* Share & Actions Toolbar */}
           <div className="mt-8 flex items-center justify-between border-y border-border/60 py-4">
             <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
-              Volka Studio · Cotonou
+              Volka Studio
             </span>
 
             <button
@@ -198,7 +198,7 @@ function JournalArticlePage() {
           {/* Cross-channel links: YouTube, LinkedIn, TikTok */}
           {post.social_links && (
             <div className="mt-14 border-t border-border/60 pt-8">
-              <SocialContentLinks links={post.social_links} />
+              <SocialContentLinks socialLinks={post.social_links} />
             </div>
           )}
 

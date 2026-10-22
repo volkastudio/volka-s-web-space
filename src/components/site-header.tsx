@@ -268,7 +268,7 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" | 
               transition={{ duration: 0.4, delay: 0.35 }}
             >
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground/40">
-                Studio · Cotonou
+                Studio · Afrique de l'Ouest
               </p>
               <LanguageSwitcher />
             </motion.div>

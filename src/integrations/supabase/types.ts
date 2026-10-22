@@ -155,6 +155,48 @@ export type Database = {
         }
         Relationships: []
       }
+      posts: {
+        Row: {
+          id: string
+          slug: string
+          status: 'draft' | 'published'
+          published_at: string | null
+          cover_path: string | null
+          tags: string[]
+          reading_time_minutes: number
+          social_links: Json
+          translations: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          status?: 'draft' | 'published'
+          published_at?: string | null
+          cover_path?: string | null
+          tags?: string[]
+          reading_time_minutes?: number
+          social_links?: Json
+          translations: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          status?: 'draft' | 'published'
+          published_at?: string | null
+          cover_path?: string | null
+          tags?: string[]
+          reading_time_minutes?: number
+          social_links?: Json
+          translations?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

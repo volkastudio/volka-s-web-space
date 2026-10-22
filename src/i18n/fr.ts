@@ -12,7 +12,7 @@ export const fr: Translations = {
     switchLang: "English",
   },
   hero: {
-    eyebrow: "Partenaire croissance · Cotonou, Bénin",
+    eyebrow: "Partenaire croissance · Afrique de l'Ouest",
     titleLine1: "Les systèmes qui soutiennent",
     titleLine2: "la croissance.",
     subtitle:
@@ -22,7 +22,7 @@ export const fr: Translations = {
   },
   marquee: [
     "Perception",
-    "Cotonou, Bénin",
+    "Afrique de l'Ouest",
     "Acquisition",
     "Lagos, Nigeria",
     "Conversion",
@@ -59,30 +59,35 @@ export const fr: Translations = {
       {
         number: "01",
         title: "Perception",
+        keywords: ["Branding", "Identité visuelle", "Positionnement", "Message"],
         description:
           "Être compris et perçu à la hauteur de votre entreprise. Positionnement, identité visuelle, message et cohérence sur tous les points de contact.",
       },
       {
         number: "02",
         title: "Acquisition",
+        keywords: ["Réseaux sociaux", "Facebook Ads", "SEO", "Contenu"],
         description:
           "Attirer les bonnes personnes, pas seulement générer de la visibilité. Stratégie de contenu, réseaux sociaux, publicité payante et mesure des résultats.",
       },
       {
         number: "03",
         title: "Conversion",
+        keywords: ["Web design", "Landing pages", "WhatsApp", "Réservation"],
         description:
           "Transformer l'intérêt en demandes et en opportunités. Sites web, landing pages, parcours de conversion, WhatsApp et systèmes de prise de rendez-vous.",
       },
       {
         number: "04",
         title: "Ventes",
+        keywords: ["CRM", "Pipeline", "Relance", "Suivi"],
         description:
           "Mieux organiser le suivi pour faire avancer les opportunités. CRM, pipeline commercial, processus de relance et visibilité sur les étapes de vente.",
       },
       {
         number: "05",
         title: "Automatisation",
+        keywords: ["Workflows", "Intégrations", "IA", "Notifications"],
         description:
           "Réduire les tâches répétitives et connecter les outils utiles. Workflows automatisés, intégrations, notifications et assistants IA.",
       },
@@ -106,7 +111,7 @@ export const fr: Translations = {
     howItWorks: "Comment ça fonctionne",
     howItWorksText: "Vous partagez votre brief. Nous l'analysons puis vous répondons avec un regard lucide, un périmètre précis et un tarif ferme.",
     responseTime: "Délai de réponse",
-    responseTimeText: "Un jour ouvré, du lundi au vendredi, heure de Cotonou (GMT+1).",
+    responseTimeText: "Un jour ouvré, du lundi au vendredi (GMT+1).",
     directMail: "Je préfère nous contacter directement",
     step1: "01 — Vous",
     name: "Nom complet",
@@ -135,10 +140,14 @@ export const fr: Translations = {
     allWork: "Tous les projets",
     brandIdentity: "Identité de marque",
     digitalPlatform: "Plateforme digitale",
+    catBranding: "Identité & Marque",
+    catDigital: "Digital & Web",
+    catStrategy: "Stratégie & Croissance",
+    catContent: "Contenu & Social",
   },
   footer: {
     statement: "Partenaire croissance pour les entreprises ambitieuses.",
-    location: "Cotonou, Bénin · Rayonnement panafricain & international",
+    location: "Afrique de l'Ouest · Rayonnement panafricain & international",
     rights: "Tous droits réservés.",
     quickLinks: "Navigation",
     ctaEyebrow: "Un projet ambitieux en tête ?",
@@ -255,7 +264,7 @@ export const fr: Translations = {
     ctaHeadline: "L'ambition mérite d'être visible.",
     ctaBody: "Vous préparez le lancement d'une marque d'autorité ou la refonte d'une plateforme stratégique ? Parlons de vos objectifs.",
     ctaButton: "Initier un brief",
-    studioLine: "Studio numérique · Cotonou, Bénin",
+    studioLine: "Studio numérique · Afrique de l'Ouest",
     mediaTitle: "Contenus & analyses",
     mediaHeading: "Suivez nos réflexions en vidéo et sur les réseaux.",
     mediaSubheading: "Des éclairages sans détour sur la construction de systèmes de croissance en Afrique de l'Ouest.",

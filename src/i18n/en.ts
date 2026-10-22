@@ -12,7 +12,7 @@ export const en: Translations = {
     switchLang: "Français",
   },
   hero: {
-    eyebrow: "Growth systems partner · Cotonou, Bénin",
+    eyebrow: "Growth systems partner · West Africa",
     titleLine1: "We build the systems",
     titleLine2: "behind business growth.",
     subtitle:
@@ -22,7 +22,7 @@ export const en: Translations = {
   },
   marquee: [
     "Perception",
-    "Cotonou, Bénin",
+    "West Africa",
     "Acquisition",
     "Lagos, Nigeria",
     "Conversion",
@@ -59,30 +59,35 @@ export const en: Translations = {
       {
         number: "01",
         title: "Perception",
+        keywords: ["Branding", "Visual identity", "Positioning", "Messaging"],
         description:
           "Be understood and perceived at the level of your business. Positioning, visual identity, messaging and consistency across all touchpoints.",
       },
       {
         number: "02",
         title: "Acquisition",
+        keywords: ["Social media", "Facebook Ads", "SEO", "Content"],
         description:
           "Attract the right people, not just generate visibility. Content strategy, social media, paid advertising and performance measurement.",
       },
       {
         number: "03",
         title: "Conversion",
+        keywords: ["Web design", "Landing pages", "WhatsApp", "Booking"],
         description:
           "Turn interest into inquiries and opportunities. Websites, landing pages, conversion journeys, WhatsApp and booking systems.",
       },
       {
         number: "04",
         title: "Sales",
+        keywords: ["CRM", "Pipeline", "Follow-up", "Visibility"],
         description:
           "Better organise follow-up to move opportunities forward. CRM, sales pipeline, follow-up processes and deal-stage visibility.",
       },
       {
         number: "05",
         title: "Automation",
+        keywords: ["Workflows", "Integrations", "AI", "Notifications"],
         description:
           "Reduce repetitive tasks and connect useful tools. Automated workflows, integrations, notifications and AI assistants.",
       },
@@ -106,7 +111,7 @@ export const en: Translations = {
     howItWorks: "How this works",
     howItWorksText: "You send a brief. We read it, then reply with our honest read of the work, a scope and a price.",
     responseTime: "Response time",
-    responseTimeText: "One working day, Monday to Friday, Cotonou time (GMT+1).",
+    responseTimeText: "One working day, Monday to Friday (GMT+1).",
     directMail: "I'd rather contact you directly",
     step1: "01 — About you",
     name: "Full name",
@@ -135,10 +140,14 @@ export const en: Translations = {
     allWork: "All work",
     brandIdentity: "Brand identity",
     digitalPlatform: "Digital platform",
+    catBranding: "Identity & Brand",
+    catDigital: "Digital & Web",
+    catStrategy: "Strategy & Growth",
+    catContent: "Content & Social",
   },
   footer: {
     statement: "Growth systems partner for ambitious businesses.",
-    location: "Cotonou, Bénin · West Africa & Global",
+    location: "West Africa · Pan-African & global reach",
     rights: "All rights reserved.",
     quickLinks: "Navigation",
     ctaEyebrow: "Have something ambitious in mind?",
@@ -255,7 +264,7 @@ export const en: Translations = {
     ctaHeadline: "Ambition deserves to be visible.",
     ctaBody: "Preparing to launch an authoritative brand or rebuild a mission-critical platform? Tell us about your timeline.",
     ctaButton: "Start a project brief",
-    studioLine: "Digital Studio · Cotonou, Benin",
+    studioLine: "Digital Studio · West Africa",
     mediaTitle: "Content & Insights",
     mediaHeading: "Follow our thinking in video and on social platforms.",
     mediaSubheading: "Clear, practical commentary on engineering business growth systems across West Africa.",

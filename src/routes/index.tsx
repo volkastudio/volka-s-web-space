@@ -330,7 +330,18 @@ function Index() {
                 <Reveal key={item.number} delay={i * 80}>
                   <article className="grid gap-3 border-t border-border py-7 md:grid-cols-[70px_1fr_1.3fr] md:gap-6">
                     <span className="text-xs text-gold font-mono">{item.number}</span>
-                    <h3 className="font-display text-3xl md:text-4xl font-semibold md:font-bold">{item.title}</h3>
+                    <div>
+                      <h3 className="font-display text-3xl md:text-4xl font-semibold md:font-bold">{item.title}</h3>
+                      {item.keywords && item.keywords.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {item.keywords.map((kw) => (
+                            <span key={kw} className="rounded-full border border-border bg-muted/60 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                              {kw}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     <p className="max-w-md text-sm leading-relaxed text-muted-foreground">{item.description}</p>
                   </article>
                 </Reveal>
@@ -389,8 +400,8 @@ function Index() {
                       </span>
                     </div>
 
-                    <h3 className="mt-5 sm:mt-8 font-display text-2xl sm:text-3xl lg:text-4xl font-medium">{localized.name}</h3>
-                    <p className="mt-2 sm:mt-3 text-xl sm:text-2xl font-light text-primary lg:text-3xl">
+                    <h3 className="mt-5 sm:mt-8 font-display text-2xl sm:text-3xl lg:text-4xl font-semibold">{localized.name}</h3>
+                    <p className="mt-2 sm:mt-3 text-sm font-medium uppercase tracking-[0.12em] text-primary/80">
                       {formatPrice(offer.prices)}
                     </p>
                     <p className="mt-4 sm:mt-6 text-sm leading-relaxed text-foreground/75">
