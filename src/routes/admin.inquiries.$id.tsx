@@ -18,6 +18,7 @@ import {
   getAdminInquiry,
   updateInquiry,
   resendInquiryNotification,
+  resendInquiryAutoReply,
 } from "@/lib/admin/inquiries.functions";
 import type { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ function AdminInquiryDetailPage() {
   const [internalNotes, setInternalNotes] = React.useState<string>("");
   const [savingNotes, setSavingNotes] = React.useState(false);
   const [resendingMail, setResendingMail] = React.useState(false);
+  const [resendingAutoReply, setResendingAutoReply] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [feedback, setFeedback] = React.useState<string | null>(null);
 
@@ -126,17 +128,34 @@ function AdminInquiryDetailPage() {
     try {
       const res = await resendInquiryNotification({ data: { id } });
       if (res.notified) {
-        setFeedback("Internal notification email resent successfully!");
+        setFeedback("Notification interne renvoyée avec succès à l'équipe Studio !");
       } else {
-        setError(`Email notification failed: ${res.errors.join("; ")}`);
+        setError(`Échec de la notification email : ${res.errors.join("; ")}`);
       }
       // Reload inquiry state
       const reloaded = await getAdminInquiry({ data: { id } });
       setInquiry(reloaded);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Resend failed");
+      setError(err instanceof Error ? err.message : "Échec de l'envoi de l'alerte");
     } finally {
       setResendingMail(false);
+    }
+  };
+
+  const handleResendAutoReply = async () => {
+    setResendingAutoReply(true);
+    setError(null);
+    try {
+      const res = await resendInquiryAutoReply({ data: { id } });
+      if (res.success) {
+        setFeedback("Accusé de réception réexpédié au prospect !");
+      } else {
+        setError(`Échec de l'envoi au prospect : ${res.error || "erreur inconnue"}`);
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Échec du renvoi de l'accusé");
+    } finally {
+      setResendingAutoReply(false);
     }
   };
 
@@ -405,17 +424,17 @@ function AdminInquiryDetailPage() {
           {/* Email Notification Status */}
           <div className="rounded-sm border border-border bg-card p-6 shadow-sm space-y-3">
             <h2 className="font-display text-lg font-medium border-b border-border pb-3">
-              Notification Status
+              Statut des Notifications
             </h2>
 
-            <div className="text-xs space-y-2">
+            <div className="text-xs space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Studio Notified:</span>
+                <span className="text-muted-foreground">Alerte Studio :</span>
                 <span className="font-medium">
                   {inquiry.notified_at ? (
-                    <span className="text-green-600 dark:text-green-400">Sent</span>
+                    <span className="text-green-600 dark:text-green-400">Envoyée</span>
                   ) : (
-                    <span className="text-destructive">Pending / Failed</span>
+                    <span className="text-destructive">En attente / Échouée</span>
                   )}
                 </span>
               </div>
@@ -428,21 +447,33 @@ function AdminInquiryDetailPage() {
 
               {inquiry.notify_error && (
                 <div className="rounded bg-destructive/10 p-2 text-[11px] text-destructive">
-                  Error: {inquiry.notify_error}
+                  Erreur : {inquiry.notify_error}
                 </div>
               )}
 
-              <div className="pt-2">
+              <div className="pt-2 space-y-2">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   disabled={resendingMail}
                   onClick={handleResendNotification}
-                  className="w-full text-xs"
+                  className="w-full text-xs justify-center"
                 >
                   <RotateCw className={`size-3 mr-1.5 ${resendingMail ? "animate-spin" : ""}`} />
-                  {resendingMail ? "Sending..." : "Resend Email Notification"}
+                  {resendingMail ? "Envoi en cours..." : "Renvoyer alerte interne studio"}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  disabled={resendingAutoReply}
+                  onClick={handleResendAutoReply}
+                  className="w-full text-xs justify-center"
+                >
+                  <Send className={`size-3 mr-1.5 ${resendingAutoReply ? "animate-spin" : ""}`} />
+                  {resendingAutoReply ? "Envoi en cours..." : "Renvoyer accusé prospect"}
                 </Button>
               </div>
             </div>

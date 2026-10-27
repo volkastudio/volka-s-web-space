@@ -14,19 +14,33 @@ import { Route as AdminRouteRouteImport } from './routes/admin.route'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as StartRouteImport } from './routes/start'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAuditsRouteImport } from './routes/admin.audits'
+import { Route as AdminHealthRouteImport } from './routes/admin.health'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminSocialsRouteImport } from './routes/admin.socials'
+import { Route as AuditIndexRouteImport } from './routes/audit.index'
+import { Route as AuditConfirmationRouteImport } from './routes/audit.confirmation'
+import { Route as AuditDemandeRouteImport } from './routes/audit.demande'
+import { Route as AuditRapportRouteImport } from './routes/audit.rapport'
+import { Route as AuditVerifierRouteImport } from './routes/audit.verifier'
 import { Route as CasesIndexRouteImport } from './routes/cases.index'
 import { Route as CasesSlugRouteImport } from './routes/cases.$slug'
 import { Route as JournalIndexRouteImport } from './routes/journal.index'
 import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as OffresSlugRouteImport } from './routes/offres.$slug'
+import { Route as SalesSlugRouteImport } from './routes/sales.$slug'
+import { Route as SalesUnsubscribeRouteImport } from './routes/sales.unsubscribe'
+import { Route as AdminAuditsWorkbenchRouteImport } from './routes/admin.audits.workbench'
 import { Route as AdminCasesIndexRouteImport } from './routes/admin.cases.index'
 import { Route as AdminCasesIdRouteImport } from './routes/admin.cases.$id'
 import { Route as AdminInquiriesIndexRouteImport } from './routes/admin.inquiries.index'
 import { Route as AdminInquiriesIdRouteImport } from './routes/admin.inquiries.$id'
 import { Route as AdminPostsIndexRouteImport } from './routes/admin.posts.index'
 import { Route as AdminPostsIdRouteImport } from './routes/admin.posts.$id'
+import { Route as AdminSalesIndexRouteImport } from './routes/admin.sales.index'
+import { Route as AdminSalesBuyersRouteImport } from './routes/admin.sales.buyers'
+import { Route as AdminSalesEditorRouteImport } from './routes/admin.sales.editor'
+import { Route as AdminSalesSequencesRouteImport } from './routes/admin.sales.sequences'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -53,6 +67,16 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAuditsRoute = AdminAuditsRouteImport.update({
+  id: '/audits',
+  path: '/audits',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminHealthRoute = AdminHealthRouteImport.update({
+  id: '/health',
+  path: '/health',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -62,6 +86,31 @@ const AdminSocialsRoute = AdminSocialsRouteImport.update({
   id: '/socials',
   path: '/socials',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const AuditIndexRoute = AuditIndexRouteImport.update({
+  id: '/audit/',
+  path: '/audit/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditConfirmationRoute = AuditConfirmationRouteImport.update({
+  id: '/audit/confirmation',
+  path: '/audit/confirmation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditDemandeRoute = AuditDemandeRouteImport.update({
+  id: '/audit/demande',
+  path: '/audit/demande',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditRapportRoute = AuditRapportRouteImport.update({
+  id: '/audit/rapport',
+  path: '/audit/rapport',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditVerifierRoute = AuditVerifierRouteImport.update({
+  id: '/audit/verifier',
+  path: '/audit/verifier',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CasesIndexRoute = CasesIndexRouteImport.update({
   id: '/cases/',
@@ -87,6 +136,21 @@ const OffresSlugRoute = OffresSlugRouteImport.update({
   id: '/offres/$slug',
   path: '/offres/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SalesSlugRoute = SalesSlugRouteImport.update({
+  id: '/sales/$slug',
+  path: '/sales/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalesUnsubscribeRoute = SalesUnsubscribeRouteImport.update({
+  id: '/sales/unsubscribe',
+  path: '/sales/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAuditsWorkbenchRoute = AdminAuditsWorkbenchRouteImport.update({
+  id: '/workbench',
+  path: '/workbench',
+  getParentRoute: () => AdminAuditsRoute,
 } as any)
 const AdminCasesIndexRoute = AdminCasesIndexRouteImport.update({
   id: '/cases/',
@@ -118,45 +182,93 @@ const AdminPostsIdRoute = AdminPostsIdRouteImport.update({
   path: '/posts/$id',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminSalesIndexRoute = AdminSalesIndexRouteImport.update({
+  id: '/sales/',
+  path: '/sales/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSalesBuyersRoute = AdminSalesBuyersRouteImport.update({
+  id: '/sales/buyers',
+  path: '/sales/buyers',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSalesEditorRoute = AdminSalesEditorRouteImport.update({
+  id: '/sales/editor',
+  path: '/sales/editor',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSalesSequencesRoute = AdminSalesSequencesRouteImport.update({
+  id: '/sales/sequences',
+  path: '/sales/sequences',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/legal': typeof LegalRoute
   '/start': typeof StartRoute
+  '/admin/audits': typeof AdminAuditsRouteWithChildren
+  '/admin/health': typeof AdminHealthRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/socials': typeof AdminSocialsRoute
+  '/audit/confirmation': typeof AuditConfirmationRoute
+  '/audit/demande': typeof AuditDemandeRoute
+  '/audit/rapport': typeof AuditRapportRoute
+  '/audit/verifier': typeof AuditVerifierRoute
   '/cases/$slug': typeof CasesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/offres/$slug': typeof OffresSlugRoute
+  '/sales/$slug': typeof SalesSlugRoute
+  '/sales/unsubscribe': typeof SalesUnsubscribeRoute
   '/admin/': typeof AdminIndexRoute
+  '/audit/': typeof AuditIndexRoute
   '/cases/': typeof CasesIndexRoute
   '/journal/': typeof JournalIndexRoute
+  '/admin/audits/workbench': typeof AdminAuditsWorkbenchRoute
   '/admin/cases/$id': typeof AdminCasesIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
   '/admin/posts/$id': typeof AdminPostsIdRoute
+  '/admin/sales/buyers': typeof AdminSalesBuyersRoute
+  '/admin/sales/editor': typeof AdminSalesEditorRoute
+  '/admin/sales/sequences': typeof AdminSalesSequencesRoute
   '/admin/cases/': typeof AdminCasesIndexRoute
   '/admin/inquiries/': typeof AdminInquiriesIndexRoute
   '/admin/posts/': typeof AdminPostsIndexRoute
+  '/admin/sales/': typeof AdminSalesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/legal': typeof LegalRoute
   '/start': typeof StartRoute
+  '/admin/audits': typeof AdminAuditsRouteWithChildren
+  '/admin/health': typeof AdminHealthRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/socials': typeof AdminSocialsRoute
+  '/audit/confirmation': typeof AuditConfirmationRoute
+  '/audit/demande': typeof AuditDemandeRoute
+  '/audit/rapport': typeof AuditRapportRoute
+  '/audit/verifier': typeof AuditVerifierRoute
   '/cases/$slug': typeof CasesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/offres/$slug': typeof OffresSlugRoute
+  '/sales/$slug': typeof SalesSlugRoute
+  '/sales/unsubscribe': typeof SalesUnsubscribeRoute
   '/admin': typeof AdminIndexRoute
+  '/audit': typeof AuditIndexRoute
   '/cases': typeof CasesIndexRoute
   '/journal': typeof JournalIndexRoute
+  '/admin/audits/workbench': typeof AdminAuditsWorkbenchRoute
   '/admin/cases/$id': typeof AdminCasesIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
   '/admin/posts/$id': typeof AdminPostsIdRoute
+  '/admin/sales/buyers': typeof AdminSalesBuyersRoute
+  '/admin/sales/editor': typeof AdminSalesEditorRoute
+  '/admin/sales/sequences': typeof AdminSalesSequencesRoute
   '/admin/cases': typeof AdminCasesIndexRoute
   '/admin/inquiries': typeof AdminInquiriesIndexRoute
   '/admin/posts': typeof AdminPostsIndexRoute
+  '/admin/sales': typeof AdminSalesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -164,20 +276,34 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/legal': typeof LegalRoute
   '/start': typeof StartRoute
+  '/admin/audits': typeof AdminAuditsRouteWithChildren
+  '/admin/health': typeof AdminHealthRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/socials': typeof AdminSocialsRoute
+  '/audit/confirmation': typeof AuditConfirmationRoute
+  '/audit/demande': typeof AuditDemandeRoute
+  '/audit/rapport': typeof AuditRapportRoute
+  '/audit/verifier': typeof AuditVerifierRoute
   '/cases/$slug': typeof CasesSlugRoute
   '/journal/$slug': typeof JournalSlugRoute
   '/offres/$slug': typeof OffresSlugRoute
+  '/sales/$slug': typeof SalesSlugRoute
+  '/sales/unsubscribe': typeof SalesUnsubscribeRoute
   '/admin/': typeof AdminIndexRoute
+  '/audit/': typeof AuditIndexRoute
   '/cases/': typeof CasesIndexRoute
   '/journal/': typeof JournalIndexRoute
+  '/admin/audits/workbench': typeof AdminAuditsWorkbenchRoute
   '/admin/cases/$id': typeof AdminCasesIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
   '/admin/posts/$id': typeof AdminPostsIdRoute
+  '/admin/sales/buyers': typeof AdminSalesBuyersRoute
+  '/admin/sales/editor': typeof AdminSalesEditorRoute
+  '/admin/sales/sequences': typeof AdminSalesSequencesRoute
   '/admin/cases/': typeof AdminCasesIndexRoute
   '/admin/inquiries/': typeof AdminInquiriesIndexRoute
   '/admin/posts/': typeof AdminPostsIndexRoute
+  '/admin/sales/': typeof AdminSalesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -186,59 +312,101 @@ export interface FileRouteTypes {
     | '/admin'
     | '/legal'
     | '/start'
+    | '/admin/audits'
+    | '/admin/health'
     | '/admin/login'
     | '/admin/socials'
+    | '/audit/confirmation'
+    | '/audit/demande'
+    | '/audit/rapport'
+    | '/audit/verifier'
     | '/cases/$slug'
     | '/journal/$slug'
     | '/offres/$slug'
+    | '/sales/$slug'
+    | '/sales/unsubscribe'
     | '/admin/'
+    | '/audit/'
     | '/cases/'
     | '/journal/'
+    | '/admin/audits/workbench'
     | '/admin/cases/$id'
     | '/admin/inquiries/$id'
     | '/admin/posts/$id'
+    | '/admin/sales/buyers'
+    | '/admin/sales/editor'
+    | '/admin/sales/sequences'
     | '/admin/cases/'
     | '/admin/inquiries/'
     | '/admin/posts/'
+    | '/admin/sales/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/legal'
     | '/start'
+    | '/admin/audits'
+    | '/admin/health'
     | '/admin/login'
     | '/admin/socials'
+    | '/audit/confirmation'
+    | '/audit/demande'
+    | '/audit/rapport'
+    | '/audit/verifier'
     | '/cases/$slug'
     | '/journal/$slug'
     | '/offres/$slug'
+    | '/sales/$slug'
+    | '/sales/unsubscribe'
     | '/admin'
+    | '/audit'
     | '/cases'
     | '/journal'
+    | '/admin/audits/workbench'
     | '/admin/cases/$id'
     | '/admin/inquiries/$id'
     | '/admin/posts/$id'
+    | '/admin/sales/buyers'
+    | '/admin/sales/editor'
+    | '/admin/sales/sequences'
     | '/admin/cases'
     | '/admin/inquiries'
     | '/admin/posts'
+    | '/admin/sales'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/legal'
     | '/start'
+    | '/admin/audits'
+    | '/admin/health'
     | '/admin/login'
     | '/admin/socials'
+    | '/audit/confirmation'
+    | '/audit/demande'
+    | '/audit/rapport'
+    | '/audit/verifier'
     | '/cases/$slug'
     | '/journal/$slug'
     | '/offres/$slug'
+    | '/sales/$slug'
+    | '/sales/unsubscribe'
     | '/admin/'
+    | '/audit/'
     | '/cases/'
     | '/journal/'
+    | '/admin/audits/workbench'
     | '/admin/cases/$id'
     | '/admin/inquiries/$id'
     | '/admin/posts/$id'
+    | '/admin/sales/buyers'
+    | '/admin/sales/editor'
+    | '/admin/sales/sequences'
     | '/admin/cases/'
     | '/admin/inquiries/'
     | '/admin/posts/'
+    | '/admin/sales/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -246,9 +414,16 @@ export interface RootRouteChildren {
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   LegalRoute: typeof LegalRoute
   StartRoute: typeof StartRoute
+  AuditConfirmationRoute: typeof AuditConfirmationRoute
+  AuditDemandeRoute: typeof AuditDemandeRoute
+  AuditRapportRoute: typeof AuditRapportRoute
+  AuditVerifierRoute: typeof AuditVerifierRoute
   CasesSlugRoute: typeof CasesSlugRoute
   JournalSlugRoute: typeof JournalSlugRoute
   OffresSlugRoute: typeof OffresSlugRoute
+  SalesSlugRoute: typeof SalesSlugRoute
+  SalesUnsubscribeRoute: typeof SalesUnsubscribeRoute
+  AuditIndexRoute: typeof AuditIndexRoute
   CasesIndexRoute: typeof CasesIndexRoute
   JournalIndexRoute: typeof JournalIndexRoute
 }
@@ -290,6 +465,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/audits': {
+      id: '/admin/audits'
+      path: '/audits'
+      fullPath: '/admin/audits'
+      preLoaderRoute: typeof AdminAuditsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/health': {
+      id: '/admin/health'
+      path: '/health'
+      fullPath: '/admin/health'
+      preLoaderRoute: typeof AdminHealthRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
@@ -303,6 +492,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/socials'
       preLoaderRoute: typeof AdminSocialsRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/audit/': {
+      id: '/audit/'
+      path: '/audit'
+      fullPath: '/audit/'
+      preLoaderRoute: typeof AuditIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit/confirmation': {
+      id: '/audit/confirmation'
+      path: '/audit/confirmation'
+      fullPath: '/audit/confirmation'
+      preLoaderRoute: typeof AuditConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit/demande': {
+      id: '/audit/demande'
+      path: '/audit/demande'
+      fullPath: '/audit/demande'
+      preLoaderRoute: typeof AuditDemandeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit/rapport': {
+      id: '/audit/rapport'
+      path: '/audit/rapport'
+      fullPath: '/audit/rapport'
+      preLoaderRoute: typeof AuditRapportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit/verifier': {
+      id: '/audit/verifier'
+      path: '/audit/verifier'
+      fullPath: '/audit/verifier'
+      preLoaderRoute: typeof AuditVerifierRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/cases/': {
       id: '/cases/'
@@ -338,6 +562,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/offres/$slug'
       preLoaderRoute: typeof OffresSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/sales/$slug': {
+      id: '/sales/$slug'
+      path: '/sales/$slug'
+      fullPath: '/sales/$slug'
+      preLoaderRoute: typeof SalesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sales/unsubscribe': {
+      id: '/sales/unsubscribe'
+      path: '/sales/unsubscribe'
+      fullPath: '/sales/unsubscribe'
+      preLoaderRoute: typeof SalesUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/audits/workbench': {
+      id: '/admin/audits/workbench'
+      path: '/workbench'
+      fullPath: '/admin/audits/workbench'
+      preLoaderRoute: typeof AdminAuditsWorkbenchRouteImport
+      parentRoute: typeof AdminAuditsRoute
     }
     '/admin/cases/': {
       id: '/admin/cases/'
@@ -381,31 +626,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPostsIdRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/sales/': {
+      id: '/admin/sales/'
+      path: '/sales'
+      fullPath: '/admin/sales/'
+      preLoaderRoute: typeof AdminSalesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/sales/buyers': {
+      id: '/admin/sales/buyers'
+      path: '/sales/buyers'
+      fullPath: '/admin/sales/buyers'
+      preLoaderRoute: typeof AdminSalesBuyersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/sales/editor': {
+      id: '/admin/sales/editor'
+      path: '/sales/editor'
+      fullPath: '/admin/sales/editor'
+      preLoaderRoute: typeof AdminSalesEditorRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/sales/sequences': {
+      id: '/admin/sales/sequences'
+      path: '/sales/sequences'
+      fullPath: '/admin/sales/sequences'
+      preLoaderRoute: typeof AdminSalesSequencesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
+interface AdminAuditsRouteChildren {
+  AdminAuditsWorkbenchRoute: typeof AdminAuditsWorkbenchRoute
+}
+
+const AdminAuditsRouteChildren: AdminAuditsRouteChildren = {
+  AdminAuditsWorkbenchRoute: AdminAuditsWorkbenchRoute,
+}
+
+const AdminAuditsRouteWithChildren = AdminAuditsRoute._addFileChildren(
+  AdminAuditsRouteChildren,
+)
+
 interface AdminRouteRouteChildren {
+  AdminAuditsRoute: typeof AdminAuditsRouteWithChildren
+  AdminHealthRoute: typeof AdminHealthRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminSocialsRoute: typeof AdminSocialsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminCasesIdRoute: typeof AdminCasesIdRoute
   AdminInquiriesIdRoute: typeof AdminInquiriesIdRoute
   AdminPostsIdRoute: typeof AdminPostsIdRoute
+  AdminSalesBuyersRoute: typeof AdminSalesBuyersRoute
+  AdminSalesEditorRoute: typeof AdminSalesEditorRoute
+  AdminSalesSequencesRoute: typeof AdminSalesSequencesRoute
   AdminCasesIndexRoute: typeof AdminCasesIndexRoute
   AdminInquiriesIndexRoute: typeof AdminInquiriesIndexRoute
   AdminPostsIndexRoute: typeof AdminPostsIndexRoute
+  AdminSalesIndexRoute: typeof AdminSalesIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAuditsRoute: AdminAuditsRouteWithChildren,
+  AdminHealthRoute: AdminHealthRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminSocialsRoute: AdminSocialsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminCasesIdRoute: AdminCasesIdRoute,
   AdminInquiriesIdRoute: AdminInquiriesIdRoute,
   AdminPostsIdRoute: AdminPostsIdRoute,
+  AdminSalesBuyersRoute: AdminSalesBuyersRoute,
+  AdminSalesEditorRoute: AdminSalesEditorRoute,
+  AdminSalesSequencesRoute: AdminSalesSequencesRoute,
   AdminCasesIndexRoute: AdminCasesIndexRoute,
   AdminInquiriesIndexRoute: AdminInquiriesIndexRoute,
   AdminPostsIndexRoute: AdminPostsIndexRoute,
+  AdminSalesIndexRoute: AdminSalesIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
@@ -417,9 +714,16 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRouteRoute: AdminRouteRouteWithChildren,
   LegalRoute: LegalRoute,
   StartRoute: StartRoute,
+  AuditConfirmationRoute: AuditConfirmationRoute,
+  AuditDemandeRoute: AuditDemandeRoute,
+  AuditRapportRoute: AuditRapportRoute,
+  AuditVerifierRoute: AuditVerifierRoute,
   CasesSlugRoute: CasesSlugRoute,
   JournalSlugRoute: JournalSlugRoute,
   OffresSlugRoute: OffresSlugRoute,
+  SalesSlugRoute: SalesSlugRoute,
+  SalesUnsubscribeRoute: SalesUnsubscribeRoute,
+  AuditIndexRoute: AuditIndexRoute,
   CasesIndexRoute: CasesIndexRoute,
   JournalIndexRoute: JournalIndexRoute,
 }

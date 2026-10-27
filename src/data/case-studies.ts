@@ -270,8 +270,6 @@ export const initialCaseStudies: CaseStudyRecord[] = [
         tagline: "A portfolio that closes commissions.",
         discipline: "Brand identity",
         sector: "Architecture",
-        year: "2024",
-        location: "Abidjan, Côte d'Ivoire",
         imageAlt: "Atelier Noir architecture portfolio website on a large monitor in a concrete office",
         summary:
           "An architecture practice whose work outclassed every way it was being presented.",

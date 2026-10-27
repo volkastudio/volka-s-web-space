@@ -18,14 +18,22 @@ export const DEFAULT_STUDIO_SOCIALS: StudioSocialLinks = {
   youtube: "https://www.youtube.com/@volkastudio",
   twitter: "https://x.com/volkastudio",
   facebook: "",
-  whatsapp: "https://wa.me/22900000000?text=Bonjour%20Volka%2C%20je%20voudrais%20d%C3%A9marrer%20un%20projet.",
+  whatsapp: "",
   email: "hello@volkastudio.com",
 };
 
 const STORAGE_KEY = "volka_studio_socials";
 
 /**
- * Retrieves the current studio social links with fallbacks.
+ * Checks whether a WhatsApp string is a fake or empty placeholder.
+ */
+export function isPlaceholderWhatsApp(url: string | null | undefined): boolean {
+  if (!url || !url.trim()) return true;
+  return url.includes("22900000000") || url.includes("00000000");
+}
+
+/**
+ * Retrieves the current studio social links with fallbacks and placeholder stripping.
  */
 export function getStudioSocials(): StudioSocialLinks {
   if (typeof window === "undefined") {
@@ -35,7 +43,11 @@ export function getStudioSocials(): StudioSocialLinks {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_STUDIO_SOCIALS;
     const parsed = JSON.parse(raw);
-    return { ...DEFAULT_STUDIO_SOCIALS, ...parsed };
+    const sanitized: StudioSocialLinks = { ...DEFAULT_STUDIO_SOCIALS, ...parsed };
+    if (isPlaceholderWhatsApp(sanitized.whatsapp)) {
+      sanitized.whatsapp = "";
+    }
+    return sanitized;
   } catch {
     return DEFAULT_STUDIO_SOCIALS;
   }

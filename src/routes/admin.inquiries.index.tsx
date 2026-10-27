@@ -20,7 +20,7 @@ export const Route = createFileRoute("/admin/inquiries/")({
   head: () => ({
     meta: [
       { name: "robots", content: "noindex, nofollow" },
-      { title: "Inquiries Inbox — Volka Admin" },
+      { title: "Boîte de Prospects — Volka Admin" },
     ],
   }),
   component: AdminInquiriesIndexPage,
@@ -153,19 +153,19 @@ function AdminInquiriesIndexPage() {
         <div>
           <div className="flex items-center gap-2">
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">
-              Inbound Pipeline
+              Pipeline de Prospects
             </p>
             {unreadCount > 0 && (
               <span className="rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold text-primary">
-                {unreadCount} new
+                {unreadCount} nouveau{unreadCount > 1 ? "x" : ""}
               </span>
             )}
           </div>
           <h1 className="mt-2 font-display text-4xl font-light md:text-5xl">
-            Inquiries Inbox
+            Boîte de Prospects
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Review client briefs submitted via the /start onboarding flow.
+            Consultez les briefs clients soumis via le formulaire /démarrer.
           </p>
         </div>
 
@@ -176,7 +176,7 @@ function AdminInquiriesIndexPage() {
           className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground shadow-sm transition-colors hover:border-gold hover:text-gold disabled:opacity-40"
         >
           <Download className="size-4" />
-          <span>Export CSV</span>
+          <span>Exporter CSV</span>
         </button>
       </div>
 
@@ -195,7 +195,7 @@ function AdminInquiriesIndexPage() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search name, company, email..."
+            placeholder="Rechercher nom, entreprise, email..."
             className="w-full rounded-sm border border-border bg-card pl-9 pr-4 py-2 text-xs focus:border-gold focus:outline-none"
           />
         </div>
@@ -225,11 +225,11 @@ function AdminInquiriesIndexPage() {
           <table className="w-full text-left text-xs">
             <thead className="border-b border-border bg-muted/40 uppercase tracking-[0.14em] text-muted-foreground">
               <tr>
-                <th className="px-5 py-3.5">Client & Company</th>
-                <th className="px-5 py-3.5">Offer & Scope</th>
+                <th className="px-5 py-3.5">Client &amp; Entreprise</th>
+                <th className="px-5 py-3.5">Offre &amp; Calendrier</th>
                 <th className="px-5 py-3.5">Budget</th>
-                <th className="px-5 py-3.5">Received</th>
-                <th className="px-5 py-3.5">Status</th>
+                <th className="px-5 py-3.5">Reçu le</th>
+                <th className="px-5 py-3.5">Statut</th>
                 <th className="px-5 py-3.5 text-right">Action</th>
               </tr>
             </thead>
@@ -237,13 +237,13 @@ function AdminInquiriesIndexPage() {
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
-                    Loading inquiries...
+                    Chargement des prospects...
                   </td>
                 </tr>
               ) : inquiries.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
-                    No inquiries found.
+                    Aucun prospect trouvé.
                   </td>
                 </tr>
               ) : (
@@ -309,7 +309,7 @@ function AdminInquiriesIndexPage() {
                           params={{ id: inquiry.id }}
                           className="inline-flex items-center gap-1 font-medium text-gold hover:underline"
                         >
-                          <span>Review</span>
+                          <span>Consulter</span>
                           <ChevronRight className="size-3.5" />
                         </Link>
                       </td>

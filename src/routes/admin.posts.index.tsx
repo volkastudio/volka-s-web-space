@@ -52,7 +52,7 @@ function AdminPostsIndexPage() {
       setDbReady(res.dbReady);
       setError(null);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load articles");
+      setError(err instanceof Error ? err.message : "Erreur lors du chargement des articles");
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ function AdminPostsIndexPage() {
         prev.map((p) => (p.id === item.id ? { ...p, status: nextStatus } : p)),
       );
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to change status");
+      setError(err instanceof Error ? err.message : "Impossible de modifier le statut");
     } finally {
       setActionLoading(null);
     }
@@ -80,7 +80,7 @@ function AdminPostsIndexPage() {
 
   const handleDelete = async (item: PostRecord) => {
     const title = item.translations.fr.title || item.slug;
-    if (!confirm(`Are you sure you want to delete "${title}"? This cannot be undone.`)) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer l'article "${title}" ? Cette action est irréversible.`)) {
       return;
     }
 
@@ -90,7 +90,7 @@ function AdminPostsIndexPage() {
       await deletePost({ data: { id: item.id } });
       setPosts((prev) => prev.filter((p) => p.id !== item.id));
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to delete article");
+      setError(err instanceof Error ? err.message : "Impossible de supprimer l'article");
     } finally {
       setActionLoading(null);
     }
@@ -123,7 +123,7 @@ function AdminPostsIndexPage() {
             Journal & Articles
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Write thought-leadership essays, publish guides, and attach related video/social content.
+            Rédigez les analyses stratégiques, publiez vos guides et associez les formats vidéo et réseaux sociaux.
           </p>
         </div>
 
@@ -133,7 +133,7 @@ function AdminPostsIndexPage() {
           className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
         >
           <Plus className="size-4 text-gold" />
-          <span>New article</span>
+          <span>Nouvel article</span>
         </Link>
       </div>
 
@@ -142,14 +142,14 @@ function AdminPostsIndexPage() {
         <div className="mt-6 rounded-lg border border-gold/30 bg-gold/10 p-4 text-xs text-foreground">
           <div className="flex items-center gap-2 font-medium text-gold">
             <Database className="size-4" />
-            <span>Supabase `posts` table migration recommended</span>
+            <span>Migration de la table Supabase `posts` recommandée</span>
           </div>
           <p className="mt-1 text-muted-foreground">
-            Showing static reference articles. Run migration{" "}
+            Affichage des articles de référence statiques. Exécutez la migration{" "}
             <code className="rounded bg-card px-1 py-0.5 text-foreground font-mono">
               20261021180000_phase6_blog.sql
             </code>{" "}
-            in your Supabase SQL Editor to enable full DB persistence.
+            dans l'éditeur SQL Supabase pour activer la persistance complète en base.
           </p>
         </div>
       )}
@@ -169,24 +169,28 @@ function AdminPostsIndexPage() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by title, tag, slug..."
+            placeholder="Rechercher par titre, étiquette, slug..."
             className="w-full rounded-sm border border-border bg-card pl-9 pr-4 py-2 text-xs focus:border-gold focus:outline-none"
           />
         </div>
 
         <div className="flex items-center gap-1 rounded-sm border border-border bg-card p-1 text-xs">
-          {(["all", "published", "draft"] as const).map((filter) => (
+          {([
+            { id: "all", label: "Tous" },
+            { id: "published", label: "Publiés" },
+            { id: "draft", label: "Brouillons" },
+          ] as const).map((filter) => (
             <button
-              key={filter}
+              key={filter.id}
               type="button"
-              onClick={() => setStatusFilter(filter)}
-              className={`rounded px-3 py-1 font-medium capitalize transition-colors ${
-                statusFilter === filter
+              onClick={() => setStatusFilter(filter.id)}
+              className={`rounded px-3 py-1 font-medium transition-colors ${
+                statusFilter === filter.id
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {filter}
+              {filter.label}
             </button>
           ))}
         </div>
@@ -196,11 +200,11 @@ function AdminPostsIndexPage() {
       <div className="mt-6 overflow-hidden rounded-lg border border-border bg-card">
         {loading ? (
           <div className="p-12 text-center text-xs text-muted-foreground">
-            Loading articles...
+            Chargement des articles...
           </div>
         ) : filteredPosts.length === 0 ? (
           <div className="p-12 text-center text-xs text-muted-foreground">
-            No articles match your search or filter.
+            Aucun article ne correspond à votre recherche.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -208,10 +212,10 @@ function AdminPostsIndexPage() {
               <thead className="border-b border-border bg-background/50 text-[11px] uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="px-6 py-4 font-medium">Article</th>
-                  <th className="px-6 py-4 font-medium">Status</th>
-                  <th className="px-6 py-4 font-medium">Tags</th>
-                  <th className="px-6 py-4 font-medium">Social Links</th>
-                  <th className="px-6 py-4 font-medium">Languages</th>
+                  <th className="px-6 py-4 font-medium">Statut</th>
+                  <th className="px-6 py-4 font-medium">Étiquettes</th>
+                  <th className="px-6 py-4 font-medium">Réseaux associés</th>
+                  <th className="px-6 py-4 font-medium">Langues</th>
                   <th className="px-6 py-4 font-medium">Date</th>
                   <th className="px-6 py-4 text-right font-medium">Actions</th>
                 </tr>
@@ -264,12 +268,12 @@ function AdminPostsIndexPage() {
                           {post.status === "published" ? (
                             <>
                               <CheckCircle className="size-3" />
-                              <span>Published</span>
+                              <span>Publié</span>
                             </>
                           ) : (
                             <>
                               <Clock className="size-3" />
-                              <span>Draft</span>
+                              <span>Brouillon</span>
                             </>
                           )}
                         </button>
@@ -373,9 +377,13 @@ function AdminPostsIndexPage() {
                       {/* Date */}
                       <td className="px-6 py-4 text-muted-foreground text-[11px]">
                         {post.published_at ? (
-                          new Date(post.published_at).toLocaleDateString()
+                          new Date(post.published_at).toLocaleDateString("fr-FR", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
                         ) : (
-                          <span>Unscheduled</span>
+                          <span>Non planifié</span>
                         )}
                       </td>
 
@@ -387,7 +395,7 @@ function AdminPostsIndexPage() {
                               to="/journal/$slug"
                               params={{ slug: post.slug }}
                               target="_blank"
-                              title="View published article"
+                              title="Consulter l'article en ligne"
                               className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                             >
                               <ExternalLink className="size-3.5" />
@@ -396,7 +404,7 @@ function AdminPostsIndexPage() {
                           <Link
                             to="/admin/posts/$id"
                             params={{ id: post.id }}
-                            title="Edit article"
+                            title="Modifier l'article"
                             className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
                           >
                             <Edit2 className="size-3.5" />
@@ -405,7 +413,7 @@ function AdminPostsIndexPage() {
                             type="button"
                             disabled={isLoading}
                             onClick={() => handleDelete(post)}
-                            title="Delete article"
+                            title="Supprimer l'article"
                             className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                           >
                             <Trash2 className="size-3.5" />

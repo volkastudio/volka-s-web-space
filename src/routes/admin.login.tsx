@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router"
 import { z } from "zod";
 import { Lock, Mail, ArrowRight, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { adminSignIn } from "@/lib/admin/health.functions";
 import { useAdminAuth } from "@/lib/admin/admin-auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/admin/login")({
   head: () => ({
     meta: [
       { name: "robots", content: "noindex, nofollow" },
-      { title: "Admin Login — Volka Studio" },
+      { title: "Connexion Studio — Volka Studio" },
     ],
   }),
   component: AdminLoginPage,
@@ -43,7 +44,7 @@ function AdminLoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError("Please enter both email and password.");
+      setError("Veuillez saisir votre adresse email et votre mot de passe.");
       return;
     }
 
@@ -51,40 +52,29 @@ function AdminLoginPage() {
     setError(null);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
+      const result = await adminSignIn({
+        data: {
+          email: email.trim(),
+          password,
+        },
       });
 
-      if (signInError) {
-        setError(signInError.message);
+      if (!result.ok) {
+        setError(result.error);
         setLoading(false);
         return;
       }
 
-      if (data.user) {
-        // Refresh admin context to check admin_users table
-        await refresh();
+      // Synchronize client-side Supabase session
+      await supabase.auth.setSession({
+        access_token: result.session.access_token,
+        refresh_token: result.session.refresh_token,
+      });
 
-        // Check if admin status is confirmed
-        const { data: adminRecord, error: checkErr } = await supabase
-          .from("admin_users")
-          .select("user_id")
-          .eq("user_id", data.user.id)
-          .maybeSingle();
-
-        if (checkErr || !adminRecord) {
-          setError(
-            "Access denied. This account does not have administrator privileges.",
-          );
-          setLoading(false);
-          return;
-        }
-
-        navigate({ to: search.redirect || "/admin", replace: true });
-      }
+      await refresh();
+      navigate({ to: search.redirect || "/admin", replace: true });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to sign in. Please try again.";
+      const msg = err instanceof Error ? err.message : "Erreur de connexion. Veuillez réessayer.";
       setError(msg);
       setLoading(false);
     }
@@ -98,10 +88,10 @@ function AdminLoginPage() {
             VOLKA
           </span>
           <p className="mt-2 text-xs font-medium uppercase tracking-[0.25em] text-gold">
-            Studio Back Office
+            Administration Studio
           </p>
-          <p className="mt-3 text-sm font-light text-primary-foreground/60">
-            Sign in with your studio administrator account.
+          <p className="mt-3 text-sm font-light text-primary-foreground/70">
+            Connectez-vous avec votre compte administrateur habilité.
           </p>
         </div>
 
@@ -115,7 +105,7 @@ function AdminLoginPage() {
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <div className="space-y-2">
             <Label htmlFor="admin-email" className="text-xs uppercase tracking-[0.14em] text-primary-foreground/80">
-              Email address
+              Adresse email
             </Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-primary-foreground/40" />
@@ -133,7 +123,7 @@ function AdminLoginPage() {
 
           <div className="space-y-2">
             <Label htmlFor="admin-password" className="text-xs uppercase tracking-[0.14em] text-primary-foreground/80">
-              Password
+              Mot de passe
             </Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-primary-foreground/40" />
@@ -159,11 +149,11 @@ function AdminLoginPage() {
             {loading ? (
               <span className="flex items-center gap-2">
                 <span className="size-3.5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                Signing in...
+                Vérification des accès...
               </span>
             ) : (
               <span className="flex items-center justify-center gap-2">
-                <span>Enter studio back office</span>
+                <span>Accéder au back office</span>
                 <ArrowRight className="size-4" />
               </span>
             )}
@@ -175,7 +165,7 @@ function AdminLoginPage() {
             href="/"
             className="text-xs text-primary-foreground/50 transition-colors hover:text-gold"
           >
-            ← Back to public website
+            ← Retour au site public
           </a>
         </div>
       </div>

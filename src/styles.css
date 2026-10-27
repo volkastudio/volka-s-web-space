@@ -66,11 +66,19 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   /* Brand colours */
+  --color-forest-black: var(--forest-black);
   --color-forest: var(--forest);
+  --color-pine: var(--forest);
   --color-mint: var(--mint);
   --color-paper: var(--paper);
   --color-ivory: var(--ivory);
+  --color-terracotta: var(--terracotta);
+  --color-ochre: var(--gold);
   --color-gold: var(--gold);
+  /* Semantic status tokens */
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-error: var(--status-error);
   /* Fonts */
   --font-display: "Cormorant Garamond", Georgia, serif;
   --font-sans: "DM Sans Variable", "DM Sans", sans-serif;
@@ -80,36 +88,42 @@
   --radius: 0.25rem;
   /* Backgrounds & surfaces */
   --background: oklch(0.985 0.016 103.4);
-  --foreground: oklch(0.18 0.033 171.7);
+  --foreground: oklch(0.18 0.033 148.2);
   --card: oklch(0.97 0.018 77.7);
-  --card-foreground: oklch(0.18 0.033 171.7);
+  --card-foreground: oklch(0.18 0.033 148.2);
   --popover: oklch(0.985 0.016 103.4);
-  --popover-foreground: oklch(0.18 0.033 171.7);
-  /* Brand primary: deep forest green */
+  --popover-foreground: oklch(0.18 0.033 148.2);
+  /* Brand primary: deep forest green / pine */
   --primary: oklch(0.28 0.055 172.6);
   --primary-foreground: oklch(0.985 0.016 103.4);
   /* Secondary: soft mint */
   --secondary: oklch(0.82 0.055 168.8);
-  --secondary-foreground: oklch(0.22 0.045 172.6);
+  --secondary-foreground: oklch(0.18 0.033 148.2);
   /* Muted */
   --muted: oklch(0.93 0.017 85.8);
   --muted-foreground: oklch(0.48 0.018 81.2);
-  /* Accent: gold */
+  /* Accent: gold / ochre */
   --accent: oklch(0.69 0.151 65.8);
-  --accent-foreground: oklch(0.18 0.033 171.7);
-  /* Destructive */
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --accent-foreground: oklch(0.18 0.033 148.2);
+  /* Destructive: terracotta */
+  --destructive: oklch(0.53 0.135 48.5);
+  --destructive-foreground: oklch(0.985 0.016 103.4);
   /* Borders & inputs */
   --border: oklch(0.82 0.018 85.8);
   --input: oklch(0.82 0.018 85.8);
   --ring: oklch(0.69 0.151 65.8);
-  /* Named brand colours */
-  --forest: oklch(0.18 0.033 148.2);
-  --mint: oklch(0.82 0.055 168.8);
-  --paper: oklch(0.985 0.016 103.4);
-  --ivory: oklch(0.97 0.018 77.7);
-  --gold: oklch(0.69 0.151 65.8);
+  /* Named brand colours (Volka - Color Palette.png) */
+  --forest-black: oklch(0.18 0.033 148.2); /* #0E1C12 */
+  --forest: oklch(0.28 0.055 172.6);       /* #01322D */
+  --mint: oklch(0.82 0.055 168.8);         /* #AAD4C6 */
+  --paper: oklch(0.985 0.016 103.4);       /* #FEFFF1 */
+  --ivory: oklch(0.97 0.018 77.7);         /* #FCF5EB */
+  --terracotta: oklch(0.53 0.135 48.5);    /* #A45727 */
+  --gold: oklch(0.69 0.151 65.8);          /* #C8853A */
+  /* Semantic Status Aliases */
+  --status-success: oklch(0.82 0.055 168.8);
+  --status-warning: oklch(0.69 0.151 65.8);
+  --status-error: oklch(0.53 0.135 48.5);
   /* Admin sidebar (Phase 5) — neutral blue-slate to distinguish from brand */
   --sidebar: oklch(0.984 0.003 247.858);
   --sidebar-foreground: oklch(0.129 0.042 264.695);

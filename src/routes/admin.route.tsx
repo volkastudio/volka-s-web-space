@@ -2,6 +2,7 @@ import * as React from "react";
 import { createFileRoute, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { AdminAuthProvider, useAdminAuth } from "@/lib/admin/admin-auth-context";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { AdminTopBar } from "@/components/admin/admin-topbar";
 import { listAdminInquiries } from "@/lib/admin/inquiries.functions";
 
 export const Route = createFileRoute("/admin")({
@@ -78,7 +79,7 @@ function AdminLayoutInner() {
           <span className="font-display text-3xl font-light tracking-[0.14em]">VOLKA</span>
           <div className="mt-4 flex items-center justify-center gap-2 text-xs uppercase tracking-[0.2em] text-gold">
             <span className="size-2 rounded-full bg-gold animate-ping" />
-            <span>Verifying admin credentials...</span>
+            <span>Vérification des accès administrateur...</span>
           </div>
         </div>
       </div>
@@ -93,8 +94,11 @@ function AdminLayoutInner() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground lg:flex-row">
       <AdminSidebar unreadInquiriesCount={unreadCount} />
-      <div className="flex-1 overflow-y-auto">
-        <Outlet />
+      <div className="flex flex-1 flex-col overflow-y-auto">
+        <AdminTopBar />
+        <main className="flex-1">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

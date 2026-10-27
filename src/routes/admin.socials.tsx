@@ -13,14 +13,20 @@ import {
   RotateCcw,
   Sparkles,
   Share2,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DEFAULT_STUDIO_SOCIALS,
   getStudioSocials,
   saveStudioSocials,
+  isPlaceholderWhatsApp,
   type StudioSocialLinks,
 } from "@/lib/studio-socials";
+import {
+  getAdminSiteSettings,
+  updateAdminSiteSettings,
+} from "@/lib/admin/settings.functions";
 
 // Custom TikTok Icon
 function TikTokIcon({ className = "size-4" }: { className?: string }) {
@@ -41,7 +47,7 @@ export const Route = createFileRoute("/admin/socials")({
   head: () => ({
     meta: [
       { name: "robots", content: "noindex, nofollow" },
-      { title: "Social Media Links — Volka Admin" },
+      { title: "Réseaux Sociaux & Contact — Volka Admin" },
     ],
   }),
   component: AdminSocialsPage,
@@ -49,27 +55,82 @@ export const Route = createFileRoute("/admin/socials")({
 
 function AdminSocialsPage() {
   const [form, setForm] = React.useState<StudioSocialLinks>(() => getStudioSocials());
+  const [loading, setLoading] = React.useState(true);
+  const [saving, setSaving] = React.useState(false);
   const [saved, setSaved] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    let mounted = true;
+    async function loadRemoteSettings() {
+      try {
+        const remote = await getAdminSiteSettings({ data: { key: "socials" } });
+        if (mounted && remote) {
+          const merged = { ...DEFAULT_STUDIO_SOCIALS, ...remote } as StudioSocialLinks;
+          if (isPlaceholderWhatsApp(merged.whatsapp)) {
+            merged.whatsapp = "";
+          }
+          setForm(merged);
+          saveStudioSocials(merged);
+        }
+      } catch (err) {
+        console.warn("[AdminSocials] Could not load remote settings, using local fallback:", err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+
+    loadRemoteSettings();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleChange = (key: keyof StudioSocialLinks, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setSaved(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    saveStudioSocials(form);
-    setSaved(true);
-    setMessage("Tous les liens des réseaux sociaux du studio ont été enregistrés avec succès !");
-    setTimeout(() => {
-      setMessage(null);
-    }, 4000);
+  const handleSubmit = async (e?: React.SyntheticEvent) => {
+    if (e) e.preventDefault();
+    setSaving(true);
+    setError(null);
+    try {
+      // 1. Persist to database site_settings
+      await updateAdminSiteSettings({
+        data: {
+          key: "socials",
+          value: form as unknown as Record<string, string>,
+        },
+      });
+
+      // 2. Synchronize local storage & trigger event
+      saveStudioSocials(form);
+
+      setSaved(true);
+      setMessage("Les liens officiels ont été enregistrés et synchronisés sur tout le site !");
+      setTimeout(() => setMessage(null), 4000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de l'enregistrement");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (confirm("Réinitialiser tous les liens des réseaux sociaux aux valeurs par défaut ?")) {
       setForm(DEFAULT_STUDIO_SOCIALS);
+      try {
+        await updateAdminSiteSettings({
+          data: {
+            key: "socials",
+            value: DEFAULT_STUDIO_SOCIALS as unknown as Record<string, string>,
+          },
+        });
+      } catch (e) {
+        // Fallback to local
+      }
       saveStudioSocials(DEFAULT_STUDIO_SOCIALS);
       setSaved(true);
       setMessage("Les liens ont été réinitialisés aux valeurs par défaut.");
@@ -137,7 +198,7 @@ function AdminSocialsPage() {
       key: "whatsapp",
       label: "WhatsApp Business Direct",
       description: "Lien direct wa.me pour échanger instantanément avec les prospects",
-      placeholder: "https://wa.me/22900000000?text=Bonjour%20Volka...",
+      placeholder: "https://wa.me/22990000000?text=Bonjour%20Volka...",
       icon: Phone,
       iconColor: "text-emerald-400",
     },
@@ -197,6 +258,31 @@ function AdminSocialsPage() {
         <div className="mt-6 flex items-center gap-3 rounded border border-emerald-500/30 bg-emerald-500/10 p-4 text-xs text-emerald-400">
           <Check className="size-4 shrink-0" />
           <span>{message}</span>
+        </div>
+      )}
+
+      {/* Error Notification */}
+      {error && (
+        <div className="mt-6 flex items-center gap-3 rounded border border-destructive/30 bg-destructive/10 p-4 text-xs text-destructive">
+          <AlertCircle className="size-4 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* Terracotta Warning Banner when WhatsApp is not configured */}
+      {isPlaceholderWhatsApp(form.whatsapp) && (
+        <div className="mt-6 flex items-start gap-3 rounded-sm border border-terracotta/40 bg-terracotta/10 p-4 text-xs text-foreground">
+          <AlertCircle className="size-4 shrink-0 text-terracotta mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-semibold text-terracotta block">
+              Attention : Aucun lien WhatsApp direct n'est configuré
+            </span>
+            <p className="text-muted-foreground leading-relaxed">
+              Pour garantir la crédibilité de Volka Studio, le lien et le bouton WhatsApp sont
+              automatiquement masqués sur l'ensemble du site public (footer, pages contact, etc.) tant
+              qu'une URL WhatsApp valide n'est pas enregistrée.
+            </p>
+          </div>
         </div>
       )}
 

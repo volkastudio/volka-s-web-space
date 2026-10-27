@@ -3,16 +3,43 @@ import { z } from "zod";
 import { requireAdminAuth } from "@/integrations/supabase/admin-middleware";
 import { caseStudySchema, type CaseStudyInput, type CaseStudyRecord } from "@/lib/case-study-schema";
 
-export const listAdminCases = createServerFn({ method: "GET" })
+export const getAdminCasesStats = createServerFn({ method: "GET" })
   .middleware([requireAdminAuth])
   .handler(async () => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data, error } = await supabaseAdmin
+    const [totalRes, publishedRes, draftRes] = await Promise.all([
+      supabaseAdmin.from("case_studies").select("id", { count: "exact", head: true }),
+      supabaseAdmin.from("case_studies").select("id", { count: "exact", head: true }).eq("status", "published"),
+      supabaseAdmin.from("case_studies").select("id", { count: "exact", head: true }).eq("status", "draft"),
+    ]);
+
+    return {
+      total: totalRes.count ?? 0,
+      published: publishedRes.count ?? 0,
+      draft: draftRes.count ?? 0,
+    };
+  });
+
+export const listAdminCases = createServerFn({ method: "GET" })
+  .middleware([requireAdminAuth])
+  .validator((data?: { limit?: number }) =>
+    z.object({ limit: z.number().int().min(1).max(100).optional() }).optional().parse(data ?? {}),
+  )
+  .handler(async ({ data: input = {} }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    let query = supabaseAdmin
       .from("case_studies")
       .select("*")
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
+
+    if (input.limit) {
+      query = query.limit(input.limit);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("[listAdminCases] Error:", error.message);
@@ -24,15 +51,21 @@ export const listAdminCases = createServerFn({ method: "GET" })
 
 export const getAdminCase = createServerFn({ method: "GET" })
   .middleware([requireAdminAuth])
-  .validator((data: { id: string }) => z.object({ id: z.string() }).parse(data))
+  .validator((data: { id: string }) => z.object({ id: z.string().min(1) }).parse(data))
   .handler(async ({ data: input }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data, error } = await supabaseAdmin
-      .from("case_studies")
-      .select("*")
-      .or(`id.eq.${input.id},slug.eq.${input.id}`)
-      .maybeSingle();
+    const cleanId = input.id.replace(/[,()%:*\\]/g, "").trim();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
+
+    let query = supabaseAdmin.from("case_studies").select("*");
+    if (isUuid) {
+      query = query.eq("id", cleanId);
+    } else {
+      query = query.eq("slug", cleanId);
+    }
+
+    const { data, error } = await query.maybeSingle();
 
     if (error) {
       console.error("[getAdminCase] Error:", error.message);

@@ -27,7 +27,7 @@ export const Route = createFileRoute("/admin/cases/")({
   head: () => ({
     meta: [
       { name: "robots", content: "noindex, nofollow" },
-      { title: "Case Studies — Volka Admin" },
+      { title: "Études de cas — Volka Admin" },
     ],
   }),
   component: AdminCasesIndexPage,
@@ -49,7 +49,7 @@ function AdminCasesIndexPage() {
       setCases(data);
       setError(null);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load case studies");
+      setError(err instanceof Error ? err.message : "Erreur lors du chargement des études de cas");
     } finally {
       setLoading(false);
     }
@@ -69,14 +69,14 @@ function AdminCasesIndexPage() {
         prev.map((c) => (c.id === item.id ? { ...c, status: nextStatus } : c)),
       );
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to change status");
+      setError(err instanceof Error ? err.message : "Impossible de modifier le statut");
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleDelete = async (item: CaseStudyRecord) => {
-    if (!confirm(`Are you sure you want to delete "${item.client}"? This action cannot be undone.`)) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer "${item.client}" ? Cette action est irréversible.`)) {
       return;
     }
 
@@ -86,7 +86,7 @@ function AdminCasesIndexPage() {
       await deleteCase({ data: { id: item.id } });
       setCases((prev) => prev.filter((c) => c.id !== item.id));
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to delete case study");
+      setError(err instanceof Error ? err.message : "Impossible de supprimer l'étude de cas");
     } finally {
       setActionLoading(null);
     }
@@ -162,10 +162,10 @@ function AdminCasesIndexPage() {
             Portfolio
           </p>
           <h1 className="mt-2 font-display text-4xl font-light md:text-5xl">
-            Case Studies
+            Études de cas
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Manage your project portfolio, order on the homepage, and edit translations.
+            Gérez le portfolio de réalisations du studio, l'ordre d'affichage et les contenus bilingues.
           </p>
         </div>
 
@@ -175,7 +175,7 @@ function AdminCasesIndexPage() {
           className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
         >
           <Plus className="size-4 text-gold" />
-          <span>New case study</span>
+          <span>Nouvelle étude de cas</span>
         </Link>
       </div>
 
@@ -194,24 +194,28 @@ function AdminCasesIndexPage() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by client or sector..."
+            placeholder="Rechercher par client ou secteur..."
             className="w-full rounded-sm border border-border bg-card pl-9 pr-4 py-2 text-xs focus:border-gold focus:outline-none"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          {(["all", "published", "draft"] as const).map((filter) => (
+          {([
+            { id: "all", label: "Tous" },
+            { id: "published", label: "Publiés" },
+            { id: "draft", label: "Brouillons" },
+          ] as const).map((filter) => (
             <button
-              key={filter}
+              key={filter.id}
               type="button"
-              onClick={() => setStatusFilter(filter)}
+              onClick={() => setStatusFilter(filter.id)}
               className={`rounded-sm px-3 py-1.5 text-xs font-medium uppercase tracking-[0.14em] transition-colors ${
-                statusFilter === filter
+                statusFilter === filter.id
                   ? "bg-primary text-primary-foreground"
                   : "border border-border text-muted-foreground hover:text-foreground"
               }`}
             >
-              {filter}
+              {filter.label}
             </button>
           ))}
         </div>
@@ -223,12 +227,12 @@ function AdminCasesIndexPage() {
           <table className="w-full text-left text-xs">
             <thead className="border-b border-border bg-muted/40 uppercase tracking-[0.14em] text-muted-foreground">
               <tr>
-                <th className="px-4 py-3.5 w-16 text-center">Order</th>
-                <th className="px-4 py-3.5">Client & Title</th>
-                <th className="px-4 py-3.5">Sector</th>
-                <th className="px-4 py-3.5">Languages</th>
-                <th className="px-4 py-3.5">Featured</th>
-                <th className="px-4 py-3.5">Status</th>
+                <th className="px-4 py-3.5 w-16 text-center">Ordre</th>
+                <th className="px-4 py-3.5">Client & Titre</th>
+                <th className="px-4 py-3.5">Secteur</th>
+                <th className="px-4 py-3.5">Langues</th>
+                <th className="px-4 py-3.5">À la une</th>
+                <th className="px-4 py-3.5">Statut</th>
                 <th className="px-4 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
@@ -236,15 +240,15 @@ function AdminCasesIndexPage() {
               {loading ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
-                    Loading case studies...
+                    Chargement des études de cas...
                   </td>
                 </tr>
               ) : filteredCases.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
                     {cases.length === 0
-                      ? "No case studies in database yet. Create your first case study above!"
-                      : "No case studies matched your filter."}
+                      ? "Aucune étude de cas dans la base pour le moment. Créez votre première réalisation ci-dessus !"
+                      : "Aucune étude de cas ne correspond à votre recherche."}
                   </td>
                 </tr>
               ) : (
@@ -263,7 +267,7 @@ function AdminCasesIndexPage() {
                         {isFiltered ? (
                           <span
                             className="text-[10px] text-muted-foreground/40"
-                            title="Clear filters to reorder"
+                            title="Réinitialisez les filtres pour réordonner"
                           >
                             —
                           </span>
@@ -274,7 +278,7 @@ function AdminCasesIndexPage() {
                               disabled={idx === 0 || isActioning !== null}
                               onClick={() => handleMoveOrder(study.id, "up")}
                               className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-20"
-                              title="Move up"
+                              title="Monter d'un rang"
                             >
                               <ChevronUp className="size-3.5" />
                             </button>
@@ -283,7 +287,7 @@ function AdminCasesIndexPage() {
                               disabled={idx === filteredCases.length - 1 || isActioning !== null}
                               onClick={() => handleMoveOrder(study.id, "down")}
                               className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-20"
-                              title="Move down"
+                              title="Descendre d'un rang"
                             >
                               <ChevronDown className="size-3.5" />
                             </button>
@@ -337,12 +341,12 @@ function AdminCasesIndexPage() {
                           type="button"
                           disabled={isActioning}
                           onClick={() => handleToggleFeatured(study)}
-                          title={study.featured ? "Remove from homepage" : "Feature on homepage"}
+                          title={study.featured ? "Retirer de la page d'accueil" : "Mettre à la une sur l'accueil"}
                           className={`inline-flex items-center gap-1 transition-opacity hover:opacity-80 ${study.featured ? "text-gold" : "text-muted-foreground/30 hover:text-gold/60"}`}
                         >
                           <Star className={`size-3.5 ${study.featured ? "fill-gold" : ""}`} />
                           <span className="text-[10px] font-semibold uppercase tracking-wider">
-                            {study.featured ? "Featured" : "—"}
+                            {study.featured ? "À la une" : "—"}
                           </span>
                         </button>
                       </td>
@@ -364,7 +368,7 @@ function AdminCasesIndexPage() {
                           ) : (
                             <Clock className="size-3" />
                           )}
-                          <span>{study.status}</span>
+                          <span>{study.status === "published" ? "Publié" : "Brouillon"}</span>
                         </button>
                       </td>
 
@@ -377,7 +381,7 @@ function AdminCasesIndexPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                               className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
-                              title="View on site"
+                              title="Voir sur le site public"
                             >
                               <ExternalLink className="size-3.5" />
                             </a>
@@ -386,7 +390,7 @@ function AdminCasesIndexPage() {
                             to="/admin/cases/$id"
                             params={{ id: study.id }}
                             className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
-                            title="Edit"
+                            title="Modifier"
                           >
                             <Edit2 className="size-3.5" />
                           </Link>
@@ -395,7 +399,7 @@ function AdminCasesIndexPage() {
                             disabled={isActioning}
                             onClick={() => handleDelete(study)}
                             className="rounded p-1.5 text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
-                            title="Delete"
+                            title="Supprimer"
                           >
                             <Trash2 className="size-3.5" />
                           </button>

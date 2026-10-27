@@ -10,9 +10,8 @@ import {
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
-import { listAdminCases } from "@/lib/admin/cases.functions";
+import { getAdminCasesStats } from "@/lib/admin/cases.functions";
 import { listAdminInquiries } from "@/lib/admin/inquiries.functions";
-import type { CaseStudyRecord } from "@/lib/case-study-schema";
 import type { Database } from "@/integrations/supabase/types";
 
 type InquiryRow = Database["public"]["Tables"]["project_inquiries"]["Row"];
@@ -28,7 +27,9 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function AdminDashboardPage() {
-  const [cases, setCases] = React.useState<CaseStudyRecord[]>([]);
+  const [casesStats, setCasesStats] = React.useState<{ total: number; published: number; draft: number }>(
+    { total: 0, published: 0, draft: 0 },
+  );
   const [inquiries, setInquiries] = React.useState<InquiryRow[]>([]);
   const [unreadCount, setUnreadCount] = React.useState(0);
   const [totalInquiries, setTotalInquiries] = React.useState(0);
@@ -40,14 +41,14 @@ function AdminDashboardPage() {
 
     async function loadData() {
       try {
-        const [casesRes, inquiriesRes] = await Promise.allSettled([
-          listAdminCases(),
+        const [statsRes, inquiriesRes] = await Promise.allSettled([
+          getAdminCasesStats(),
           listAdminInquiries({ data: { limit: 5 } }),
         ]);
 
         if (mounted) {
-          if (casesRes.status === "fulfilled") {
-            setCases(casesRes.value);
+          if (statsRes.status === "fulfilled") {
+            setCasesStats(statsRes.value);
           }
           if (inquiriesRes.status === "fulfilled") {
             setInquiries(inquiriesRes.value.items);
@@ -58,7 +59,7 @@ function AdminDashboardPage() {
         }
       } catch (err: unknown) {
         if (mounted) {
-          setError(err instanceof Error ? err.message : "Failed to load dashboard data");
+          setError(err instanceof Error ? err.message : "Erreur lors du chargement du tableau de bord");
           setLoading(false);
         }
       }
@@ -70,22 +71,19 @@ function AdminDashboardPage() {
     };
   }, []);
 
-  const publishedCases = cases.filter((c) => c.status === "published");
-  const draftCases = cases.filter((c) => c.status === "draft");
-
   return (
     <div className="p-6 md:p-10 lg:p-12">
       {/* Header */}
       <div className="flex flex-col justify-between gap-4 border-b border-border pb-8 md:flex-row md:items-end">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">
-            Overview
+            Vue d'ensemble
           </p>
           <h1 className="mt-2 font-display text-4xl font-light md:text-5xl">
-            Studio Dashboard
+            Tableau de bord
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Manage your case studies, track inbound client briefs, and publish updates.
+            Gérez vos études de cas, suivez les demandes client et publiez vos articles.
           </p>
         </div>
 
@@ -96,7 +94,7 @@ function AdminDashboardPage() {
             className="inline-flex items-center gap-2 rounded-sm bg-primary px-4 py-2.5 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
           >
             <Plus className="size-4 text-gold" />
-            <span>New case study</span>
+            <span>Nouvelle étude de cas</span>
           </Link>
         </div>
       </div>
@@ -114,19 +112,19 @@ function AdminDashboardPage() {
         <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-              New Inquiries
+              Nouveaux Prospects
             </span>
             <Inbox className="size-4 text-gold" />
           </div>
           <div className="mt-4 flex items-baseline gap-2">
             <span className="font-display text-4xl font-medium">{unreadCount}</span>
-            <span className="text-xs text-muted-foreground">awaiting review</span>
+            <span className="text-xs text-muted-foreground">en attente</span>
           </div>
           <Link
             to="/admin/inquiries"
             className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gold hover:underline"
           >
-            <span>Open inbox</span>
+            <span>Ouvrir la boîte de réception</span>
             <ArrowRight className="size-3" />
           </Link>
         </div>
@@ -135,19 +133,19 @@ function AdminDashboardPage() {
         <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-              Published Work
+              Études Publiées
             </span>
             <CheckCircle2 className="size-4 text-primary" />
           </div>
           <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-display text-4xl font-medium">{publishedCases.length}</span>
-            <span className="text-xs text-muted-foreground">live on site</span>
+            <span className="font-display text-4xl font-medium">{casesStats.published}</span>
+            <span className="text-xs text-muted-foreground">en ligne</span>
           </div>
           <Link
             to="/admin/cases"
             className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gold hover:underline"
           >
-            <span>View all cases</span>
+            <span>Voir toutes les études</span>
             <ArrowRight className="size-3" />
           </Link>
         </div>
@@ -156,16 +154,16 @@ function AdminDashboardPage() {
         <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-              Draft Projects
+              Projets en Brouillon
             </span>
             <Clock className="size-4 text-muted-foreground" />
           </div>
           <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-display text-4xl font-medium">{draftCases.length}</span>
-            <span className="text-xs text-muted-foreground">in progress</span>
+            <span className="font-display text-4xl font-medium">{casesStats.draft}</span>
+            <span className="text-xs text-muted-foreground">en cours</span>
           </div>
           <span className="mt-4 block text-xs text-muted-foreground">
-            {draftCases.length > 0 ? "Ready to edit & publish" : "No pending drafts"}
+            {casesStats.draft > 0 ? "Prêts à modifier et publier" : "Aucun brouillon en attente"}
           </span>
         </div>
 
@@ -181,13 +179,13 @@ function AdminDashboardPage() {
             <span className="font-display text-4xl font-medium">
               {totalInquiries > 0 ? totalInquiries : "—"}
             </span>
-            <span className="text-xs text-muted-foreground">total briefs received</span>
+            <span className="text-xs text-muted-foreground">briefs reçus au total</span>
           </div>
           <Link
             to="/admin/inquiries"
             className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gold hover:underline"
           >
-            <span>Filter by status</span>
+            <span>Filtrer par statut</span>
             <ArrowRight className="size-3" />
           </Link>
         </div>
@@ -199,25 +197,25 @@ function AdminDashboardPage() {
         <div className="rounded-sm border border-border bg-card p-6 shadow-sm lg:col-span-2">
           <div className="flex items-center justify-between border-b border-border pb-4">
             <div>
-              <h2 className="font-display text-xl font-medium">Recent Inquiries</h2>
-              <p className="text-xs text-muted-foreground">Latest client briefs received</p>
+              <h2 className="font-display text-xl font-medium">Derniers Prospects</h2>
+              <p className="text-xs text-muted-foreground">Derniers briefs clients reçus</p>
             </div>
             <Link
               to="/admin/inquiries"
               className="text-xs font-medium uppercase tracking-[0.14em] text-gold hover:underline"
             >
-              View all
+              Voir tout
             </Link>
           </div>
 
           <div className="mt-4 divide-y divide-border">
             {loading ? (
               <div className="py-8 text-center text-xs text-muted-foreground">
-                Loading inquiries...
+                Chargement des prospects...
               </div>
             ) : inquiries.length === 0 ? (
               <div className="py-8 text-center text-xs text-muted-foreground">
-                No inquiries received yet. Briefs sent via /start will appear here.
+                Aucun prospect pour l'instant. Les briefs envoyés via /start s'afficheront ici.
               </div>
             ) : (
               inquiries.map((inquiry) => (
@@ -252,7 +250,7 @@ function AdminDashboardPage() {
                       params={{ id: inquiry.id }}
                       className="text-xs text-gold hover:underline"
                     >
-                      Review
+                      Consulter
                     </Link>
                   </div>
                 </div>
@@ -264,28 +262,28 @@ function AdminDashboardPage() {
         {/* Quick Links / Studio Actions (1 col) */}
         <div className="space-y-6">
           <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
-            <h2 className="font-display text-xl font-medium">Quick Actions</h2>
+            <h2 className="font-display text-xl font-medium">Actions Rapides</h2>
             <div className="mt-4 space-y-2.5">
               <Link
                 to="/admin/cases/$id"
                 params={{ id: "new" }}
                 className="flex items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold"
               >
-                <span>Create new case study</span>
+                <span>Créer une étude de cas</span>
                 <Plus className="size-4" />
               </Link>
               <Link
                 to="/admin/cases"
                 className="flex items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold"
               >
-                <span>Manage case studies</span>
+                <span>Gérer les études de cas</span>
                 <Briefcase className="size-4" />
               </Link>
               <Link
                 to="/admin/inquiries"
                 className="flex items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold"
               >
-                <span>Manage inquiries</span>
+                <span>Gérer les prospects</span>
                 <Inbox className="size-4" />
               </Link>
               <a
@@ -294,7 +292,7 @@ function AdminDashboardPage() {
                 rel="noopener noreferrer"
                 className="flex items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold"
               >
-                <span>Preview live site</span>
+                <span>Voir le site en direct</span>
                 <ArrowRight className="size-4" />
               </a>
             </div>

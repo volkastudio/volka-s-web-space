@@ -37,8 +37,12 @@ export const listAdminInquiries = createServerFn({ method: "GET" })
     }
 
     if (input.search && input.search.trim()) {
-      const term = `%${input.search.trim()}%`;
-      query = query.or(`name.ilike.${term},email.ilike.${term},company.ilike.${term},vision.ilike.${term}`);
+      // Sanitize search term to prevent PostgREST grammar breakage from commas, parentheses, colons, or percent signs
+      const sanitized = input.search.trim().replace(/[,()%:*\\]/g, " ").trim();
+      if (sanitized) {
+        const term = `%${sanitized}%`;
+        query = query.or(`name.ilike.${term},email.ilike.${term},company.ilike.${term},vision.ilike.${term}`);
+      }
     }
 
     const limit = input.limit ?? 50;
@@ -127,11 +131,31 @@ export const updateInquiry = createServerFn({ method: "POST" })
     return data as InquiryRow;
   });
 
+function formatInquiryPayload(inquiry: InquiryRow) {
+  return {
+    name: inquiry.name,
+    email: inquiry.email,
+    company: inquiry.company ?? undefined,
+    phone: inquiry.phone ?? undefined,
+    preferredChannel: (inquiry.preferred_channel === "whatsapp" ? "whatsapp" : "email") as "email" | "whatsapp",
+    offer: inquiry.offer as import("@/data/offers").OfferId,
+    timeline: inquiry.timeline,
+    budgetRange: inquiry.budget_range,
+    vision: inquiry.vision,
+    challenge: inquiry.challenge ?? undefined,
+    referralSource: inquiry.referral_source ?? undefined,
+    locale: (inquiry.locale as "fr" | "en") ?? "fr",
+    website: "",
+    elapsedMs: 10_000,
+  };
+}
+
+/** Resends ONLY the internal studio notification (Finding F3) */
 export const resendInquiryNotification = createServerFn({ method: "POST" })
   .middleware([requireAdminAuth])
   .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data: input }) => {
-    const [{ supabaseAdmin }, { sendInquiryEmails }] = await Promise.all([
+    const [{ supabaseAdmin }, { sendInternalNotification }] = await Promise.all([
       import("@/integrations/supabase/client.server"),
       import("@/lib/mailer.server"),
     ]);
@@ -146,36 +170,50 @@ export const resendInquiryNotification = createServerFn({ method: "POST" })
       throw new Error("Inquiry not found to resend notification");
     }
 
-    const payload = {
-      name: inquiry.name,
-      email: inquiry.email,
-      company: inquiry.company ?? undefined,
-      phone: inquiry.phone ?? undefined,
-      preferredChannel: (inquiry.preferred_channel === "whatsapp" ? "whatsapp" : "email") as "email" | "whatsapp",
-      offer: inquiry.offer as import("@/data/offers").OfferId,
-      timeline: inquiry.timeline,
-      budgetRange: inquiry.budget_range,
-      vision: inquiry.vision,
-      challenge: inquiry.challenge ?? undefined,
-      referralSource: inquiry.referral_source ?? undefined,
-      locale: (inquiry.locale as "fr" | "en") ?? "fr",
-      website: "",
-      elapsedMs: 10_000,
-    };
-
-    const result = await sendInquiryEmails(payload, inquiry.id);
+    const payload = formatInquiryPayload(inquiry);
+    const result = await sendInternalNotification(payload, inquiry.id);
 
     const now = new Date().toISOString();
     await supabaseAdmin
       .from("project_inquiries")
       .update({
-        notified_at: result.notified ? now : inquiry.notified_at,
-        notify_error: result.errors.length > 0 ? result.errors.join("; ") : null,
+        notified_at: result.success ? now : inquiry.notified_at,
+        notify_error: result.success ? null : result.error ?? "Failed to send internal notification",
       })
       .eq("id", inquiry.id);
 
     return {
-      notified: result.notified,
-      errors: result.errors,
+      notified: result.success,
+      errors: result.error ? [result.error] : [],
     };
   });
+
+/** Resends ONLY the prospect auto-reply confirmation email (Finding F3) */
+export const resendInquiryAutoReply = createServerFn({ method: "POST" })
+  .middleware([requireAdminAuth])
+  .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data: input }) => {
+    const [{ supabaseAdmin }, { sendAutoReply }] = await Promise.all([
+      import("@/integrations/supabase/client.server"),
+      import("@/lib/mailer.server"),
+    ]);
+
+    const { data: inquiry, error } = await supabaseAdmin
+      .from("project_inquiries")
+      .select("*")
+      .eq("id", input.id)
+      .maybeSingle();
+
+    if (error || !inquiry) {
+      throw new Error("Inquiry not found to resend auto-reply");
+    }
+
+    const payload = formatInquiryPayload(inquiry);
+    const result = await sendAutoReply(payload, inquiry.id);
+
+    return {
+      success: result.success,
+      error: result.error,
+    };
+  });
+

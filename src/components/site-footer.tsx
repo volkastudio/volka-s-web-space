@@ -4,7 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/context";
-import { useStudioSocials } from "@/lib/studio-socials";
+import { useStudioSocials, isPlaceholderWhatsApp } from "@/lib/studio-socials";
 
 export function SiteFooter() {
   const { t } = useI18n();
@@ -94,7 +94,7 @@ export function SiteFooter() {
                 Facebook
               </a>
             )}
-            {socials.whatsapp?.trim() && (
+            {socials.whatsapp?.trim() && !isPlaceholderWhatsApp(socials.whatsapp) && (
               <a
                 href={socials.whatsapp}
                 target="_blank"

@@ -86,14 +86,68 @@ export type Database = {
       admin_users: {
         Row: {
           user_id: string
+          role: 'owner' | 'sales' | 'editor'
           created_at: string
         }
         Insert: {
           user_id: string
+          role?: 'owner' | 'sales' | 'editor'
           created_at?: string
         }
         Update: {
           user_id?: string
+          role?: 'owner' | 'sales' | 'editor'
+          created_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          key: string
+          value: Json
+          updated_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          key: string
+          value: Json
+          updated_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          key?: string
+          value?: Json
+          updated_by?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_audit_log: {
+        Row: {
+          id: string
+          actor_id: string | null
+          action: string
+          entity: string
+          entity_id: string | null
+          diff: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          actor_id?: string | null
+          action: string
+          entity: string
+          entity_id?: string | null
+          diff?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          actor_id?: string | null
+          action?: string
+          entity?: string
+          entity_id?: string | null
+          diff?: Json | null
           created_at?: string
         }
         Relationships: []
@@ -194,6 +248,330 @@ export type Database = {
           translations?: Json
           created_at?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      security_events: {
+        Row: {
+          id: number
+          ts: string
+          type: string
+          severity: 'info' | 'warning' | 'critical'
+          actor_id: string | null
+          ip_hash: string | null
+          path: string | null
+          details: Json | null
+        }
+        Insert: {
+          id?: number
+          ts?: string
+          type: string
+          severity: 'info' | 'warning' | 'critical'
+          actor_id?: string | null
+          ip_hash?: string | null
+          path?: string | null
+          details?: Json | null
+        }
+        Update: {
+          id?: number
+          ts?: string
+          type?: string
+          severity?: 'info' | 'warning' | 'critical'
+          actor_id?: string | null
+          ip_hash?: string | null
+          path?: string | null
+          details?: Json | null
+        }
+        Relationships: []
+      }
+      health_checks: {
+        Row: {
+          key: string
+          group_name: string
+          status: 'ok' | 'warning' | 'error'
+          detail: string
+          hint: string | null
+          checked_at: string
+        }
+        Insert: {
+          key: string
+          group_name?: string
+          status: 'ok' | 'warning' | 'error'
+          detail: string
+          hint?: string | null
+          checked_at?: string
+        }
+        Update: {
+          key?: string
+          group_name?: string
+          status?: 'ok' | 'warning' | 'error'
+          detail?: string
+          hint?: string | null
+          checked_at?: string
+        }
+        Relationships: []
+      }
+      login_attempts: {
+        Row: {
+          id: number
+          ts: string
+          email_hash: string
+          ip_hash: string
+          success: boolean
+        }
+        Insert: {
+          id?: number
+          ts?: string
+          email_hash: string
+          ip_hash: string
+          success?: boolean
+        }
+        Update: {
+          id?: number
+          ts?: string
+          email_hash?: string
+          ip_hash?: string
+          success?: boolean
+        }
+        Relationships: []
+      }
+      audit_requests: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          status: 'pending_verification' | 'queued' | 'waitlist' | 'reviewing' | 'completed' | 'rejected'
+          track: 'website' | 'marketing' | 'sales' | 'general'
+          contact_name: string
+          contact_email: string
+          contact_phone: string
+          company_name: string
+          activity_sector: string
+          country: string
+          team_size: string
+          website_url: string | null
+          specific_answers: Json
+          verification_token: string
+          verification_token_expires_at: string
+          verified_at: string | null
+          is_entitled: boolean
+          privacy_consent: boolean
+          admin_notes: string | null
+          sent_at: string | null
+          due_at: string | null
+          hashed_ip: string | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          status?: 'pending_verification' | 'queued' | 'waitlist' | 'reviewing' | 'completed' | 'rejected'
+          track: 'website' | 'marketing' | 'sales' | 'general'
+          contact_name: string
+          contact_email: string
+          contact_phone: string
+          company_name: string
+          activity_sector: string
+          country: string
+          team_size: string
+          website_url?: string | null
+          specific_answers?: Json
+          verification_token: string
+          verification_token_expires_at: string
+          verified_at?: string | null
+          is_entitled?: boolean
+          privacy_consent?: boolean
+          admin_notes?: string | null
+          sent_at?: string | null
+          due_at?: string | null
+          hashed_ip?: string | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          status?: 'pending_verification' | 'queued' | 'waitlist' | 'reviewing' | 'completed' | 'rejected'
+          track?: 'website' | 'marketing' | 'sales' | 'general'
+          contact_name?: string
+          contact_email?: string
+          contact_phone?: string
+          company_name?: string
+          activity_sector?: string
+          country?: string
+          team_size?: string
+          website_url?: string | null
+          specific_answers?: Json
+          verification_token?: string
+          verification_token_expires_at?: string
+          verified_at?: string | null
+          is_entitled?: boolean
+          privacy_consent?: boolean
+          admin_notes?: string | null
+          sent_at?: string | null
+          due_at?: string | null
+          hashed_ip?: string | null
+        }
+        Relationships: []
+      }
+      digital_products: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          slug: string
+          title: string
+          headline: string
+          cover_image: string | null
+          description: string
+          features: Json
+          faq: Json
+          status: 'draft' | 'published' | 'archived'
+          trigger_keyword: string | null
+          views_count: number
+          cta_clicks_count: number
+          outbound_clicks_count: number
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          slug: string
+          title: string
+          headline: string
+          cover_image?: string | null
+          description: string
+          features?: Json
+          faq?: Json
+          status?: 'draft' | 'published' | 'archived'
+          trigger_keyword?: string | null
+          views_count?: number
+          cta_clicks_count?: number
+          outbound_clicks_count?: number
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          slug?: string
+          title?: string
+          headline?: string
+          cover_image?: string | null
+          description?: string
+          features?: Json
+          faq?: Json
+          status?: 'draft' | 'published' | 'archived'
+          trigger_keyword?: string | null
+          views_count?: number
+          cta_clicks_count?: number
+          outbound_clicks_count?: number
+        }
+        Relationships: []
+      }
+      product_regions: {
+        Row: {
+          id: string
+          product_id: string
+          region_key: string
+          label_fr: string
+          label_en: string
+          checkout_url: string
+          platform_name: string
+          sort_order: number
+          is_active: boolean
+        }
+        Insert: {
+          id?: string
+          product_id: string
+          region_key: string
+          label_fr: string
+          label_en: string
+          checkout_url: string
+          platform_name?: string
+          sort_order?: number
+          is_active?: boolean
+        }
+        Update: {
+          id?: string
+          product_id?: string
+          region_key?: string
+          label_fr?: string
+          label_en?: string
+          checkout_url?: string
+          platform_name?: string
+          sort_order?: number
+          is_active?: boolean
+        }
+        Relationships: []
+      }
+      buyers: {
+        Row: {
+          id: string
+          created_at: string
+          email: string
+          name: string | null
+          country: string | null
+          product_id: string | null
+          product_title: string
+          platform: string
+          platform_order_ref: string | null
+          amount_cents: number | null
+          currency: string | null
+          marketing_consent: 'yes' | 'no' | 'unknown'
+          consent_note: string | null
+          source_tag: string | null
+          lead_id: string | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          email: string
+          name?: string | null
+          country?: string | null
+          product_id?: string | null
+          product_title: string
+          platform: string
+          platform_order_ref?: string | null
+          amount_cents?: number | null
+          currency?: string | null
+          marketing_consent?: 'yes' | 'no' | 'unknown'
+          consent_note?: string | null
+          source_tag?: string | null
+          lead_id?: string | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          email?: string
+          name?: string | null
+          country?: string | null
+          product_id?: string | null
+          product_title?: string
+          platform?: string
+          platform_order_ref?: string | null
+          amount_cents?: number | null
+          currency?: string | null
+          marketing_consent?: 'yes' | 'no' | 'unknown'
+          consent_note?: string | null
+          source_tag?: string | null
+          lead_id?: string | null
+        }
+        Relationships: []
+      }
+      email_suppressions: {
+        Row: {
+          email: string
+          reason: 'unsubscribe' | 'bounce' | 'complaint'
+          suppressed_at: string
+        }
+        Insert: {
+          email: string
+          reason: 'unsubscribe' | 'bounce' | 'complaint'
+          suppressed_at?: string
+        }
+        Update: {
+          email?: string
+          reason?: 'unsubscribe' | 'bounce' | 'complaint'
+          suppressed_at?: string
         }
         Relationships: []
       }

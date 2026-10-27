@@ -2,9 +2,12 @@ import * as React from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
+export type AdminRole = "owner" | "sales" | "editor";
+
 interface AdminAuthContextValue {
   user: User | null;
   isAdmin: boolean;
+  role: AdminRole | null;
   isLoading: boolean;
   error: string | null;
   signOut: () => Promise<void>;
@@ -16,6 +19,7 @@ const AdminAuthContext = React.createContext<AdminAuthContextValue | undefined>(
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<User | null>(null);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [role, setRole] = React.useState<AdminRole | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -23,6 +27,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     if (!currentUser) {
       setUser(null);
       setIsAdmin(false);
+      setRole(null);
       setIsLoading(false);
       return;
     }
@@ -30,7 +35,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error: dbError } = await supabase
         .from("admin_users")
-        .select("user_id")
+        .select("user_id, role")
         .eq("user_id", currentUser.id)
         .maybeSingle();
 
@@ -50,6 +55,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
         console.warn("[AdminAuth] Check error:", dbError.message);
         setUser(currentUser);
         setIsAdmin(false);
+        setRole(null);
         setError(friendlyMsg);
         setIsLoading(false);
         return;
@@ -58,16 +64,19 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
       if (data) {
         setUser(currentUser);
         setIsAdmin(true);
+        setRole((data.role as AdminRole) || "owner");
         setError(null);
       } else {
         setUser(currentUser);
         setIsAdmin(false);
+        setRole(null);
         setError("Your account does not have administrator privileges.");
       }
     } catch (err) {
       console.error("[AdminAuth] Unexpected check error:", err);
       setUser(currentUser);
       setIsAdmin(false);
+      setRole(null);
       setError("Failed to verify administrator status.");
     } finally {
       setIsLoading(false);
@@ -109,18 +118,20 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
     setUser(null);
     setIsAdmin(false);
+    setRole(null);
   }, []);
 
   const value = React.useMemo(
     () => ({
       user,
       isAdmin,
+      role,
       isLoading,
       error,
       signOut,
       refresh,
     }),
-    [user, isAdmin, isLoading, error, signOut, refresh],
+    [user, isAdmin, role, isLoading, error, signOut, refresh],
   );
 
   return (

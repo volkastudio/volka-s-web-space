@@ -26,7 +26,33 @@ export const submitInquiry = createServerFn({ method: "POST" })
     const data = ctx.data as InquiryInput;
 
     // Bots get a fake success and nothing is stored.
-    if (isHoneypotFilled(data.website) || isTooFast(data.elapsedMs)) {
+    if (isHoneypotFilled(data.website)) {
+      try {
+        const { logSecurityEvent } = await import("@/lib/admin/security.server");
+        await logSecurityEvent({
+          type: "honeypot_hit",
+          severity: "info",
+          path: "/start",
+          details: { email: data.email },
+        });
+      } catch (err) {
+        console.error("Failed to log honeypot hit:", err);
+      }
+      return { ok: true as const };
+    }
+
+    if (isTooFast(data.elapsedMs)) {
+      try {
+        const { logSecurityEvent } = await import("@/lib/admin/security.server");
+        await logSecurityEvent({
+          type: "too_fast",
+          severity: "info",
+          path: "/start",
+          details: { elapsedMs: data.elapsedMs, email: data.email },
+        });
+      } catch (err) {
+        console.error("Failed to log too_fast hit:", err);
+      }
       return { ok: true as const };
     }
 
@@ -40,7 +66,20 @@ export const submitInquiry = createServerFn({ method: "POST" })
     const ip = getClientIp(request.headers);
     // Without a salt the hash would be trivially reversible, so skip IP tracking entirely.
     const ipHash = salt && ip !== "unknown" ? await hashIp(ip, salt) : null;
-    if (!salt) console.warn("[inquiries] SECRET_SALT is not set: IP rate limiting is disabled.");
+    if (!salt) {
+      console.warn("[inquiries] SECRET_SALT is not set: IP rate limiting is disabled.");
+      try {
+        const { logSecurityEvent } = await import("@/lib/admin/security.server");
+        await logSecurityEvent({
+          type: "salt_missing",
+          severity: "warning",
+          path: "/start",
+          details: { note: "SECRET_SALT missing in environment" },
+        });
+      } catch (err) {
+        console.error("Failed to log salt_missing:", err);
+      }
+    }
     const userAgent = request.headers.get("user-agent")?.slice(0, 255) ?? null;
     const now = Date.now();
 
@@ -55,6 +94,18 @@ export const submitInquiry = createServerFn({ method: "POST" })
         // Fail open: a broken rate-limit query must not block real leads.
         console.error("Inquiry rate-limit check failed", error.message);
       } else if (isRateLimited(count ?? 0)) {
+        try {
+          const { logSecurityEvent } = await import("@/lib/admin/security.server");
+          await logSecurityEvent({
+            type: "rate_limited",
+            severity: "warning",
+            ipHash,
+            path: "/start",
+            details: { count, threshold: RATE_LIMIT_WINDOW_MS },
+          });
+        } catch (err) {
+          console.error("Failed to log rate_limited:", err);
+        }
         throw new Error("Too many briefs from this connection. Please try again later or write to us by email.");
       }
     }
@@ -70,6 +121,18 @@ export const submitInquiry = createServerFn({ method: "POST" })
     if (duplicateError) {
       console.error("Inquiry duplicate check failed", duplicateError.message);
     } else if (duplicates && duplicates.length > 0) {
+      try {
+        const { logSecurityEvent } = await import("@/lib/admin/security.server");
+        await logSecurityEvent({
+          type: "duplicate_submit",
+          severity: "info",
+          ipHash,
+          path: "/start",
+          details: { email: data.email },
+        });
+      } catch (err) {
+        console.error("Failed to log duplicate_submit:", err);
+      }
       return { ok: true as const };
     }
 
@@ -87,7 +150,7 @@ export const submitInquiry = createServerFn({ method: "POST" })
         vision: data.vision,
         challenge: data.challenge || null,
         referral_source: data.referralSource || null,
-        locale: data.locale ?? "en",
+        locale: data.locale ?? "fr",
         ip_hash: ipHash,
         user_agent: userAgent,
       })
@@ -116,7 +179,20 @@ export const submitInquiry = createServerFn({ method: "POST" })
         await record({ notify_error: "SMTP not configured" });
       } else {
         const result = await sendInquiryEmails(data, row.id);
-        if (result.errors.length > 0) console.error("Inquiry email failure", result.errors.join(" | "));
+        if (result.errors.length > 0) {
+          console.error("Inquiry email failure", result.errors.join(" | "));
+          try {
+            const { logSecurityEvent } = await import("@/lib/admin/security.server");
+            await logSecurityEvent({
+              type: "mail_failed",
+              severity: "warning",
+              path: "/start",
+              details: { inquiryId: row.id, errors: result.errors },
+            });
+          } catch (logErr) {
+            console.error("Failed to log mail_failed:", logErr);
+          }
+        }
         await record({
           ...(result.notified ? { notified_at: new Date().toISOString() } : {}),
           ...(result.errors.length > 0 ? { notify_error: result.errors.join(" | ").slice(0, 600) } : {}),
@@ -127,6 +203,17 @@ export const submitInquiry = createServerFn({ method: "POST" })
       await record({
         notify_error: (mailError instanceof Error ? mailError.message : String(mailError)).slice(0, 600),
       });
+      try {
+        const { logSecurityEvent } = await import("@/lib/admin/security.server");
+        await logSecurityEvent({
+          type: "mail_failed",
+          severity: "warning",
+          path: "/start",
+          details: { inquiryId: row.id, error: String(mailError) },
+        });
+      } catch (logErr) {
+        console.error("Failed to log mail_failed crash:", logErr);
+      }
     }
 
     return { ok: true as const };
