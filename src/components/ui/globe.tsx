@@ -4,7 +4,18 @@ import createGlobe, { type COBEOptions } from "cobe";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-const DEFAULT_GLOBE_CONFIG: COBEOptions = {
+type GlobeRenderState = {
+  phi: number;
+  width: number;
+  height: number;
+  [key: string]: any;
+};
+
+type GlobeOptions = COBEOptions & {
+  onRender?: (state: GlobeRenderState) => void;
+};
+
+const DEFAULT_GLOBE_CONFIG: GlobeOptions = {
   width: 600,
   height: 600,
   onRender: (_state) => {},
@@ -29,7 +40,7 @@ const DEFAULT_GLOBE_CONFIG: COBEOptions = {
 
 interface GlobeProps {
   className?: string;
-  config?: Partial<COBEOptions>;
+  config?: Partial<GlobeOptions>;
   highlightRegion?: "europe" | "afrique" | null;
 }
 
@@ -67,7 +78,7 @@ export function Globe({ className, config = {}, highlightRegion }: GlobeProps) {
     window.addEventListener("resize", onResize);
     onResize();
 
-    const mergedConfig: COBEOptions = {
+    const mergedConfig: GlobeOptions = {
       ...DEFAULT_GLOBE_CONFIG,
       ...config,
       width: (width || 300) * 2,
@@ -76,16 +87,16 @@ export function Globe({ className, config = {}, highlightRegion }: GlobeProps) {
         if (!pointerInteracting.current) {
           phi += 0.004;
         }
-        state.phi = phi + r;
-        state.width = (width || 300) * 2;
-        state.height = (width || 300) * 2;
+        state["phi"] = phi + r;
+        state["width"] = (width || 300) * 2;
+        state["height"] = (width || 300) * 2;
       },
     };
 
     let globe: ReturnType<typeof createGlobe> | null = null;
     try {
       if (canvasRef.current) {
-        globe = createGlobe(canvasRef.current, mergedConfig);
+        globe = createGlobe(canvasRef.current, mergedConfig as unknown as COBEOptions);
         canvasRef.current.style.opacity = "1";
       }
     } catch (e) {
