@@ -137,7 +137,11 @@ export const saveAdminAuditSettings = createServerFn({ method: "POST" })
         .parse(data)
   )
   .handler(async ({ data }): Promise<AuditCapacityStatus> => {
-    return await updateAuditSettings(data);
+    const patch: { capacity_per_month?: number; delivery_working_days?: number; is_open?: boolean } = {};
+    if (data.capacity_per_month !== undefined) patch.capacity_per_month = data.capacity_per_month;
+    if (data.delivery_working_days !== undefined) patch.delivery_working_days = data.delivery_working_days;
+    if (data.is_open !== undefined) patch.is_open = data.is_open;
+    return await updateAuditSettings(patch);
   });
 
 /**

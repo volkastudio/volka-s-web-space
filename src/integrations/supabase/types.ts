@@ -360,13 +360,16 @@ export type Database = {
           sent_at: string | null
           due_at: string | null
           hashed_ip: string | null
+          assigned_to: string | null
+          minutes_spent: number | null
+          locale: string | null
         }
         Insert: {
           id?: string
           created_at?: string
           updated_at?: string
           status?: 'pending_verification' | 'queued' | 'waitlist' | 'reviewing' | 'completed' | 'rejected'
-          track: 'website' | 'marketing' | 'sales' | 'general'
+          track?: 'website' | 'marketing' | 'sales' | 'general'
           contact_name: string
           contact_email: string
           contact_phone: string
@@ -385,6 +388,9 @@ export type Database = {
           sent_at?: string | null
           due_at?: string | null
           hashed_ip?: string | null
+          assigned_to?: string | null
+          minutes_spent?: number | null
+          locale?: string | null
         }
         Update: {
           id?: string
@@ -410,6 +416,9 @@ export type Database = {
           sent_at?: string | null
           due_at?: string | null
           hashed_ip?: string | null
+          assigned_to?: string | null
+          minutes_spent?: number | null
+          locale?: string | null
         }
         Relationships: []
       }
@@ -520,6 +529,9 @@ export type Database = {
           consent_note: string | null
           source_tag: string | null
           lead_id: string | null
+          import_batch_id: string | null
+          purchased_at: string | null
+          region_key: string | null
         }
         Insert: {
           id?: string
@@ -537,6 +549,9 @@ export type Database = {
           consent_note?: string | null
           source_tag?: string | null
           lead_id?: string | null
+          import_batch_id?: string | null
+          purchased_at?: string | null
+          region_key?: string | null
         }
         Update: {
           id?: string
@@ -554,24 +569,300 @@ export type Database = {
           consent_note?: string | null
           source_tag?: string | null
           lead_id?: string | null
+          import_batch_id?: string | null
+          purchased_at?: string | null
+          region_key?: string | null
         }
         Relationships: []
       }
       email_suppressions: {
         Row: {
           email: string
-          reason: 'unsubscribe' | 'bounce' | 'complaint'
+          reason: 'unsubscribe' | 'bounce' | 'complaint' | 'manual'
           suppressed_at: string
         }
         Insert: {
           email: string
-          reason: 'unsubscribe' | 'bounce' | 'complaint'
+          reason: 'unsubscribe' | 'bounce' | 'complaint' | 'manual'
           suppressed_at?: string
         }
         Update: {
           email?: string
-          reason?: 'unsubscribe' | 'bounce' | 'complaint'
+          reason?: 'unsubscribe' | 'bounce' | 'complaint' | 'manual'
           suppressed_at?: string
+        }
+        Relationships: []
+      }
+      audit_findings_library: {
+        Row: {
+          id: string
+          track: 'website' | 'marketing' | 'sales' | 'general'
+          pillar: string | null
+          title_fr: string
+          title_en: string
+          why_fr: string
+          why_en: string
+          fix_fr: string
+          fix_en: string
+          impact: number
+          effort: number
+          suggested_offer: string | null
+          active: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          track: 'website' | 'marketing' | 'sales' | 'general'
+          pillar?: string | null
+          title_fr: string
+          title_en?: string
+          why_fr?: string
+          why_en?: string
+          fix_fr?: string
+          fix_en?: string
+          impact?: number
+          effort?: number
+          suggested_offer?: string | null
+          active?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          track?: 'website' | 'marketing' | 'sales' | 'general'
+          pillar?: string | null
+          title_fr?: string
+          title_en?: string
+          why_fr?: string
+          why_en?: string
+          fix_fr?: string
+          fix_en?: string
+          impact?: number
+          effort?: number
+          suggested_offer?: string | null
+          active?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      audit_reports: {
+        Row: {
+          id: string
+          audit_request_id: string
+          token_hash: string
+          expires_at: string
+          revoked_at: string | null
+          locale: string
+          scorecard: Json
+          findings: Json
+          quick_wins: Json
+          recommendation: Json
+          sent_at: string | null
+          first_viewed_at: string | null
+          view_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          audit_request_id: string
+          token_hash: string
+          expires_at?: string
+          revoked_at?: string | null
+          locale?: string
+          scorecard?: Json
+          findings?: Json
+          quick_wins?: Json
+          recommendation?: Json
+          sent_at?: string | null
+          first_viewed_at?: string | null
+          view_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          audit_request_id?: string
+          token_hash?: string
+          expires_at?: string
+          revoked_at?: string | null
+          locale?: string
+          scorecard?: Json
+          findings?: Json
+          quick_wins?: Json
+          recommendation?: Json
+          sent_at?: string | null
+          first_viewed_at?: string | null
+          view_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      import_batches: {
+        Row: {
+          id: string
+          filename: string
+          platform: string
+          row_count: number
+          imported_count: number
+          skipped_count: number
+          created_by: string | null
+          created_at: string
+          undone_at: string | null
+        }
+        Insert: {
+          id?: string
+          filename: string
+          platform: string
+          row_count?: number
+          imported_count?: number
+          skipped_count?: number
+          created_by?: string | null
+          created_at?: string
+          undone_at?: string | null
+        }
+        Update: {
+          id?: string
+          filename?: string
+          platform?: string
+          row_count?: number
+          imported_count?: number
+          skipped_count?: number
+          created_by?: string | null
+          created_at?: string
+          undone_at?: string | null
+        }
+        Relationships: []
+      }
+      email_sequences: {
+        Row: {
+          id: string
+          key: string
+          name: string
+          scope: Json
+          active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          key: string
+          name: string
+          scope?: Json
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          key?: string
+          name?: string
+          scope?: Json
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_sequence_steps: {
+        Row: {
+          id: string
+          sequence_id: string
+          position: number
+          delay_days: number
+          subject_fr: string
+          subject_en: string
+          body_fr: string
+          body_en: string
+          stop_on_reply: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          sequence_id: string
+          position?: number
+          delay_days?: number
+          subject_fr: string
+          subject_en?: string
+          body_fr: string
+          body_en?: string
+          stop_on_reply?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          sequence_id?: string
+          position?: number
+          delay_days?: number
+          subject_fr?: string
+          subject_en?: string
+          body_fr?: string
+          body_en?: string
+          stop_on_reply?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      email_sends: {
+        Row: {
+          id: string
+          sequence_step_id: string
+          buyer_id: string
+          status: 'scheduled' | 'sent' | 'failed' | 'skipped' | 'cancelled'
+          scheduled_at: string
+          sent_at: string | null
+          error: string | null
+          message_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          sequence_step_id: string
+          buyer_id: string
+          status?: 'scheduled' | 'sent' | 'failed' | 'skipped' | 'cancelled'
+          scheduled_at: string
+          sent_at?: string | null
+          error?: string | null
+          message_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          sequence_step_id?: string
+          buyer_id?: string
+          status?: 'scheduled' | 'sent' | 'failed' | 'skipped' | 'cancelled'
+          scheduled_at?: string
+          sent_at?: string | null
+          error?: string | null
+          message_id?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      webhook_events: {
+        Row: {
+          id: string
+          platform: string
+          received_at: string
+          signature_ok: boolean
+          processed_at: string | null
+          payload: Json
+        }
+        Insert: {
+          id: string
+          platform: string
+          received_at?: string
+          signature_ok?: boolean
+          processed_at?: string | null
+          payload?: Json
+        }
+        Update: {
+          id?: string
+          platform?: string
+          received_at?: string
+          signature_ok?: boolean
+          processed_at?: string | null
+          payload?: Json
         }
         Relationships: []
       }

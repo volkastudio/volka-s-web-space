@@ -172,11 +172,11 @@ export const updateStep = createServerFn({ method: "POST" })
         .parse(data)
   )
   .handler(async ({ data }) => {
-    return await updateSequenceStep(data.stepId, {
-      delay_days: data.delay_days,
-      subject_fr: data.subject_fr,
-      body_fr: data.body_fr,
-    });
+    const patch: { delay_days?: number; subject_fr?: string; body_fr?: string } = {};
+    if (data.delay_days !== undefined) patch.delay_days = data.delay_days;
+    if (data.subject_fr !== undefined) patch.subject_fr = data.subject_fr;
+    if (data.body_fr !== undefined) patch.body_fr = data.body_fr;
+    return await updateSequenceStep(data.stepId, patch);
   });
 
 /**
@@ -189,6 +189,19 @@ export const sendTestSequence = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     return await sendTestSequenceEmail(data.stepId, data.recipientEmail);
+  });
+
+/**
+ * Admin: Delete a digital product and its associated regions.
+ */
+export const deleteProduct = createServerFn({ method: "POST" })
+  .middleware([requireAdminAuth])
+  .validator((data: { id: string }) =>
+    z.object({ id: z.string().uuid() }).parse(data)
+  )
+  .handler(async ({ data }) => {
+    const { deleteAdminProduct } = await import("./sales.server");
+    return await deleteAdminProduct(data.id);
   });
 
 /**

@@ -20,10 +20,10 @@ const searchSchema = z.object({
   token: z.string().optional(),
 });
 
-export const Route = createFileRoute("/audit/rapport")(({
+export const Route = createFileRoute("/audit/rapport")({
   validateSearch: searchSchema,
-  loader: async ({ location }) => {
-    const token = (location.search as { token?: string }).token;
+  loader: async ({ location }: { location: { search: { token?: string } } }) => {
+    const token = location.search.token;
     if (!token) {
       throw notFound();
     }
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/audit/rapport")(({
     }
     return { success: true, report: result.report };
   },
-  head: ({ loaderData }) => ({
+  head: ({ loaderData }: { loaderData: any }) => ({
     meta: [
       {
         title: loaderData?.success && loaderData.report
@@ -49,7 +49,7 @@ export const Route = createFileRoute("/audit/rapport")(({
     ],
   }),
   component: AuditReportPage,
-} as any));
+});
 
 const TRACK_LABELS: Record<string, string> = {
   website: "Site Web — Conversion & Perception",

@@ -135,7 +135,7 @@ function AdminAuditsPage() {
   );
   const [showSettingsModal, setShowSettingsModal] = React.useState(false);
   const [settingsForm, setSettingsForm] = React.useState({
-    capacity_per_month: (loaderData as any).capacity?.capacity ?? 10,
+    capacity_per_month: (loaderData as any).capacity?.capacity ?? 30,
     delivery_working_days: (loaderData as any).capacity?.deliveryDays ?? 5,
     is_open: (loaderData as any).capacity?.isOpen ?? true,
   });

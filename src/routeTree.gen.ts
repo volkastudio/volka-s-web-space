@@ -17,6 +17,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAuditsRouteImport } from './routes/admin.audits'
 import { Route as AdminHealthRouteImport } from './routes/admin.health'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminSocialsRouteImport } from './routes/admin.socials'
 import { Route as AuditIndexRouteImport } from './routes/audit.index'
 import { Route as AuditConfirmationRouteImport } from './routes/audit.confirmation'
@@ -80,6 +81,11 @@ const AdminHealthRoute = AdminHealthRouteImport.update({
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminSocialsRoute = AdminSocialsRouteImport.update({
@@ -211,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/admin/audits': typeof AdminAuditsRouteWithChildren
   '/admin/health': typeof AdminHealthRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/socials': typeof AdminSocialsRoute
   '/audit/confirmation': typeof AuditConfirmationRoute
   '/audit/demande': typeof AuditDemandeRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/admin/audits': typeof AdminAuditsRouteWithChildren
   '/admin/health': typeof AdminHealthRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/socials': typeof AdminSocialsRoute
   '/audit/confirmation': typeof AuditConfirmationRoute
   '/audit/demande': typeof AuditDemandeRoute
@@ -279,6 +287,7 @@ export interface FileRoutesById {
   '/admin/audits': typeof AdminAuditsRouteWithChildren
   '/admin/health': typeof AdminHealthRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/socials': typeof AdminSocialsRoute
   '/audit/confirmation': typeof AuditConfirmationRoute
   '/audit/demande': typeof AuditDemandeRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/admin/audits'
     | '/admin/health'
     | '/admin/login'
+    | '/admin/media'
     | '/admin/socials'
     | '/audit/confirmation'
     | '/audit/demande'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/admin/audits'
     | '/admin/health'
     | '/admin/login'
+    | '/admin/media'
     | '/admin/socials'
     | '/audit/confirmation'
     | '/audit/demande'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/admin/audits'
     | '/admin/health'
     | '/admin/login'
+    | '/admin/media'
     | '/admin/socials'
     | '/audit/confirmation'
     | '/audit/demande'
@@ -484,6 +496,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/socials': {
@@ -673,6 +692,7 @@ interface AdminRouteRouteChildren {
   AdminAuditsRoute: typeof AdminAuditsRouteWithChildren
   AdminHealthRoute: typeof AdminHealthRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMediaRoute: typeof AdminMediaRoute
   AdminSocialsRoute: typeof AdminSocialsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminCasesIdRoute: typeof AdminCasesIdRoute
@@ -691,6 +711,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAuditsRoute: AdminAuditsRouteWithChildren,
   AdminHealthRoute: AdminHealthRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminMediaRoute: AdminMediaRoute,
   AdminSocialsRoute: AdminSocialsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminCasesIdRoute: AdminCasesIdRoute,

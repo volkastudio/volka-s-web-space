@@ -97,22 +97,54 @@ function parseCsvRows(csvText: string): Record<string, string>[] {
 }
 
 function mapCsvRow(row: Record<string, string>, platform: string) {
-  return {
+  const amountParsed = row["amount"]
+    ? Math.round(parseFloat(row["amount"].replace(",", ".")) * 100)
+    : undefined;
+
+  const result: {
+    email: string;
+    name?: string;
+    country?: string;
+    product_title: string;
+    platform: string;
+    platform_order_ref?: string;
+    amount_cents?: number;
+    currency?: string;
+    marketing_consent?: "yes" | "no" | "unknown";
+    consent_note?: string;
+    source_tag?: string;
+  } = {
     email: row["email"] ?? "",
-    name: row["name"] ?? row["prénom"] ?? row["first_name"] ?? "",
-    country: row["country"] ?? row["pays"] ?? "",
     product_title: row["product"] ?? row["produit"] ?? row["product_title"] ?? "",
     platform,
-    platform_order_ref: row["order_id"] ?? row["order_ref"] ?? row["reference"] ?? "",
-    amount_cents: row["amount"]
-      ? Math.round(parseFloat(row["amount"].replace(",", ".")) * 100)
-      : undefined,
-    currency: row["currency"] ?? row["devise"] ?? "EUR",
-    marketing_consent: (["yes", "no", "unknown"].includes(row["marketing_consent"] ?? "")
-      ? row["marketing_consent"]
-      : "unknown") as MarketingConsent,
-    consent_note: row["consent_note"] ?? `Import CSV plateforme ${platform}`,
   };
+
+  const nameVal = row["name"] ?? row["prénom"] ?? row["first_name"];
+  if (nameVal) result.name = nameVal;
+
+  const countryVal = row["country"] ?? row["pays"];
+  if (countryVal) result.country = countryVal;
+
+  const orderRefVal = row["order_id"] ?? row["order_ref"] ?? row["reference"];
+  if (orderRefVal) result.platform_order_ref = orderRefVal;
+
+  if (typeof amountParsed === "number" && !isNaN(amountParsed)) {
+    result.amount_cents = amountParsed;
+  }
+
+  const currencyVal = row["currency"] ?? row["devise"];
+  if (currencyVal) result.currency = currencyVal;
+
+  const consentVal = row["marketing_consent"];
+  if (consentVal === "yes" || consentVal === "no" || consentVal === "unknown") {
+    result.marketing_consent = consentVal;
+  } else {
+    result.marketing_consent = "unknown";
+  }
+
+  result.consent_note = row["consent_note"] ?? `Import CSV plateforme ${platform}`;
+
+  return result;
 }
 
 function formatAmount(cents: number | null, currency: string): string {

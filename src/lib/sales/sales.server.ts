@@ -510,17 +510,27 @@ export async function sendTestSequenceEmail(stepId: string, recipientEmail: stri
 
   if (error || !step) throw new Error("Étape de séquence introuvable.");
 
-  const { getTransporter, isMailConfigured } = await import("@/lib/mailer.server");
+  const { isMailConfigured } = await import("@/lib/mailer.server");
   if (!isMailConfigured()) {
     throw new Error("SMTP non configuré dans l'environnement.");
   }
 
-  const transporter = getTransporter();
+  const { createTransport } = await import("nodemailer");
+  const transporter = createTransport({
+    host: process.env["SMTP_HOST"],
+    port: Number(process.env["SMTP_PORT"] || 587),
+    secure: process.env["SMTP_SECURE"] === "true",
+    ...(process.env["SMTP_USER"]
+      ? { auth: { user: process.env["SMTP_USER"], pass: process.env["SMTP_PASS"] ?? "" } }
+      : {}),
+  });
+
   const from = process.env["MAIL_FROM"] ?? "";
   const siteUrl = (process.env["SITE_URL"] || "https://volkastudio.com").replace(/\/$/, "");
 
-  const subject = `[TEST VOLKA] ${step.subject_fr.replace(/\{\{prénom\}\}/g, "Durock").replace(/\{\{produit\}\}/g, "Guide des Systèmes")}`;
-  const bodyText = `${step.body_fr
+  const stepItem = step as unknown as { subject_fr: string; body_fr: string };
+  const subject = `[TEST VOLKA] ${(stepItem.subject_fr || "").replace(/\{\{prénom\}\}/g, "Durock").replace(/\{\{produit\}\}/g, "Guide des Systèmes")}`;
+  const bodyText = `${(stepItem.body_fr || "")
     .replace(/\{\{prénom\}\}/g, "Durock")
     .replace(/\{\{produit\}\}/g, "Guide des Systèmes")}
 
@@ -544,13 +554,17 @@ Se désabonner : ${siteUrl}/sales/unsubscribe?test=true
  */
 export async function suppressEmail(email: string, reason = "unsubscribe") {
   const normalized = email.toLowerCase().trim();
+  const validReason = (["unsubscribe", "bounce", "complaint", "manual"].includes(reason)
+    ? reason
+    : "unsubscribe") as "unsubscribe" | "bounce" | "complaint" | "manual";
+
   const { error } = await supabaseAdmin
     .from("email_suppressions")
     .upsert(
       {
         email: normalized,
-        reason,
-        created_at: new Date().toISOString(),
+        reason: validReason,
+        suppressed_at: new Date().toISOString(),
       },
       { onConflict: "email" }
     );
@@ -572,6 +586,16 @@ export async function suppressEmail(email: string, reason = "unsubscribe") {
       .eq("status", "scheduled");
   }
 
+  return { success: true };
+}
+
+/**
+ * Admin: delete product and associated regions.
+ */
+export async function deleteAdminProduct(id: string) {
+  await supabaseAdmin.from("product_regions").delete().eq("product_id", id);
+  const { error } = await supabaseAdmin.from("digital_products").delete().eq("id", id);
+  if (error) throw new Error(error.message);
   return { success: true };
 }
 

@@ -109,13 +109,19 @@ export async function createAuditReport(params: {
   }
 
   // 5. Update audit status to completed, set sent_at and minutes_spent
-  const auditPatch: Record<string, unknown> = {
+  type AuditPatch = {
+    status: "completed";
+    sent_at: string;
+    updated_at: string;
+    minutes_spent?: number;
+  };
+  const auditPatch: AuditPatch = {
     status: "completed",
     sent_at: now,
     updated_at: now,
   };
   if (typeof params.minutesSpent === "number" && params.minutesSpent > 0) {
-    auditPatch["minutes_spent"] = params.minutesSpent;
+    auditPatch.minutes_spent = params.minutesSpent;
   }
 
   await supabaseAdmin
@@ -214,10 +220,10 @@ export async function getAuditReportByToken(rawToken: string): Promise<{
       audit_request_id: report.audit_request_id as string,
       token_hash: report.token_hash as string,
       locale: (report.locale as string) ?? "fr",
-      scorecard: (report.scorecard as AuditScorecardItem[]) ?? [],
-      findings: (report.findings as AuditFinding[]) ?? [],
-      quick_wins: (report.quick_wins as AuditFinding[]) ?? [],
-      recommendation: (report.recommendation as AuditRecommendation) ?? {},
+      scorecard: ((report.scorecard as unknown) as AuditScorecardItem[]) ?? [],
+      findings: ((report.findings as unknown) as AuditFinding[]) ?? [],
+      quick_wins: ((report.quick_wins as unknown) as AuditFinding[]) ?? [],
+      recommendation: ((report.recommendation as unknown) as AuditRecommendation) ?? {},
       sent_at: report.sent_at as string | null,
       first_viewed_at: report.first_viewed_at as string | null,
       view_count: (report.view_count as number) ?? 0,
@@ -270,7 +276,7 @@ export async function getAuditFindingsLibrary(params?: { track?: string; activeO
     .order("impact", { ascending: false });
 
   if (params?.track && params.track !== "all") {
-    query = query.eq("track", params.track);
+    query = query.eq("track", params.track as "website" | "sales" | "marketing" | "general");
   }
   if (params?.activeOnly !== false) {
     query = query.eq("active", true);

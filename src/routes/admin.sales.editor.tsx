@@ -15,18 +15,25 @@ import {
   ImageIcon,
   CheckCircle2,
   X,
+  Upload,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { getAdminProducts, saveProduct } from "@/lib/sales/sales.functions";
+import {
+  getAdminProducts,
+  saveProduct,
+  deleteProduct,
+} from "@/lib/sales/sales.functions";
+import { signUpload } from "@/lib/admin/cases.functions";
 
 const searchSchema = z.object({
   id: z.string().uuid().optional(),
 });
 
-export const Route = createFileRoute("/admin/sales/editor")(({
+export const Route = createFileRoute("/admin/sales/editor")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
@@ -46,7 +53,7 @@ export const Route = createFileRoute("/admin/sales/editor")(({
     return { product: null };
   },
   component: AdminSalesEditorPage,
-} as any));
+});
 
 interface RegionRow {
   region_key: string;
@@ -106,6 +113,15 @@ const EMPTY_PRODUCT: ProductFormState = {
   regions: DEFAULT_REGIONS,
 };
 
+/** Derive public media URL from storage path */
+function getMediaPublicUrl(path: string): string {
+  const supabaseUrl =
+    (typeof import.meta !== "undefined" &&
+      (import.meta as any).env?.VITE_SUPABASE_URL) ||
+    "";
+  return `${supabaseUrl}/storage/v1/object/public/media/${path}`;
+}
+
 function AdminSalesEditorPage() {
   const { product: initialProduct } = Route.useLoaderData() as { product: any };
   const navigate = useNavigate();
@@ -136,6 +152,12 @@ function AdminSalesEditorPage() {
   const [saving, setSaving] = React.useState(false);
   const [saved, setSaved] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [deleting, setDeleting] = React.useState(false);
+
+  // Image upload state
+  const [imageUploading, setImageUploading] = React.useState(false);
+  const [imageError, setImageError] = React.useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const update = <K extends keyof ProductFormState>(key: K, value: ProductFormState[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -188,6 +210,40 @@ function AdminSalesEditorPage() {
     );
   };
 
+  // ── Image Upload ──────────────────────────────────────────────
+  const handleImageFile = async (file: File) => {
+    setImageError(null);
+    setImageUploading(true);
+    try {
+      const { signedUrl, path } = await signUpload({
+        data: { filename: file.name, contentType: file.type },
+      });
+
+      const res = await fetch(signedUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Upload failed (${res.status})`);
+      }
+
+      const publicUrl = getMediaPublicUrl(path);
+      update("cover_image", publicUrl);
+    } catch (err) {
+      setImageError(err instanceof Error ? err.message : "Erreur lors de l'upload.");
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
+  const handleImageDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) handleImageFile(file);
+  };
+
   const handleSave = async () => {
     setError(null);
     setSaving(true);
@@ -213,6 +269,19 @@ function AdminSalesEditorPage() {
       setError(err instanceof Error ? err.message : "Erreur lors de la sauvegarde.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!form.id) return;
+    if (!window.confirm(`Supprimer définitivement « ${form.title} » ? Cette action est irréversible.`)) return;
+    setDeleting(true);
+    try {
+      await deleteProduct({ data: { id: form.id } });
+      navigate({ to: "/admin/sales/" });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la suppression.");
+      setDeleting(false);
     }
   };
 
@@ -342,17 +411,86 @@ function AdminSalesEditorPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-forest-black/70">
-              <span className="flex items-center gap-1.5"><ImageIcon className="size-3.5" /> URL de la cover (WebP recommandé)</span>
+          {/* ── Image Upload Widget ── */}
+          <div className="space-y-1.5 sm:col-span-1">
+            <Label className="text-xs font-medium text-forest-black/70 flex items-center gap-1.5">
+              <ImageIcon className="size-3.5" /> Image de couverture
             </Label>
+
+            {form.cover_image ? (
+              /* Preview */
+              <div className="relative group rounded-lg overflow-hidden border border-pine/20 bg-soft-paper">
+                <img
+                  src={form.cover_image}
+                  alt="Couverture"
+                  className="w-full h-36 object-cover"
+                />
+                <div className="absolute inset-0 bg-forest-black/0 group-hover:bg-forest-black/40 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-3 py-1.5 bg-warm-ivory text-xs font-medium text-forest-black rounded-md shadow"
+                  >
+                    Changer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => update("cover_image", "")}
+                    className="px-3 py-1.5 bg-terracotta text-white text-xs font-medium rounded-md shadow"
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Drop zone */
+              <div
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleImageDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className="flex flex-col items-center justify-center gap-2 h-36 border-2 border-dashed border-pine/25 rounded-lg bg-soft-paper/60 hover:border-pine/50 hover:bg-soft-paper cursor-pointer transition-all"
+              >
+                {imageUploading ? (
+                  <Loader2 className="size-6 animate-spin text-pine/60" />
+                ) : (
+                  <>
+                    <Upload className="size-5 text-pine/50" />
+                    <span className="text-xs text-forest-black/50 text-center px-4">
+                      Glissez une image ou cliquez pour parcourir
+                      <br />
+                      <span className="text-[11px] text-forest-black/35">WebP, PNG, JPG — max 5 MB</span>
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleImageFile(file);
+                e.target.value = "";
+              }}
+            />
+
+            {imageError && (
+              <p className="text-[11px] text-terracotta">{imageError}</p>
+            )}
+
+            {/* URL fallback input */}
             <Input
               value={form.cover_image}
               onChange={(e) => update("cover_image", e.target.value)}
-              placeholder="https://..."
-              className="bg-soft-paper border-pine/20 text-sm font-mono"
+              placeholder="ou collez une URL externe https://..."
+              className="bg-soft-paper border-pine/15 text-xs font-mono"
             />
           </div>
+
+          {/* Trigger keyword */}
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-forest-black/70">
               Mot-clé déclencheur (ex: commentaire Instagram)
@@ -582,6 +720,32 @@ function AdminSalesEditorPage() {
           ))}
         </div>
       </section>
+
+      {/* ── Danger Zone ── */}
+      {form.id && (
+        <section className="bg-terracotta/5 border border-terracotta/25 rounded-xl p-6 space-y-3">
+          <div className="flex items-center gap-2 text-terracotta">
+            <AlertTriangle className="size-4 shrink-0" />
+            <h2 className="font-semibold text-sm uppercase tracking-wider">Zone de danger</h2>
+          </div>
+          <p className="text-xs text-forest-black/60">
+            La suppression est définitive et irréversible. Les acheteurs liés à cette page ne seront pas supprimés.
+          </p>
+          <Button
+            variant="outline"
+            onClick={handleDelete}
+            disabled={deleting}
+            className="text-xs border-terracotta/40 text-terracotta hover:bg-terracotta hover:text-white transition-colors"
+          >
+            {deleting ? (
+              <Loader2 className="size-3.5 animate-spin mr-1" />
+            ) : (
+              <Trash2 className="size-3.5 mr-1" />
+            )}
+            {deleting ? "Suppression..." : "Supprimer cette page de vente"}
+          </Button>
+        </section>
+      )}
 
       {/* Save bottom bar */}
       <div className="sticky bottom-0 bg-warm-ivory/95 backdrop-blur-md border-t border-pine/15 p-4 flex justify-end gap-3 -mx-6 rounded-b-none print:hidden">

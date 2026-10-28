@@ -19,6 +19,7 @@ import { easeVolkaOut } from "@/lib/motion";
 
 const searchSchema = z.object({
   offer: z.string().optional(),
+  source: z.string().optional(),
 });
 
 export const Route = createFileRoute("/start")({

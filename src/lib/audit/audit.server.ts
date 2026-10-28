@@ -63,7 +63,7 @@ export async function getAuditCapacityStatus(): Promise<AuditCapacityStatus> {
     .maybeSingle();
 
   const val = (settingRow?.value as Record<string, unknown>) ?? {};
-  const capacity = typeof val["capacity_per_month"] === "number" ? val["capacity_per_month"] : 10;
+  const capacity = typeof val["capacity_per_month"] === "number" ? val["capacity_per_month"] : 30;
   const deliveryDays = typeof val["delivery_working_days"] === "number" ? val["delivery_working_days"] : 5;
   const isOpen = val["is_open"] !== false;
 

@@ -13,6 +13,7 @@ import {
   Share2,
   FileSearch,
   ShoppingBag,
+  Image,
 } from "lucide-react";
 import { useAdminAuth } from "@/lib/admin/admin-auth-context";
 
@@ -61,6 +62,12 @@ export function AdminSidebar({ unreadInquiriesCount = 0 }: AdminSidebarProps) {
       label: "Ventes",
       to: "/admin/sales",
       icon: ShoppingBag,
+      exact: false,
+    },
+    {
+      label: "Médiathèque",
+      to: "/admin/media",
+      icon: Image,
       exact: false,
     },
     {

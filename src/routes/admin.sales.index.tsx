@@ -15,6 +15,7 @@ import {
   Users,
   Pencil,
   Mail,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ import {
   getAdminProducts,
   duplicateProduct,
   saveProduct,
+  deleteProduct,
 } from "@/lib/sales/sales.functions";
 
 export const Route = createFileRoute("/admin/sales/")({
@@ -56,6 +58,7 @@ function AdminSalesIndexPage() {
   const [copiedLink, setCopiedLink] = React.useState<string | null>(null);
   const [sourceTag, setSourceTag] = React.useState<string>("ig-bio");
   const [duplicating, setDuplicating] = React.useState<string | null>(null);
+  const [deleting, setDeleting] = React.useState<string | null>(null);
 
   const handleDuplicate = async (id: string) => {
     setDuplicating(id);
@@ -67,6 +70,20 @@ function AdminSalesIndexPage() {
       console.error(err);
     } finally {
       setDuplicating(null);
+    }
+  };
+
+  const handleDelete = async (id: string, title: string) => {
+    if (!window.confirm(`Supprimer définitivement « ${title} » ? Cette action est irréversible.`)) return;
+    setDeleting(id);
+    try {
+      await deleteProduct({ data: { id } });
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de la suppression.");
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -249,6 +266,18 @@ function AdminSalesIndexPage() {
                         >
                           <ExternalLink className="size-3.5" />
                         </a>
+
+                        {/* Delete */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDelete(p.id, p.title)}
+                          disabled={deleting === p.id}
+                          className="h-7 text-xs hover:text-red-600 hover:bg-red-50 px-1.5"
+                          title="Supprimer cette page"
+                        >
+                          <Trash2 className="size-3.5" />
+                        </Button>
                       </td>
                     </tr>
                   );
