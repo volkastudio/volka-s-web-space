@@ -278,7 +278,7 @@ function AdminSalesEditorPage() {
     setDeleting(true);
     try {
       await deleteProduct({ data: { id: form.id } });
-      navigate({ to: "/admin/sales/" });
+      navigate({ to: "/admin/sales" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de la suppression.");
       setDeleting(false);

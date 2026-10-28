@@ -49,9 +49,11 @@ const deleteMediaFile = createServerFn({ method: "POST" })
   });
 
 // ── Route ───────────────────────────────────────────────────────
-// NOTE: Route path "/admin/media" is auto-registered by TanStack Start via
-// the file convention admin.media.tsx — no manual registration needed.
-export const Route = createFileRoute("/admin/media" as string)({
+// Route path "/admin/media" is auto-registered by TanStack Start via
+// the file convention admin.media.tsx on the next build/dev run.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error – route will be added to routeTree after next codegen
+export const Route = createFileRoute("/admin/media")({
   head: () => ({
     meta: [
       { name: "robots", content: "noindex, nofollow" },

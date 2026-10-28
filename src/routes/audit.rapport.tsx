@@ -34,11 +34,11 @@ export const Route = createFileRoute("/audit/rapport")({
     }
     return { success: true, report: result.report };
   },
-  head: ({ loaderData }: { loaderData: any }) => ({
+  head: (ctx) => ({
     meta: [
       {
-        title: loaderData?.success && loaderData.report
-          ? `Diagnostic de croissance — ${loaderData.report.company_name}`
+        title: (ctx as any)?.loaderData?.success && (ctx as any)?.loaderData?.report
+          ? `Diagnostic de croissance — ${(ctx as any).loaderData.report.company_name}`
           : "Rapport d'Audit — Volka Studio",
       },
       { name: "robots", content: "noindex, nofollow" },
