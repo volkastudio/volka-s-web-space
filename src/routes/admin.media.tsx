@@ -1,7 +1,5 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { requireAdminAuth } from "@/integrations/supabase/admin-middleware";
 import {
   Upload,
   Copy,
@@ -13,46 +11,14 @@ import {
   AlertTriangle,
   ExternalLink,
 } from "lucide-react";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { signUpload } from "@/lib/admin/cases.functions";
+import {
+  listMediaFiles,
+  deleteMediaFile,
+  type MediaFileItem,
+} from "@/lib/admin/media.functions";
 
-// ── Server functions ────────────────────────────────────────────
-const listMediaFiles = createServerFn({ method: "GET" })
-  .middleware([requireAdminAuth])
-  .handler(async () => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin.storage
-      .from("media")
-      .list("", { limit: 200, sortBy: { column: "created_at", order: "desc" } });
-    if (error) throw new Error(error.message);
-    const supabaseUrl = process.env["SUPABASE_URL"] ?? "";
-    return (data ?? []).map((f) => ({
-      name: f.name,
-      id: f.id ?? f.name,
-      size: (f.metadata?.size ?? 0) as number,
-      contentType: (f.metadata?.mimetype ?? "") as string,
-      publicUrl: `${supabaseUrl}/storage/v1/object/public/media/${f.name}`,
-    }));
-  });
-
-const deleteMediaFile = createServerFn({ method: "POST" })
-  .middleware([requireAdminAuth])
-  .validator((data: { path: string }) =>
-    z.object({ path: z.string().min(1) }).parse(data)
-  )
-  .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.storage.from("media").remove([data.path]);
-    if (error) throw new Error(error.message);
-    return { success: true as const };
-  });
-
-// ── Route ───────────────────────────────────────────────────────
-// Route path "/admin/media" is auto-registered by TanStack Start via
-// the file convention admin.media.tsx on the next build/dev run.
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error – route will be added to routeTree after next codegen
 export const Route = createFileRoute("/admin/media")({
   head: () => ({
     meta: [
@@ -60,17 +26,9 @@ export const Route = createFileRoute("/admin/media")({
       { title: "Médiathèque — Volka Admin" },
     ],
   }),
-  loader: async () => listMediaFiles(),
+  loader: () => listMediaFiles(),
   component: AdminMediaPage,
 });
-
-interface MediaFile {
-  name: string;
-  id: string;
-  size: number;
-  contentType: string;
-  publicUrl: string;
-}
 
 function formatBytes(bytes: number) {
   if (bytes === 0) return "0 B";
@@ -81,8 +39,8 @@ function formatBytes(bytes: number) {
 }
 
 function AdminMediaPage() {
-  const initialFiles = Route.useLoaderData() as MediaFile[];
-  const [files, setFiles] = React.useState<MediaFile[]>(initialFiles);
+  const initialFiles = Route.useLoaderData() as MediaFileItem[];
+  const [files, setFiles] = React.useState<MediaFileItem[]>(initialFiles);
   const [uploading, setUploading] = React.useState(false);
   const [uploadError, setUploadError] = React.useState<string | null>(null);
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
@@ -94,7 +52,7 @@ function AdminMediaPage() {
     if (!fileList || fileList.length === 0) return;
     setUploadError(null);
     setUploading(true);
-    const newFiles: MediaFile[] = [];
+    const newFiles: MediaFileItem[] = [];
     try {
       for (const file of Array.from(fileList)) {
         const { signedUrl, path } = await signUpload({
@@ -107,8 +65,8 @@ function AdminMediaPage() {
         });
         if (!res.ok) throw new Error(`Échec upload ${file.name} (${res.status})`);
 
-        const supabaseUrl =
-          (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_SUPABASE_URL) || "";
+        // Derive public URL from Vite env (client-side only)
+        const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"] ?? "";
         newFiles.push({
           name: path,
           id: path,
@@ -131,7 +89,7 @@ function AdminMediaPage() {
     setTimeout(() => setCopiedId(null), 2500);
   };
 
-  const handleDelete = async (file: MediaFile) => {
+  const handleDelete = async (file: MediaFileItem) => {
     if (!window.confirm(`Supprimer « ${file.name} » de la médiathèque ?`)) return;
     setDeleting(file.id);
     try {
