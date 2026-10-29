@@ -63,7 +63,7 @@ export async function getAuditCapacityStatus(): Promise<AuditCapacityStatus> {
     .maybeSingle();
 
   const val = (settingRow?.value as Record<string, unknown>) ?? {};
-  const capacity = typeof val["capacity_per_month"] === "number" ? val["capacity_per_month"] : 30;
+  const capacity = typeof val["capacity_per_month"] === "number" ? val["capacity_per_month"] : 15;
   const deliveryDays = typeof val["delivery_working_days"] === "number" ? val["delivery_working_days"] : 5;
   const isOpen = val["is_open"] !== false;
 
@@ -228,6 +228,7 @@ export async function verifyAuditEmail(token: string): Promise<{
   status?: "queued" | "waitlist";
   company?: string;
   track?: string;
+  deliveryDays?: number;
 }> {
   if (!token || typeof token !== "string" || token.length < 16) {
     return { success: false, error: "Jeton de vérification invalide." };
@@ -248,11 +249,13 @@ export async function verifyAuditEmail(token: string): Promise<{
 
   // Already verified?
   if (audit.status !== "pending_verification") {
+    const current = await getAuditCapacityStatus();
     return {
       success: true,
       status: audit.status === "waitlist" ? "waitlist" : "queued",
       company: audit.company_name,
       track: audit.track,
+      deliveryDays: current.deliveryDays,
     };
   }
 
@@ -308,6 +311,7 @@ export async function verifyAuditEmail(token: string): Promise<{
     status: nextStatus,
     company: audit.company_name,
     track: audit.track,
+    deliveryDays: capacity.deliveryDays,
   };
 }
 

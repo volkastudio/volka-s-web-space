@@ -58,8 +58,8 @@ function AuditVerifierPage() {
     <div className="min-h-screen bg-forest-black text-paper flex flex-col font-sans">
       <SiteHeader />
 
-      <main className="flex-1 flex items-center justify-center pt-32 pb-24 px-6 sm:px-12">
-        <div className="max-w-xl w-full bg-pine/30 border border-pine/70 rounded-xl p-8 sm:p-10 space-y-8 text-center shadow-2xl relative">
+      <main className="flex-1 flex items-center justify-center pt-10 pb-16 px-5 sm:pt-20 sm:pb-24 sm:px-12">
+        <div className="max-w-xl w-full bg-pine/30 border border-pine/70 rounded-xl p-6 sm:p-10 space-y-8 text-center shadow-2xl relative">
           {/* SUCCESS: QUEUED */}
           {isQueued && (
             <>
@@ -83,7 +83,11 @@ function AuditVerifierPage() {
               <div className="p-5 rounded-lg bg-forest-black/80 border border-mint/30 text-left space-y-3 text-xs sm:text-sm">
                 <div className="flex items-center gap-2 text-mint font-semibold">
                   <Clock className="size-4" />
-                  <span>Délai de réalisation : 5 jours ouvrés</span>
+                  <span>
+                    {result.deliveryDays
+                      ? `Rapport envoyé sous ${result.deliveryDays} jours ouvrés`
+                      : "Rapport envoyé par email"}
+                  </span>
                 </div>
                 <p className="text-paper/80 leading-relaxed">
                   Notre équipe va analyser vos supports, exécuter les contrôles techniques et rédiger vos 3 constats stratégiques. Vous recevrez un lien d'accès privé par email.
@@ -116,20 +120,20 @@ function AuditVerifierPage() {
                   Capacité atteinte pour ce mois
                 </span>
                 <h1 className="font-display text-3xl sm:text-4xl text-paper font-light">
-                  Inscrit sur liste d'attente prioritaire
+                  Vous êtes sur liste d'attente
                 </h1>
                 <p className="text-sm sm:text-base text-mint/90 leading-relaxed">
-                  La limite mensuelle de 10 audits a été atteinte. Votre demande pour{" "}
-                  <strong className="text-paper">{result.company}</strong> a été enregistrée en tête de file pour le cycle suivant.
+                  Les places de ce mois sont toutes prises. Votre demande pour{" "}
+                  <strong className="text-paper">{result.company}</strong> est enregistrée pour le mois suivant, dans l'ordre d'arrivée.
                 </p>
               </div>
 
               <div className="p-5 rounded-lg bg-forest-black/80 border border-ochre/30 text-left space-y-2 text-xs sm:text-sm">
                 <span className="text-ochre font-semibold block">
-                  Traitement prioritaire garanti
+                  Aucune action nécessaire
                 </span>
                 <p className="text-paper/80 leading-relaxed">
-                  Vous n'avez aucune action supplémentaire à effectuer. Dès l'ouverture des nouveaux créneaux, votre dossier sera traité en priorité absolue.
+                  Vous n'avez aucune action supplémentaire à effectuer. Nous vous écrirons dès que de nouvelles places s'ouvrent.
                 </p>
               </div>
 

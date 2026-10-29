@@ -302,7 +302,7 @@ function AuditWizardPage() {
     <div className="min-h-screen bg-forest-black text-paper flex flex-col font-sans">
       <SiteHeader />
 
-      <main className="flex-1 pt-32 pb-24 px-6 sm:px-12">
+      <main className="flex-1 pt-8 pb-20 px-5 sm:px-12 sm:pt-16">
         <div className="max-w-xl mx-auto space-y-8">
           {/* Top Title & Step Indicator */}
           <div className="space-y-4">
@@ -368,7 +368,13 @@ function AuditWizardPage() {
           )}
 
           {/* WIZARD FORM */}
-          <form onSubmit={handleSubmit} noValidate className="space-y-8">
+          <form onSubmit={handleSubmit} noValidate className="audit-form space-y-8">
+            {/* Mobile comfort: 16px text stops iOS zooming into fields; 48px touch targets */}
+            <style>{`
+              .audit-form input:not([type="checkbox"]), .audit-form select, .audit-form textarea { font-size: 16px; }
+              .audit-form input:not([type="checkbox"]), .audit-form select { min-height: 48px; }
+              .audit-form input[type="checkbox"] { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+            `}</style>
             {/* Honeypot field (hidden from real users) */}
             <div className="hidden" aria-hidden="true">
               <label htmlFor="website_check">Ne pas remplir</label>
@@ -866,27 +872,27 @@ function AuditWizardPage() {
             )}
 
             {/* BUTTON BAR */}
-            <div className="flex items-center justify-between gap-4 pt-4 border-t border-pine/50">
+            <div className="flex flex-col-reverse gap-3 pt-4 border-t border-pine/50 sm:flex-row sm:items-center sm:justify-between">
               {currentStep > 1 ? (
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleBack}
                   disabled={submitting}
-                  className="border-pine hover:bg-pine/40 text-paper"
+                  className="h-12 w-full border-pine hover:bg-pine/40 text-paper sm:w-auto"
                 >
                   <ArrowLeft className="mr-2 size-4" />
                   Précédent
                 </Button>
               ) : (
-                <div />
+                <div className="hidden sm:block" />
               )}
 
               {currentStep < 4 ? (
                 <Button
                   type="button"
                   onClick={handleNext}
-                  className="bg-ochre hover:bg-ochre/90 text-forest-black font-semibold px-6"
+                  className="h-12 w-full bg-ochre hover:bg-ochre/90 text-forest-black font-semibold px-6 sm:w-auto"
                 >
                   Continuer
                   <ArrowRight className="ml-2 size-4" />
@@ -895,7 +901,7 @@ function AuditWizardPage() {
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="bg-ochre hover:bg-ochre/90 text-forest-black font-semibold px-7 shadow-lg"
+                  className="h-12 w-full bg-ochre hover:bg-ochre/90 text-forest-black font-semibold px-7 shadow-lg sm:w-auto"
                 >
                   {submitting ? (
                     <>

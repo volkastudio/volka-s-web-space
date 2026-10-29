@@ -28,6 +28,32 @@ export interface DigitalProductWithRegions {
 }
 
 /**
+ * Turns what an admin typed into an absolute http(s) URL.
+ * "whop.com/x" -> "https://whop.com/x"; "//whop.com" -> "https://whop.com".
+ * Returns null when it cannot be a valid web address (so it never becomes a relative link).
+ */
+export function normalizeCheckoutUrl(raw: string): string | null {
+  let value = (raw || "").trim();
+  if (!value) return null;
+
+  if (value.startsWith("//")) {
+    value = `https:${value}`;
+  } else if (!/^[a-z][a-z0-9+.-]*:/i.test(value)) {
+    // No scheme typed: assume https
+    value = `https://${value.replace(/^\/+/, "")}`;
+  }
+
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    if (!url.hostname.includes(".")) return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Public: fetches published product and its active regions by slug.
  */
 export async function getProductBySlug(slug: string): Promise<DigitalProductWithRegions | null> {
@@ -119,19 +145,21 @@ export async function resolveRegionRedirect(
     .update({ outbound_clicks_count: (product.outbound_clicks_count || 0) + 1 })
     .eq("id", product.id);
 
-  // Append UTM tracking
-  try {
-    const url = new URL(region.checkout_url);
-    url.searchParams.set("utm_source", "volka");
-    url.searchParams.set("utm_campaign", slug);
-    if (sourceTag) {
-      url.searchParams.set("utm_content", sourceTag);
-    }
-    return url.toString();
-  } catch {
-    const separator = region.checkout_url.includes("?") ? "&" : "?";
-    return `${region.checkout_url}${separator}utm_source=volka&utm_campaign=${slug}`;
+  // Always resolve to an absolute URL (older rows may have been saved without https://)
+  const normalized = normalizeCheckoutUrl(region.checkout_url);
+  if (!normalized) {
+    console.error(`Invalid checkout URL for ${slug}/${regionKey}: ${region.checkout_url}`);
+    return null;
   }
+
+  // Append UTM tracking
+  const url = new URL(normalized);
+  url.searchParams.set("utm_source", "volka");
+  url.searchParams.set("utm_campaign", slug);
+  if (sourceTag) {
+    url.searchParams.set("utm_content", sourceTag);
+  }
+  return url.toString();
 }
 
 /**
@@ -173,6 +201,18 @@ export async function saveAdminProduct(params: {
 }) {
   const now = new Date().toISOString();
 
+  // 0. Validate and normalise every checkout link BEFORE touching the database,
+  //    so a typo can never wipe the existing regions.
+  const normalizedRegions = (params.regions ?? []).map((r) => {
+    const checkoutUrl = normalizeCheckoutUrl(r.checkout_url);
+    if (!checkoutUrl) {
+      throw new Error(
+        `Lien invalide pour la région "${r.label_fr || r.region_key}" : "${r.checkout_url}". Exemple : https://whop.com/votre-produit`
+      );
+    }
+    return { ...r, checkout_url: checkoutUrl };
+  });
+
   // 1. Upsert product
   const productPayload = {
     slug: params.slug.toLowerCase().trim(),
@@ -209,8 +249,8 @@ export async function saveAdminProduct(params: {
   if (productId && params.regions) {
     await supabaseAdmin.from("product_regions").delete().eq("product_id", productId);
 
-    if (params.regions.length > 0) {
-      const regionsToInsert = params.regions.map((r, i) => ({
+    if (normalizedRegions.length > 0) {
+      const regionsToInsert = normalizedRegions.map((r, i) => ({
         product_id: productId,
         region_key: r.region_key,
         label_fr: r.label_fr,

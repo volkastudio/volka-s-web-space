@@ -29,8 +29,8 @@ function AuditConfirmationPage() {
     <div className="min-h-screen bg-forest-black text-paper flex flex-col font-sans">
       <SiteHeader />
 
-      <main className="flex-1 flex items-center justify-center pt-32 pb-24 px-6 sm:px-12">
-        <div className="max-w-xl w-full bg-pine/30 border border-mint/30 rounded-xl p-8 sm:p-10 space-y-8 text-center shadow-2xl relative">
+      <main className="flex-1 flex items-center justify-center pt-10 pb-16 px-5 sm:pt-20 sm:pb-24 sm:px-12">
+        <div className="max-w-xl w-full bg-pine/30 border border-mint/30 rounded-xl p-6 sm:p-10 space-y-8 text-center shadow-2xl relative">
           {/* Top Icon Badge */}
           <div className="size-16 rounded-full bg-mint/15 border border-mint/40 text-mint flex items-center justify-center mx-auto shadow-inner">
             <Mail className="size-8" />
@@ -73,7 +73,7 @@ function AuditConfirmationPage() {
                 3
               </span>
               <p className="text-paper/85">
-                Votre créneau est immédiatement sécurisé et notre studio commence l'analyse sous 5 jours ouvrés.
+                Une fois votre adresse confirmée, votre demande est enregistrée et nous vous écrivons dès que le rapport est prêt.
               </p>
             </div>
           </div>
