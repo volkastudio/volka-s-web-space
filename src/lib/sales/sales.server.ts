@@ -1,6 +1,13 @@
 // Server-side logic for Phase 14: Digital Sales Pages, Regions & Buyers
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
+import { hashIdentifier } from "@/lib/admin/security.server";
+import { resolvePageConfig, type SalesPageConfig } from "./sales-config";
+
+// Tables/columns added after the last Supabase type generation (page_config, product_contacts).
+// Regenerate src/integrations/supabase/types.ts to drop this loose handle.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const looseDb = supabaseAdmin as unknown as { from: (table: string) => any };
 
 export interface DigitalProductWithRegions {
   id: string;
@@ -16,6 +23,8 @@ export interface DigitalProductWithRegions {
   views_count: number;
   cta_clicks_count: number;
   outbound_clicks_count: number;
+  /** Editable texts and optional email step (per page, from the back office). */
+  page_config: SalesPageConfig;
   regions: {
     id: string;
     region_key: string;
@@ -92,8 +101,116 @@ export async function getProductBySlug(slug: string): Promise<DigitalProductWith
     ...product,
     features: (product.features as unknown as string[]) || [],
     faq: (product.faq as unknown as { q: string; a: string }[]) || [],
+    page_config: resolvePageConfig((product as unknown as Record<string, unknown>)["page_config"]),
     regions: regions || [],
   };
+}
+
+/**
+ * Public: stores an email entered on a sales page before the redirect to the checkout.
+ * Never blocks a sale: callers redirect even if this fails.
+ */
+export async function captureProductContact(
+  input: {
+    slug: string;
+    regionKey?: string | undefined;
+    email: string;
+    name?: string | undefined;
+    marketingConsent?: boolean | undefined;
+    sourceTag?: string | undefined;
+  },
+  clientIp?: string
+): Promise<{ success: boolean }> {
+  const parsed = z
+    .object({
+      email: z.string().trim().toLowerCase().email().max(200),
+      name: z.string().trim().max(120).optional(),
+    })
+    .safeParse({ email: input.email, name: input.name });
+  if (!parsed.success) return { success: false };
+
+  const { data: product } = await supabaseAdmin
+    .from("digital_products")
+    .select("*")
+    .eq("slug", input.slug)
+    .eq("status", "published")
+    .maybeSingle();
+  if (!product) return { success: false };
+
+  const config = resolvePageConfig((product as unknown as Record<string, unknown>)["page_config"]);
+  if (config.capture.mode === "off") return { success: false };
+
+  const salt = process.env["SECRET_SALT"] || "";
+  const hashedIp = clientIp && salt ? await hashIdentifier(clientIp, salt) : null;
+
+  // Light rate limit: 10 entries per hashed IP per hour
+  if (hashedIp) {
+    const cutoff = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count } = await looseDb
+      .from("product_contacts")
+      .select("id", { count: "exact", head: true })
+      .eq("hashed_ip", hashedIp)
+      .gte("created_at", cutoff);
+    if ((count ?? 0) >= 10) return { success: false };
+  }
+
+  const consent = Boolean(input.marketingConsent) && config.capture.consent_label.length > 0;
+  const nowIso = new Date().toISOString();
+
+  const { data: existing } = await looseDb
+    .from("product_contacts")
+    .select("id, marketing_consent")
+    .eq("product_id", product.id)
+    .eq("email", parsed.data.email)
+    .maybeSingle();
+
+  if (existing) {
+    // Never downgrade an earlier "yes"; only upgrade it.
+    const patch: Record<string, unknown> = {
+      region_key: input.regionKey ?? null,
+      ...(parsed.data.name ? { name: parsed.data.name } : {}),
+      ...(consent && !existing.marketing_consent
+        ? { marketing_consent: true, consent_text: config.capture.consent_label, consent_at: nowIso }
+        : {}),
+    };
+    const { error } = await looseDb.from("product_contacts").update(patch).eq("id", existing.id);
+    return { success: !error };
+  }
+
+  const { error } = await looseDb.from("product_contacts").insert({
+    product_id: product.id,
+    email: parsed.data.email,
+    name: parsed.data.name || null,
+    region_key: input.regionKey ?? null,
+    marketing_consent: consent,
+    consent_text: consent ? config.capture.consent_label : null,
+    consent_at: consent ? nowIso : null,
+    source_tag: input.sourceTag?.slice(0, 120) || null,
+    hashed_ip: hashedIp,
+  });
+  return { success: !error };
+}
+
+/**
+ * Admin: contacts collected on one sales page (most recent first).
+ */
+export async function listAdminProductContacts(productId: string) {
+  const { data, error } = await looseDb
+    .from("product_contacts")
+    .select("id, created_at, email, name, region_key, marketing_consent, source_tag")
+    .eq("product_id", productId)
+    .order("created_at", { ascending: false })
+    .limit(500);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as {
+    id: string;
+    created_at: string;
+    email: string;
+    name: string | null;
+    region_key: string | null;
+    marketing_consent: boolean;
+    source_tag: string | null;
+  }[];
 }
 
 /**
@@ -163,16 +280,30 @@ export async function resolveRegionRedirect(
 }
 
 /**
- * Admin: List all digital products.
+ * Admin: List all digital products with full region configurations.
  */
 export async function listAdminProducts() {
   const { data, error } = await supabaseAdmin
     .from("digital_products")
-    .select("*, product_regions(id, region_key, label_fr, is_active)")
+    .select("*, product_regions(*)")
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
   return data || [];
+}
+
+/**
+ * Admin: Get single digital product by ID with full regions.
+ */
+export async function getAdminProductById(id: string) {
+  const { data, error } = await supabaseAdmin
+    .from("digital_products")
+    .select("*, product_regions(*)")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  return data;
 }
 
 /**
@@ -189,6 +320,7 @@ export async function saveAdminProduct(params: {
   faq: { q: string; a: string }[];
   status: "draft" | "published" | "archived";
   trigger_keyword?: string;
+  page_config?: unknown;
   regions: {
     region_key: string;
     label_fr: string;
@@ -224,6 +356,7 @@ export async function saveAdminProduct(params: {
     faq: params.faq,
     status: params.status,
     trigger_keyword: params.trigger_keyword?.trim() || null,
+    page_config: resolvePageConfig(params.page_config),
     updated_at: now,
   };
 
@@ -293,6 +426,7 @@ export async function duplicateAdminProduct(id: string) {
       faq: original.faq,
       status: "draft",
       trigger_keyword: original.trigger_keyword,
+      ...({ page_config: (original as unknown as Record<string, unknown>)["page_config"] ?? {} } as object),
     })
     .select("id")
     .single();

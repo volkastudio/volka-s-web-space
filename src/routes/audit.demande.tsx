@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { submitAuditForm } from "@/lib/audit/audit.functions";
 import type { AuditTrack } from "@/lib/audit/audit.server";
+import { track } from "@/lib/analytics/tracker";
 
 const searchSchema = z.object({
   track: z.enum(["website", "marketing", "sales", "general"]).optional(),
@@ -285,6 +286,14 @@ function AuditWizardPage() {
       if (typeof window !== "undefined") {
         sessionStorage.removeItem(STORAGE_KEY);
       }
+
+      track("audit_submit", {
+        path: "/audit/demande",
+        metadata: {
+          track: formData.track,
+          sector: formData.activitySector,
+        },
+      });
 
       // Navigate to confirmation page
       navigate({

@@ -30,7 +30,7 @@ export const Route = createFileRoute("/admin/sales/")({
   head: () => ({
     meta: [
       { name: "robots", content: "noindex, nofollow" },
-      { title: "Pages de Vente — Volka Admin" },
+      { title: "Outils & Produits — Volka Admin" },
     ],
   }),
   loader: async () => {
@@ -90,7 +90,7 @@ function AdminSalesIndexPage() {
   const copyTaggedLink = (slug: string) => {
     const origin = typeof window !== "undefined" ? window.location.origin : "https://volkastudio.com";
     const tag = sourceTag.trim() ? `?src=${encodeURIComponent(sourceTag.trim())}` : "";
-    const fullUrl = `${origin}/sales/${slug}${tag}`;
+    const fullUrl = `${origin}/tools/${slug}${tag}`;
 
     navigator.clipboard.writeText(fullUrl);
     setCopiedLink(slug);
@@ -103,10 +103,10 @@ function AdminSalesIndexPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-light text-forest-black">
-            Ventes — Pages & Acheteurs
+            Outils — Pages & Acheteurs
           </h1>
           <p className="text-sm text-forest-black/70">
-            Gérez vos pages de vente `/sales/$slug`, liens trackés et redirections de paiement.
+            Gérez vos pages d'outils `/tools/$slug`, liens trackés et redirections de paiement.
           </p>
         </div>
 
@@ -178,7 +178,7 @@ function AdminSalesIndexPage() {
                           {p.title}
                         </div>
                         <div className="text-forest-black/60 font-mono text-[11px]">
-                          /sales/{p.slug}
+                          /tools/{p.slug}
                         </div>
                       </td>
 
@@ -259,7 +259,7 @@ function AdminSalesIndexPage() {
 
                         {/* Open Page */}
                         <a
-                          href={`/sales/${p.slug}`}
+                          href={`/tools/${p.slug}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center text-xs p-1 hover:text-terracotta"

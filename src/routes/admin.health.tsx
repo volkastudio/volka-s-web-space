@@ -133,8 +133,8 @@ const FLAGGED_PROBLEMS = [
     id: "F11",
     title: "Mesure d'audience et lecture sans cookies",
     phase: "Phase 12a",
-    status: "in_progress",
-    note: "Analytics première partie prévu avant lancement public dans la Phase 12a.",
+    status: "resolved",
+    note: "Analytics première partie (/api/m), hachage anonyme quotidien sha256 (D18), qualification de lecture D17, purge brute à 30 jours.",
   },
   {
     id: "F12",

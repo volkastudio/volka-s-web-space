@@ -122,6 +122,189 @@ export type Database = {
         }
         Relationships: []
       }
+      site_events: {
+        Row: {
+          id: string
+          event_name: string
+          path: string
+          entity_type: string | null
+          entity_id: string | null
+          visitor_hash: string
+          session_id: string | null
+          source: string | null
+          referrer: string | null
+          referrer_host: string | null
+          utm_source: string | null
+          utm_medium: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          country: string | null
+          device_class: string | null
+          browser_family: string | null
+          locale: string | null
+          duration_seconds: number
+          scroll_depth: number
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_name: string
+          path: string
+          entity_type?: string | null
+          entity_id?: string | null
+          visitor_hash: string
+          session_id?: string | null
+          source?: string | null
+          referrer?: string | null
+          referrer_host?: string | null
+          utm_source?: string | null
+          utm_medium?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          country?: string | null
+          device_class?: string | null
+          browser_family?: string | null
+          locale?: string | null
+          duration_seconds?: number
+          scroll_depth?: number
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_name?: string
+          path?: string
+          entity_type?: string | null
+          entity_id?: string | null
+          visitor_hash?: string
+          session_id?: string | null
+          source?: string | null
+          referrer?: string | null
+          referrer_host?: string | null
+          utm_source?: string | null
+          utm_medium?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          country?: string | null
+          device_class?: string | null
+          browser_family?: string | null
+          locale?: string | null
+          duration_seconds?: number
+          scroll_depth?: number
+          metadata?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      daily_stats: {
+        Row: {
+          date: string
+          views: number
+          visitors: number
+          reads: number
+          bounces: number
+          avg_duration_seconds: number
+          updated_at: string
+        }
+        Insert: {
+          date: string
+          views?: number
+          visitors?: number
+          reads?: number
+          bounces?: number
+          avg_duration_seconds?: number
+          updated_at?: string
+        }
+        Update: {
+          date?: string
+          views?: number
+          visitors?: number
+          reads?: number
+          bounces?: number
+          avg_duration_seconds?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      daily_sources: {
+        Row: {
+          id: number
+          date: string
+          source: string
+          referrer_host: string
+          utm_campaign: string
+          views: number
+          visitors: number
+          reads: number
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          date: string
+          source: string
+          referrer_host?: string
+          utm_campaign?: string
+          views?: number
+          visitors?: number
+          reads?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          date?: string
+          source?: string
+          referrer_host?: string
+          utm_campaign?: string
+          views?: number
+          visitors?: number
+          reads?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      daily_entity_stats: {
+        Row: {
+          id: number
+          date: string
+          entity_type: string
+          entity_id: string
+          views: number
+          visitors: number
+          reads: number
+          total_reading_time_seconds: number
+          cta_clicks: number
+          social_clicks: number
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          date: string
+          entity_type: string
+          entity_id: string
+          views?: number
+          visitors?: number
+          reads?: number
+          total_reading_time_seconds?: number
+          cta_clicks?: number
+          social_clicks?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          date?: string
+          entity_type?: string
+          entity_id?: string
+          views?: number
+          visitors?: number
+          reads?: number
+          total_reading_time_seconds?: number
+          cta_clicks?: number
+          social_clicks?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_audit_log: {
         Row: {
           id: string

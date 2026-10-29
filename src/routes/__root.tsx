@@ -12,6 +12,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 
 import { PageTransition } from "@/components/page-transition";
 import { I18nProvider, useI18n } from "@/i18n/context";
+import { usePageTracking } from "@/lib/analytics/use-page-tracking";
 import { ArrowUpRight, RotateCcw } from "lucide-react";
 
 import appCss from "../styles.css?url";
@@ -179,6 +180,13 @@ function RootShell({ children }: { children: ReactNode }) {
               __html: ".motion-safe-hidden { opacity: 1 !important; transform: none !important; }",
             }}
           />
+          <img
+            src="/api/m/pixel.gif?p=noscript"
+            width="1"
+            height="1"
+            alt=""
+            style={{ display: "none" }}
+          />
         </noscript>
         <HeadContent />
       </head>
@@ -190,12 +198,19 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function AnalyticsListener() {
+  usePageTracking();
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider defaultLocale="fr">
+        {/* Analytics router navigation tracking */}
+        <AnalyticsListener />
         {/* Keeps html[lang] in sync with the active locale and invalidates router loaders */}
         <LangSync />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}

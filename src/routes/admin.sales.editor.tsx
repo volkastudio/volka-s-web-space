@@ -23,10 +23,18 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
+  getAdminProduct,
   getAdminProducts,
+  getAdminProductContacts,
   saveProduct,
   deleteProduct,
 } from "@/lib/sales/sales.functions";
+import {
+  resolvePageConfig,
+  DEFAULT_SALES_PAGE_CONFIG,
+  type SalesPageConfig,
+  type CaptureMode,
+} from "@/lib/sales/sales-config";
 import { signUpload } from "@/lib/admin/cases.functions";
 
 const searchSchema = z.object({
@@ -38,22 +46,43 @@ export const Route = createFileRoute("/admin/sales/editor")({
   head: () => ({
     meta: [
       { name: "robots", content: "noindex, nofollow" },
-      { title: "Éditeur de page de vente — Volka Admin" },
+      { title: "Éditeur d'outil & page — Volka Admin" },
     ],
   }),
   loader: async ({ location }) => {
     const search = location.search as { id?: string };
     if (search.id) {
-      const products = await getAdminProducts();
-      const found = (products as unknown as ProductFormState[]).find(
-        (p: any) => p.id === search.id
-      );
-      return { product: found ?? null };
+      let product: any = null;
+      try {
+        product = await getAdminProduct({ data: { id: search.id } });
+      } catch {
+        const products = await getAdminProducts();
+        product = (products as unknown as ProductFormState[]).find(
+          (p: any) => p.id === search.id
+        ) ?? null;
+      }
+      let contacts: ContactRow[] = [];
+      try {
+        contacts = (await getAdminProductContacts({ data: { productId: search.id } })) as ContactRow[];
+      } catch {
+        // table not migrated yet: the editor still works
+      }
+      return { product: product ?? null, contacts };
     }
-    return { product: null };
+    return { product: null, contacts: [] as ContactRow[] };
   },
   component: AdminSalesEditorPage,
 });
+
+interface ContactRow {
+  id: string;
+  created_at: string;
+  email: string;
+  name: string | null;
+  region_key: string | null;
+  marketing_consent: boolean;
+  source_tag: string | null;
+}
 
 interface RegionRow {
   region_key: string;
@@ -76,6 +105,7 @@ interface ProductFormState {
   faq: { q: string; a: string }[];
   status: "draft" | "published" | "archived";
   trigger_keyword: string;
+  page_config: SalesPageConfig;
   regions: RegionRow[];
 }
 
@@ -110,6 +140,7 @@ const EMPTY_PRODUCT: ProductFormState = {
   faq: [{ q: "", a: "" }],
   status: "draft",
   trigger_keyword: "",
+  page_config: DEFAULT_SALES_PAGE_CONFIG,
   regions: DEFAULT_REGIONS,
 };
 
@@ -123,7 +154,10 @@ function getMediaPublicUrl(path: string): string {
 }
 
 function AdminSalesEditorPage() {
-  const { product: initialProduct } = Route.useLoaderData() as { product: any };
+  const { product: initialProduct, contacts } = Route.useLoaderData() as {
+    product: any;
+    contacts: ContactRow[];
+  };
   const navigate = useNavigate();
 
   const [form, setForm] = React.useState<ProductFormState>(() => {
@@ -141,8 +175,17 @@ function AdminSalesEditorPage() {
           : [{ q: "", a: "" }],
         status: initialProduct.status ?? "draft",
         trigger_keyword: initialProduct.trigger_keyword ?? "",
+        page_config: resolvePageConfig(initialProduct.page_config),
         regions: (initialProduct.product_regions ?? initialProduct.regions ?? []).length
-          ? (initialProduct.product_regions ?? initialProduct.regions)
+          ? (initialProduct.product_regions ?? initialProduct.regions).map((r: any) => ({
+              region_key: r.region_key ?? "",
+              label_fr: r.label_fr ?? "",
+              label_en: r.label_en ?? r.label_fr ?? "",
+              checkout_url: r.checkout_url ?? "",
+              platform_name: r.platform_name ?? "whop",
+              sort_order: r.sort_order ?? 0,
+              is_active: r.is_active ?? true,
+            }))
           : DEFAULT_REGIONS,
       };
     }
@@ -161,6 +204,37 @@ function AdminSalesEditorPage() {
 
   const update = <K extends keyof ProductFormState>(key: K, value: ProductFormState[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
+
+  // Page texts / email step
+  const updateConfig = (patch: Partial<Omit<SalesPageConfig, "capture">>) =>
+    setForm((f) => ({ ...f, page_config: { ...f.page_config, ...patch } }));
+  const updateCapture = (patch: Partial<SalesPageConfig["capture"]>) =>
+    setForm((f) => ({
+      ...f,
+      page_config: { ...f.page_config, capture: { ...f.page_config.capture, ...patch } },
+    }));
+
+  const exportContactsCsv = () => {
+    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const rows = contacts.map((c) =>
+      [
+        c.created_at,
+        c.email,
+        c.name ?? "",
+        c.region_key ?? "",
+        c.marketing_consent ? "oui" : "non",
+        c.source_tag ?? "",
+      ].map(esc).join(",")
+    );
+    const csv = [["date", "email", "prenom", "region", "consentement_marketing", "source"].join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `contacts-${form.slug || "page"}-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   // Features
   const addFeature = () => update("features", [...form.features, ""]);
@@ -260,6 +334,7 @@ function AdminSalesEditorPage() {
           faq: form.faq.filter((f) => f.q || f.a),
           status: form.status,
           trigger_keyword: form.trigger_keyword || undefined,
+          page_config: form.page_config,
           regions: form.regions.map((r, i) => ({ ...r, sort_order: i })),
         },
       });
@@ -298,11 +373,11 @@ function AdminSalesEditorPage() {
           </a>
           <div>
             <h1 className="font-display text-2xl sm:text-3xl font-light text-forest-black">
-              {form.id ? "Modifier la page de vente" : "Nouvelle page de vente"}
+              {form.id ? "Modifier l'outil / page" : "Nouvel outil / page"}
             </h1>
             {form.slug && (
               <p className="text-xs text-forest-black/50 font-mono">
-                /sales/{form.slug}
+                /tools/{form.slug}
               </p>
             )}
           </div>
@@ -311,7 +386,7 @@ function AdminSalesEditorPage() {
         <div className="flex items-center gap-2 shrink-0">
           {form.slug && form.status === "published" && (
             <a
-              href={`/sales/${form.slug}`}
+              href={`/tools/${form.slug}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-xs text-forest-black/60 hover:text-terracotta px-2 py-1"
@@ -371,7 +446,7 @@ function AdminSalesEditorPage() {
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-forest-black/70">Slug URL *</Label>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-forest-black/50 font-mono">/sales/</span>
+              <span className="text-xs text-forest-black/50 font-mono">/tools/</span>
               <Input
                 value={form.slug}
                 onChange={(e) =>
@@ -386,7 +461,7 @@ function AdminSalesEditorPage() {
 
         <div className="space-y-1.5">
           <Label className="text-xs font-medium text-forest-black/70">
-            Accroche principale (headline Cormorant) *
+            Sous-titre court (utilisé si la description est vide) *
           </Label>
           <Input
             value={form.headline}
@@ -395,12 +470,12 @@ function AdminSalesEditorPage() {
             className="bg-soft-paper border-pine/20 text-sm"
           />
           <p className="text-[11px] text-forest-black/50">
-            Cette phrase est le h1 de la page — courte, percutante, centrée sur le bénéfice.
+            Le titre de la page est le « Titre court » ci-dessus ; cette phrase sert de texte de secours et d'aperçu de partage.
           </p>
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium text-forest-black/70">Description développée</Label>
+          <Label className="text-xs font-medium text-forest-black/70">Description (affichée sous le titre)</Label>
           <Textarea
             rows={3}
             value={form.description}
@@ -510,7 +585,7 @@ function AdminSalesEditorPage() {
       <section className="bg-warm-ivory border border-pine/10 rounded-xl p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-pine/10 pb-3">
           <h2 className="font-semibold text-forest-black text-sm uppercase tracking-wider">
-            Ce que vous obtenez (bullet points)
+            Ce que vous obtenez (non affiché sur la page pour l'instant)
           </h2>
           <Button variant="outline" size="sm" onClick={addFeature} className="text-xs h-7 border-pine/20">
             <Plus className="size-3 mr-1" /> Ajouter
@@ -544,7 +619,7 @@ function AdminSalesEditorPage() {
       <section className="bg-warm-ivory border border-pine/10 rounded-xl p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-pine/10 pb-3">
           <h2 className="font-semibold text-forest-black text-sm uppercase tracking-wider">
-            FAQ (questions/réponses)
+            FAQ (non affichée sur la page pour l'instant)
           </h2>
           <Button variant="outline" size="sm" onClick={addFaq} className="text-xs h-7 border-pine/20">
             <Plus className="size-3 mr-1" /> Ajouter
@@ -720,6 +795,200 @@ function AdminSalesEditorPage() {
           ))}
         </div>
       </section>
+
+      {/* ── Textes et étapes de la page ── */}
+      <section className="bg-warm-ivory border border-pine/10 rounded-xl p-6 space-y-5">
+        <div className="border-b border-pine/10 pb-3">
+          <h2 className="font-semibold text-forest-black text-sm uppercase tracking-wider">
+            Textes et étapes de la page
+          </h2>
+          <p className="text-[11px] text-forest-black/50 mt-1">
+            Ce que le visiteur lit après avoir cliqué, et l'étape email facultative avant la redirection.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-forest-black/70">Texte du bouton principal</Label>
+            <Input
+              value={form.page_config.cta_label}
+              onChange={(e) => updateConfig({ cta_label: e.target.value })}
+              placeholder="Obtenir"
+              className="bg-soft-paper border-pine/20 text-sm"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-forest-black/70">Question des régions</Label>
+            <Input
+              value={form.page_config.region_question}
+              onChange={(e) => updateConfig({ region_question: e.target.value })}
+              placeholder="Où habitez-vous ?"
+              className="bg-soft-paper border-pine/20 text-sm"
+            />
+          </div>
+          <div className="space-y-1.5 sm:col-span-2">
+            <Label className="text-xs font-medium text-forest-black/70">
+              Petite phrase sous la question (facultatif)
+            </Label>
+            <Input
+              value={form.page_config.region_hint}
+              onChange={(e) => updateConfig({ region_hint: e.target.value })}
+              placeholder="ex: Pour vous envoyer vers le moyen de paiement adapté"
+              className="bg-soft-paper border-pine/20 text-sm"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-4 rounded-lg border border-pine/15 bg-soft-paper/60 p-4">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-forest-black/70">
+              Étape email avant la redirection
+            </Label>
+            <select
+              value={form.page_config.capture.mode}
+              onChange={(e) => updateCapture({ mode: e.target.value as CaptureMode })}
+              className="w-full h-9 px-3 rounded-md bg-warm-ivory border border-pine/20 text-sm text-forest-black focus:outline-none"
+            >
+              <option value="off">Désactivée : on redirige directement (recommandé pour vendre)</option>
+              <option value="optional">Facultative : le visiteur peut passer</option>
+              <option value="required">Obligatoire : pas de redirection sans email</option>
+            </select>
+            {form.page_config.capture.mode === "required" && (
+              <p className="text-[11px] text-terracotta">
+                Attention : chaque champ obligatoire fait perdre des acheteurs. Les plateformes
+                (Whop, Chariow) récupèrent déjà l'email à l'achat.
+              </p>
+            )}
+          </div>
+
+          {form.page_config.capture.mode !== "off" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-[11px] text-forest-black/60">Titre de l'étape</Label>
+                <Input
+                  value={form.page_config.capture.title}
+                  onChange={(e) => updateCapture({ title: e.target.value })}
+                  className="bg-warm-ivory border-pine/20 text-sm"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[11px] text-forest-black/60">Sous-titre (facultatif)</Label>
+                <Input
+                  value={form.page_config.capture.subtitle}
+                  onChange={(e) => updateCapture({ subtitle: e.target.value })}
+                  placeholder="ex: Pour recevoir vos fichiers et mes conseils"
+                  className="bg-warm-ivory border-pine/20 text-sm"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[11px] text-forest-black/60">Texte du champ email</Label>
+                <Input
+                  value={form.page_config.capture.email_label}
+                  onChange={(e) => updateCapture({ email_label: e.target.value })}
+                  className="bg-warm-ivory border-pine/20 text-sm"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[11px] text-forest-black/60">Texte du bouton</Label>
+                <Input
+                  value={form.page_config.capture.button_label}
+                  onChange={(e) => updateCapture({ button_label: e.target.value })}
+                  className="bg-warm-ivory border-pine/20 text-sm"
+                />
+              </div>
+              {form.page_config.capture.mode === "optional" && (
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] text-forest-black/60">Texte du lien « passer »</Label>
+                  <Input
+                    value={form.page_config.capture.skip_label}
+                    onChange={(e) => updateCapture({ skip_label: e.target.value })}
+                    className="bg-warm-ivory border-pine/20 text-sm"
+                  />
+                </div>
+              )}
+              <label className="flex items-center gap-2 text-xs text-forest-black/70 cursor-pointer sm:self-end sm:pb-2">
+                <input
+                  type="checkbox"
+                  checked={form.page_config.capture.ask_name}
+                  onChange={(e) => updateCapture({ ask_name: e.target.checked })}
+                  className="rounded border-pine/30"
+                />
+                Demander aussi le prénom
+              </label>
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-[11px] text-forest-black/60">
+                  Case « recevoir vos emails » (décochée par défaut ; laisser vide = pas de case)
+                </Label>
+                <Input
+                  value={form.page_config.capture.consent_label}
+                  onChange={(e) => updateCapture({ consent_label: e.target.value })}
+                  placeholder="ex: Oui, je veux recevoir les conseils et nouveautés de Volka Studio par email"
+                  className="bg-warm-ivory border-pine/20 text-sm"
+                />
+                <p className="text-[11px] text-forest-black/50">
+                  Sans case cochée, l'email est enregistré sans consentement marketing : aucun email de suivi ne doit lui être envoyé.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── Contacts collectés ── */}
+      {form.id && form.page_config.capture.mode !== "off" || contacts.length > 0 ? (
+        <section className="bg-warm-ivory border border-pine/10 rounded-xl p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-pine/10 pb-3">
+            <div>
+              <h2 className="font-semibold text-forest-black text-sm uppercase tracking-wider">
+                Contacts collectés ({contacts.length})
+              </h2>
+              <p className="text-[11px] text-forest-black/50 mt-1">
+                Visiteurs intéressés qui ont laissé leur email. Ce ne sont pas des acheteurs.
+              </p>
+            </div>
+            {contacts.length > 0 && (
+              <Button variant="outline" size="sm" onClick={exportContactsCsv} className="text-xs h-7 border-pine/20">
+                Exporter CSV
+              </Button>
+            )}
+          </div>
+          {contacts.length === 0 ? (
+            <p className="text-xs text-forest-black/50">Aucun contact pour le moment.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-left text-forest-black/50">
+                    <th className="py-1.5 pr-3 font-medium">Date</th>
+                    <th className="py-1.5 pr-3 font-medium">Email</th>
+                    <th className="py-1.5 pr-3 font-medium">Prénom</th>
+                    <th className="py-1.5 pr-3 font-medium">Région</th>
+                    <th className="py-1.5 font-medium">Emails OK</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {contacts.slice(0, 100).map((c) => (
+                    <tr key={c.id} className="border-t border-pine/10">
+                      <td className="py-1.5 pr-3 whitespace-nowrap">
+                        {new Date(c.created_at).toLocaleDateString("fr-FR")}
+                      </td>
+                      <td className="py-1.5 pr-3 font-mono">{c.email}</td>
+                      <td className="py-1.5 pr-3">{c.name ?? "—"}</td>
+                      <td className="py-1.5 pr-3">{c.region_key ?? "—"}</td>
+                      <td className="py-1.5">{c.marketing_consent ? "Oui" : "Non"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {contacts.length > 100 && (
+                <p className="text-[11px] text-forest-black/50 pt-2">
+                  100 derniers affichés ; l'export CSV contient tous les contacts (500 max).
+                </p>
+              )}
+            </div>
+          )}
+        </section>
+      ) : null}
 
       {/* ── Danger Zone ── */}
       {form.id && (

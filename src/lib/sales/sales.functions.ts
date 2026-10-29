@@ -6,6 +6,7 @@ import {
   recordCtaClick,
   resolveRegionRedirect,
   listAdminProducts,
+  getAdminProductById,
   saveAdminProduct,
   duplicateAdminProduct,
   listAdminBuyers,
@@ -16,8 +17,19 @@ import {
   updateSequenceStep,
   sendTestSequenceEmail,
   suppressEmail,
+  captureProductContact,
+  listAdminProductContacts,
   type DigitalProductWithRegions,
 } from "./sales.server";
+
+function getClientIp(headers: Headers): string | undefined {
+  const forwarded = headers.get("x-forwarded-for");
+  if (forwarded) {
+    const first = forwarded.split(",")[0]?.trim();
+    if (first) return first;
+  }
+  return headers.get("x-real-ip") || headers.get("cf-connecting-ip") || undefined;
+}
 
 /**
  * Public: Get product and its checkout regions.
@@ -40,6 +52,59 @@ export const trackProductCta = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<{ success: boolean }> => {
     await recordCtaClick(data.slug);
     return { success: true };
+  });
+
+/**
+ * Public: store the email entered on a sales page (optional step) before the redirect.
+ * Always resolves; the page redirects to the checkout whatever the result.
+ */
+export const captureContact = createServerFn({ method: "POST" })
+  .validator((data: {
+    slug: string;
+    regionKey?: string | undefined;
+    email: string;
+    name?: string | undefined;
+    marketingConsent?: boolean | undefined;
+    sourceTag?: string | undefined;
+  }) =>
+    z
+      .object({
+        slug: z.string().min(1).max(120),
+        regionKey: z.string().max(120).optional(),
+        email: z.string().min(3).max(200),
+        name: z.string().max(120).optional(),
+        marketingConsent: z.boolean().optional(),
+        sourceTag: z.string().max(120).optional(),
+      })
+      .parse(data)
+  )
+  .handler(async ({ data }): Promise<{ success: boolean }> => {
+    let clientIp: string | undefined;
+    try {
+      const { getRequest } = await import("@tanstack/react-start/server");
+      const req = getRequest();
+      if (req) clientIp = getClientIp(req.headers);
+    } catch {
+      // no server context available
+    }
+    try {
+      return await captureProductContact(data, clientIp);
+    } catch (err) {
+      console.error("captureContact failed:", err);
+      return { success: false };
+    }
+  });
+
+/**
+ * Admin: contacts collected on a sales page.
+ */
+export const getAdminProductContacts = createServerFn({ method: "GET" })
+  .middleware([requireAdminAuth])
+  .validator((data: { productId: string }) =>
+    z.object({ productId: z.string().uuid() }).parse(data)
+  )
+  .handler(async ({ data }) => {
+    return await listAdminProductContacts(data.productId);
   });
 
 /**
@@ -67,6 +132,16 @@ export const getAdminProducts = createServerFn({ method: "GET" })
   .middleware([requireAdminAuth])
   .handler(async () => {
     return await listAdminProducts();
+  });
+
+/**
+ * Admin: Get single product with full regions.
+ */
+export const getAdminProduct = createServerFn({ method: "GET" })
+  .middleware([requireAdminAuth])
+  .validator((data: unknown) => data as { id: string })
+  .handler(async ({ data }) => {
+    return await getAdminProductById(data.id);
   });
 
 /**

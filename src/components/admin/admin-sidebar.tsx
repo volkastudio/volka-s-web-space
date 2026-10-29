@@ -14,6 +14,7 @@ import {
   FileSearch,
   ShoppingBag,
   Image,
+  BarChart3,
 } from "lucide-react";
 import { useAdminAuth } from "@/lib/admin/admin-auth-context";
 
@@ -32,6 +33,12 @@ export function AdminSidebar({ unreadInquiriesCount = 0 }: AdminSidebarProps) {
       to: "/admin",
       icon: LayoutDashboard,
       exact: true,
+    },
+    {
+      label: "Statistiques",
+      to: "/admin/insights",
+      icon: BarChart3,
+      exact: false,
     },
     {
       label: "Études de cas",
@@ -59,7 +66,7 @@ export function AdminSidebar({ unreadInquiriesCount = 0 }: AdminSidebarProps) {
       exact: false,
     },
     {
-      label: "Ventes",
+      label: "Outils",
       to: "/admin/sales",
       icon: ShoppingBag,
       exact: false,

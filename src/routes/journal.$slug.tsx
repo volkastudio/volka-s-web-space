@@ -9,6 +9,8 @@ import { MarkdownContent } from "@/components/markdown-content";
 import { SocialContentLinks } from "@/components/social-content-links";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/context";
+import { useReadTracking } from "@/lib/analytics/use-read-tracking";
+import { track } from "@/lib/analytics/tracker";
 import { getPostDetail } from "@/lib/posts.functions";
 import { getStaticPost } from "@/data/posts";
 
@@ -77,6 +79,13 @@ function JournalArticlePage() {
   // Reactive localization that switches instantly on locale toggle
   const post = getStaticPost(initialPost.slug, locale) || initialPost;
   const next = (initialNext?.slug ? getStaticPost(initialNext.slug, locale) : null) || initialNext;
+
+  // Track engaged reading time and scroll completion per D17
+  useReadTracking({
+    slug: initialPost.slug,
+    readingMinutes: post.reading_time_minutes || 4,
+    entityType: "post",
+  });
 
   const [copied, setCopied] = React.useState(false);
 
@@ -244,6 +253,13 @@ function JournalArticlePage() {
             <div className="mt-8">
               <Link
                 to="/start"
+                onClick={() => {
+                  track("post_cta_click", {
+                    entityType: "post",
+                    entityId: initialPost.slug,
+                    metadata: { target: "/start" },
+                  });
+                }}
                 className="inline-flex items-center gap-2 rounded-sm bg-gold px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-primary transition-opacity hover:opacity-90"
               >
                 <span>{isFr ? "Initier un brief" : "Start a project brief"}</span>

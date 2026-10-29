@@ -232,10 +232,13 @@ export const en: Translations = {
       "— Personal data is never sold, leased, or transferred to third parties for advertising or commercial exploitation.",
       "— You retain a permanent right to access, rectify, export, or delete your personal information. To exercise this right, contact: hello@volkastudio.com.",
     ],
-    cookiesTitle: "6. Cookies & Privacy-First Browsing",
+    cookiesTitle: "6. Cookies & Privacy-First Audience Measurement (D18)",
     cookiesBody: [
-      "This website is engineered according to principles of digital minimalism and privacy. We do not use third-party advertising cookies, cross-site tracking pixels, or intrusive profiling tools.",
-      "Only essential technical storage is utilized to ensure seamless site functionality (such as remembering your language preference FR/EN).",
+      "This website is engineered according to strict principles of digital minimalism and data privacy. We do not use third-party advertising cookies, cross-site trackers, or commercial profiling tools.",
+      "Only essential technical storage is utilized to ensure seamless browsing (such as remembering your language preference FR/EN and temporary session continuity).",
+      "First-party cookieless analytics: to observe engagement on our articles and case studies, we operate our own private first-party telemetry (/api/m). Daily visits are counted via a non-reversible rotating hash sha256(IP + user-agent + date + secret salt). Your raw IP address is never stored.",
+      "Raw event logs are automatically and permanently deleted after 30 days (only aggregate daily totals remain for long-term trends).",
+      "We strictly honour your browser privacy signals: sending Do Not Track (DNT) or Global Privacy Control (GPC) headers instantly prevents any telemetry collection.",
     ],
     governingTitle: "7. Governing Law & Jurisdiction",
     governingBody: [

@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { getAdminPost, savePost } from "@/lib/admin/posts.functions";
 import { signUpload } from "@/lib/admin/cases.functions";
+import { getAnalyticsContent } from "@/lib/analytics/analytics.functions";
+import type { ContentPerformanceRow } from "@/lib/analytics/types";
 import {
   getMediaUrl,
   estimateReadingTime,
@@ -106,6 +108,7 @@ function AdminPostEditorPage() {
   const [success, setSuccess] = React.useState<string | null>(null);
   const [uploading, setUploading] = React.useState(false);
   const [customTag, setCustomTag] = React.useState("");
+  const [postStats, setPostStats] = React.useState<ContentPerformanceRow | null>(null);
 
   React.useEffect(() => {
     if (isNew) return;
@@ -151,6 +154,18 @@ function AdminPostEditorPage() {
               },
             },
           });
+
+          // Load 30-day analytics for this article (Phase 12a)
+          if (data.slug) {
+            getAnalyticsContent({ data: { days: 30, entityType: "post" } })
+              .then((rows) => {
+                if (mounted && rows) {
+                  const match = rows.find((r) => r.entityId === data.slug);
+                  if (match) setPostStats(match);
+                }
+              })
+              .catch(() => {});
+          }
         }
       } catch (err: unknown) {
         if (mounted) {
@@ -792,6 +807,57 @@ function AdminPostEditorPage() {
 
         {/* Right Column: Settings & Metadata */}
         <div className="space-y-8 lg:col-span-4">
+          {/* Analytics Performance Card (Phase 12a) */}
+          {!isNew && form.slug && (
+            <div className="rounded-xl border border-border bg-card p-6 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  30 derniers jours (D17)
+                </span>
+                <span className="rounded-full bg-forest px-2 py-0.5 text-[10px] text-mint">
+                  Mesure première partie
+                </span>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Vues</span>
+                  <span className="font-semibold tabular-nums text-forest-black">
+                    {postStats ? postStats.views : 0}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Lectures complètes</span>
+                  <span className="font-semibold tabular-nums text-ochre">
+                    {postStats ? postStats.reads : 0}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Taux de lecture</span>
+                  <span className="font-semibold tabular-nums text-forest-black">
+                    {postStats ? postStats.readRate : 0}%
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Temps moyen</span>
+                  <span className="font-semibold tabular-nums text-forest-black">
+                    {postStats && postStats.avgReadingTimeSeconds > 0
+                      ? `${Math.floor(postStats.avgReadingTimeSeconds / 60)}m ${postStats.avgReadingTimeSeconds % 60}s`
+                      : "0s"}
+                  </span>
+                </div>
+              </div>
+              <div className="pt-2 border-t border-border/60">
+                <Link
+                  to="/admin/insights"
+                  className="text-[11px] text-gold hover:underline flex items-center justify-between"
+                >
+                  <span>Détails & statistiques</span>
+                  <ArrowRight className="size-3" />
+                </Link>
+              </div>
+            </div>
+          )}
+
           {/* Publication State */}
           <div className="rounded-xl border border-border bg-card p-6 space-y-4">
             <h3 className="font-display text-lg font-medium text-foreground">

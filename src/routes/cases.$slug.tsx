@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { getStaticCaseStudy, getNextStaticCaseStudy } from "@/data/case-studies";
 import { getCaseStudyDetail } from "@/lib/cases.functions";
 import { useI18n } from "@/i18n/context";
+import { useReadTracking } from "@/lib/analytics/use-read-tracking";
 
 export const Route = createFileRoute("/cases/$slug")({
   loader: async ({ params }) => {
@@ -71,6 +72,13 @@ function CaseStudyPage() {
   // Localized resolution: reacts instantly to locale changes
   const study = getStaticCaseStudy(initialStudy.slug, locale) || initialStudy;
   const next = (initialNext?.slug ? getStaticCaseStudy(initialNext.slug, locale) : null) || initialNext;
+
+  // Track case study reading engagement per D17
+  useReadTracking({
+    slug: initialStudy.slug,
+    readingMinutes: 3,
+    entityType: "case",
+  });
 
   return (
     <main className="bg-background text-foreground">

@@ -9,9 +9,20 @@ import {
   Sparkles,
   CheckCircle2,
   AlertCircle,
+  BarChart3,
+  BookOpen,
+  TrendingUp,
 } from "lucide-react";
 import { getAdminCasesStats } from "@/lib/admin/cases.functions";
 import { listAdminInquiries } from "@/lib/admin/inquiries.functions";
+import {
+  getAnalyticsOverview,
+  getAnalyticsContent,
+} from "@/lib/analytics/analytics.functions";
+import type {
+  AnalyticsOverviewData,
+  ContentPerformanceRow,
+} from "@/lib/analytics/types";
 import type { Database } from "@/integrations/supabase/types";
 
 type InquiryRow = Database["public"]["Tables"]["project_inquiries"]["Row"];
@@ -33,6 +44,8 @@ function AdminDashboardPage() {
   const [inquiries, setInquiries] = React.useState<InquiryRow[]>([]);
   const [unreadCount, setUnreadCount] = React.useState(0);
   const [totalInquiries, setTotalInquiries] = React.useState(0);
+  const [analyticsOverview, setAnalyticsOverview] = React.useState<AnalyticsOverviewData | null>(null);
+  const [topPosts, setTopPosts] = React.useState<ContentPerformanceRow[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -41,9 +54,11 @@ function AdminDashboardPage() {
 
     async function loadData() {
       try {
-        const [statsRes, inquiriesRes] = await Promise.allSettled([
+        const [statsRes, inquiriesRes, analyticsRes, contentRes] = await Promise.allSettled([
           getAdminCasesStats(),
           listAdminInquiries({ data: { limit: 5 } }),
+          getAnalyticsOverview({ data: { days: 7 } }),
+          getAnalyticsContent({ data: { days: 7, entityType: "post" } }),
         ]);
 
         if (mounted) {
@@ -54,6 +69,12 @@ function AdminDashboardPage() {
             setInquiries(inquiriesRes.value.items);
             setUnreadCount(inquiriesRes.value.unreadCount);
             setTotalInquiries(inquiriesRes.value.totalCount);
+          }
+          if (analyticsRes.status === "fulfilled") {
+            setAnalyticsOverview(analyticsRes.value);
+          }
+          if (contentRes.status === "fulfilled") {
+            setTopPosts(contentRes.value.slice(0, 3));
           }
           setLoading(false);
         }
@@ -105,6 +126,68 @@ function AdminDashboardPage() {
           <span>{error}</span>
         </div>
       )}
+
+      {/* Audience Summary Banner (Phase 12a) */}
+      <div className="mt-8 rounded-sm border border-border bg-card p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-sm bg-pine/10 text-pine shrink-0">
+              <BarChart3 className="size-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                  Audience & Lectures (7 derniers jours)
+                </span>
+                <span className="rounded-full bg-forest px-2 py-0.5 text-[10px] text-mint">
+                  Sans cookies (D18)
+                </span>
+              </div>
+              <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-display text-2xl font-medium tabular-nums text-forest-black">
+                    {analyticsOverview?.current.views ?? 0}
+                  </span>
+                  <span className="text-xs text-muted-foreground">visites</span>
+                  {analyticsOverview && (
+                    <span
+                      className={`text-xs font-semibold ${
+                        analyticsOverview.growth.viewsPercent >= 0 ? "text-pine" : "text-terracotta"
+                      }`}
+                    >
+                      {analyticsOverview.growth.viewsPercent > 0 ? "+" : ""}
+                      {analyticsOverview.growth.viewsPercent}%
+                    </span>
+                  )}
+                </div>
+                <span className="text-border">·</span>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-display text-2xl font-medium tabular-nums text-forest-black">
+                    {analyticsOverview?.current.reads ?? 0}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    lectures complètes ({analyticsOverview?.current.readRate ?? 0}%)
+                  </span>
+                </div>
+                <span className="text-border">·</span>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-display text-2xl font-medium tabular-nums text-forest-black">
+                    {analyticsOverview?.current.visitors ?? 0}
+                  </span>
+                  <span className="text-xs text-muted-foreground">visiteurs quotidiens</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <Link
+            to="/admin/insights"
+            className="inline-flex items-center gap-1.5 rounded-sm bg-primary px-4 py-2 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground hover:opacity-90 self-start sm:self-auto shrink-0"
+          >
+            <span>Voir les insights</span>
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </div>
+      </div>
 
       {/* Metrics Row */}
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -261,6 +344,45 @@ function AdminDashboardPage() {
 
         {/* Quick Links / Studio Actions (1 col) */}
         <div className="space-y-6">
+          {/* Top 3 Read Articles (Phase 12a) */}
+          <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2">
+                <BookOpen className="size-4 text-gold" />
+                <h2 className="font-display text-lg font-medium">Top Lectures Journal</h2>
+              </div>
+              <Link to="/admin/insights" className="text-xs text-gold hover:underline">
+                Tout voir
+              </Link>
+            </div>
+            <div className="mt-4 space-y-3">
+              {topPosts.length > 0 ? (
+                topPosts.map((post) => (
+                  <div key={post.entityId} className="space-y-1">
+                    <div className="flex justify-between text-xs">
+                      <span className="font-medium text-forest-black truncate pr-2">
+                        {post.title}
+                      </span>
+                      <span className="tabular-nums font-semibold text-ochre shrink-0">
+                        {post.reads} lectures ({post.readRate}%)
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full rounded-full bg-muted/40 overflow-hidden">
+                      <div
+                        style={{ width: `${Math.min(100, post.readRate)}%` }}
+                        className="h-full rounded-full bg-ochre"
+                      />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="py-3 text-center text-xs text-muted-foreground">
+                  Aucune lecture enregistrée sur les 7 derniers jours.
+                </p>
+              )}
+            </div>
+          </div>
+
           <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
             <h2 className="font-display text-xl font-medium">Actions Rapides</h2>
             <div className="mt-4 space-y-2.5">

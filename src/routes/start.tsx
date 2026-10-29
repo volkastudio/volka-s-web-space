@@ -16,6 +16,7 @@ import { inquirySchema, type InquiryInput } from "@/lib/inquiry-schema";
 import { offers } from "@/data/offers";
 import { useI18n } from "@/i18n/context";
 import { easeVolkaOut } from "@/lib/motion";
+import { track } from "@/lib/analytics/tracker";
 
 const searchSchema = z.object({
   offer: z.string().optional(),
@@ -275,7 +276,14 @@ function StartProject() {
 
   const goNext = () => {
     setDirection(1);
-    setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
+    setStep((s) => {
+      const nextStep = Math.min(s + 1, TOTAL_STEPS - 1);
+      track("start_step_view", {
+        path: "/start",
+        metadata: { step: nextStep },
+      });
+      return nextStep;
+    });
   };
 
   const goPrev = () => {
@@ -319,6 +327,15 @@ function StartProject() {
         data: { ...parsed.data, locale, elapsedMs: Math.max(0, Date.now() - mountedAt.current) },
       });
       setStatus("sent");
+      track("start_submit", {
+        path: "/start",
+        source: form.referralSource || undefined,
+        metadata: {
+          offer: form.offer,
+          timeline: form.timeline,
+          budgetRange: form.budgetRange,
+        },
+      });
     } catch (error) {
       setStatus("error");
       setErrorMessage(error instanceof Error ? error.message : "Une erreur est survenue. Réessayez.");

@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { getPublicAuditReport } from "@/lib/audit/audit-report.functions";
 import type { AuditReportData, AuditFinding, AuditScorecardItem } from "@/lib/audit/audit-report.server";
+import { track } from "@/lib/analytics/tracker";
 
 const searchSchema = z.object({
   token: z.string().optional(),
@@ -188,6 +189,16 @@ function AuditReportPage() {
   }
 
   const { report } = loaderData;
+
+  React.useEffect(() => {
+    track("report_view", {
+      path: "/audit/rapport",
+      entityType: "audit",
+      entityId: report.token,
+      metadata: { company: report.company_name, track: report.track },
+    });
+  }, [report.token, report.company_name, report.track]);
+
   const diagDate = new Date(report.diagnosis_date).toLocaleDateString("fr-FR", {
     day: "numeric", month: "long", year: "numeric",
   });

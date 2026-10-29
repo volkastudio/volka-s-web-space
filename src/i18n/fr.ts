@@ -232,10 +232,13 @@ export const fr: Translations = {
       "— Aucune donnée à caractère personnel n'est vendue, louée ou cédée à des tiers à des fins commerciales ou publicitaires.",
       "— Vous disposez d'un droit permanent d'accès, de rectification, de portabilité et de suppression de l'ensemble de vos données. Pour exercer ce droit, écrivez à : hello@volkastudio.com.",
     ],
-    cookiesTitle: "6. Cookies & Respect de la navigation",
+    cookiesTitle: "6. Cookies & Mesure d'audience respectueuse (D18)",
     cookiesBody: [
-      "Notre plateforme est conçue selon des principes stricts de sobriété numérique. Aucun traceur publicitaire intrusif, cookie de reciblage ou cookie tiers commercial n'est utilisé sur ce site.",
-      "Les seuls éléments stockés localement sont des cookies techniques strictement nécessaires au bon fonctionnement de la navigation (notamment la mémorisation de votre choix de langue FR/EN).",
+      "Notre plateforme est conçue selon des principes stricts de sobriété numérique et de respect de la vie privée. Aucun traceur publicitaire intrusif, cookie de reciblage ou cookie tiers commercial n'est utilisé sur ce site.",
+      "Les seuls éléments stockés localement sont des données techniques strictement nécessaires au bon fonctionnement de la navigation (notamment la mémorisation de votre choix de langue FR/EN et un identifiant de session temporaire).",
+      "Mesure d'audience première partie sans cookies : pour comprendre les dynamiques de consultation de nos articles et études de cas, nous utilisons notre propre infrastructure de télémétrie interne (/api/m). Chaque jour, une empreinte anonyme non réversible sha256(IP + user-agent + date + sel secret) est générée pour dénombrer les visites quotidiennes sans jamais stocker votre adresse IP brute.",
+      "Les événements bruts de navigation sont automatiquement et définitivement supprimés après 30 jours (seuls des totaux agrégés sont conservés pour l'historique).",
+      "Nous respectons scrupuleusement les signaux de confidentialité de votre navigateur : les en-têtes Do Not Track (DNT) et Global Privacy Control (GPC) désactivent immédiatement toute collecte télémétrique.",
     ],
     governingTitle: "7. Loi applicable & Juridiction",
     governingBody: [
