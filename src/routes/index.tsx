@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Check, Sparkles } from "lucide-react";
 
 import { CountUp } from "@/components/count-up";
+import { CurrencySwitcher } from "@/components/currency-switcher";
 import { CursorFollower } from "@/components/cursor-follower";
 import { ImageReveal } from "@/components/image-reveal";
 import { LiquidGlassCard } from "@/components/liquid-glass-card";
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Volka — Systèmes de croissance & Studio digital" },
+      { title: "Volka — Les systèmes derrière la croissance des entreprises" },
       {
         name: "description",
         content:
@@ -39,13 +40,34 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Nous aidons les entreprises à attirer, convertir et fidéliser leurs clients grâce à des systèmes digitaux cohérents.",
+          "De la façon dont votre entreprise est perçue à la manière dont elle attire, convertit et suit ses clients — avec l'automatisation pour relier le tout.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ProfessionalService",
+          name: "Volka",
+          url: "https://volkastudio.com",
+          description:
+            "Volka construit les systèmes qui soutiennent la croissance des entreprises : Perception, Acquisition, Conversion, Ventes et Automatisation.",
+          sameAs: ["https://linkedin.com/company/volkastudio"],
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Cotonou",
+            addressCountry: "BJ",
+          },
+          areaServed: ["FR", "BE", "CH", "BJ", "CI", "SN", "TG", "EU"],
+          priceRange: "€€€",
+        }),
+      },
+    ],
   }),
 });
 
@@ -72,7 +94,7 @@ function ScrollArrow({ label }: { label: string }) {
 
 function Index() {
   const { featuredStudies } = Route.useLoaderData();
-  const { locale, t, formatPrice } = useI18n();
+  const { locale, t, formatOfferPrice, formatOfferPriceStructured } = useI18n();
 
   // Localized case studies that switch reactively on locale toggle (supports up to 4 concepts)
   const displayedCases = (
@@ -92,7 +114,7 @@ function Index() {
             <source media="(min-width: 768px)" srcSet={heroImage} />
             <img
               src={heroImage}
-              alt="A creative professional entering a contemporary studio in Cotonou"
+              alt="Volka — Systèmes de croissance d'entreprise"
               width={1920}
               height={1088}
               fetchPriority="high"
@@ -181,21 +203,38 @@ function Index() {
       <section className="border-b border-border bg-ivory px-5 py-12 md:px-10 lg:px-14">
         <Reveal>
           <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 md:grid-cols-4">
-            {[
-              { to: 40, suffix: "+", label: t.stats.projects },
-              { to: 8, suffix: " yrs", label: t.stats.experience },
-              { to: 12, suffix: "", label: t.stats.countries },
-              { to: 95, suffix: "%", label: t.stats.satisfaction },
-            ].map(({ to, suffix, label }) => (
-              <div key={label} className="flex flex-col gap-1">
-                <p className="font-display text-5xl font-medium text-primary md:text-6xl">
-                  <CountUp to={to} suffix={suffix} duration={1.6} />
-                </p>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                  {label}
-                </p>
-              </div>
-            ))}
+            <div className="flex flex-col gap-1">
+              <p className="font-display text-4xl sm:text-5xl font-medium text-primary md:text-6xl">
+                <CountUp to={40} suffix="+" />
+              </p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                {t.stats.projects}
+              </p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="font-display text-4xl sm:text-5xl font-medium text-primary md:text-6xl">
+                <CountUp to={8} suffix=" yrs" />
+              </p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                {t.stats.experience}
+              </p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="font-display text-4xl sm:text-5xl font-medium text-primary md:text-6xl">
+                <CountUp to={12} />
+              </p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                {t.stats.countries}
+              </p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="font-display text-4xl sm:text-5xl font-medium text-primary md:text-6xl">
+                <CountUp to={95} suffix="%" />
+              </p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                {t.stats.satisfaction}
+              </p>
+            </div>
           </div>
         </Reveal>
       </section>
@@ -346,6 +385,15 @@ function Index() {
                   </article>
                 </Reveal>
               ))}
+              <Reveal delay={400}>
+                <div className="mt-8 border-t border-border pt-6">
+                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-gold">
+                    {locale === "fr"
+                      ? "Vous n'avez pas besoin de tout acheter. Nous partons du problème que vous avez aujourd'hui."
+                      : "You don't need to buy everything. We start from the problem you have today."}
+                  </p>
+                </div>
+              </Reveal>
             </div>
           </div>
         </div>
@@ -381,43 +429,113 @@ function Index() {
             </div>
           </Reveal>
 
+          <div className="mb-8 flex justify-start md:justify-end">
+            <CurrencySwitcher variant="light" />
+          </div>
+
           {/* 3-card clean architecture matching Strategy Document */}
-          <div className="grid gap-5 sm:gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 items-stretch">
             {offers.slice(0, 3).map((offer, index) => {
               const localized = getLocalizedOffer(offer, locale);
+              const p = formatOfferPriceStructured(offer);
+              const isFeatured = index === 1;
+
               return (
-                <Reveal key={offer.id} delay={index * 100}>
+                <Reveal key={offer.id} delay={index * 100} className="h-full">
                   <LiquidGlassCard
                     variant="light"
-                    className="flex h-full min-h-0 md:min-h-[420px] flex-col p-5 sm:p-7 md:p-8 transition-shadow hover:shadow-xl"
+                    className={`flex h-full flex-col p-6 sm:p-8 transition-all duration-300 ${
+                      isFeatured
+                        ? "ring-2 ring-primary/20 shadow-2xl relative bg-background/90 md:-translate-y-2"
+                        : "hover:shadow-xl hover:border-foreground/20"
+                    }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em]">
-                        {offer.index}
-                      </span>
-                      <span className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                    {/* Header: index + badge + duration */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full border border-border/70 bg-background/80 px-2.5 py-0.5 text-[11px] font-mono font-medium text-foreground/70">
+                          {offer.index}
+                        </span>
+                        {isFeatured && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+                            <Sparkles className="size-3" />
+                            {locale === "fr" ? "Système complet" : "Core system"}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground/80">
                         {localized.duration}
                       </span>
                     </div>
 
-                    <h3 className="mt-5 sm:mt-8 font-display text-2xl sm:text-3xl lg:text-4xl font-semibold">{localized.name}</h3>
-                    <p className="mt-2 sm:mt-3 text-sm font-medium uppercase tracking-[0.12em] text-primary/80">
-                      {formatPrice(offer.prices)}
-                    </p>
-                    <p className="mt-4 sm:mt-6 text-sm leading-relaxed text-foreground/75">
+                    {/* Title */}
+                    <h3 className="mt-5 font-display text-2xl sm:text-3xl font-semibold leading-tight text-foreground">
+                      {localized.name}
+                    </h3>
+
+                    {/* Elevated Price Block */}
+                    <div className="my-5 rounded-xl border border-border/60 bg-foreground/[0.02] p-4 transition-colors">
+                      <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground/70">
+                        {p.prefix}
+                      </span>
+                      <div className="mt-1 flex items-baseline flex-wrap gap-x-1.5 gap-y-0.5">
+                        <span className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-primary tabular-nums">
+                          {p.amount}
+                        </span>
+                        {p.vatNote && (
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground/80 font-medium">
+                            {p.vatNote}
+                          </span>
+                        )}
+                        {p.suffix && (
+                          <span className="text-sm font-normal text-muted-foreground">
+                            {p.suffix}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Tagline */}
+                    <p className="text-xs sm:text-sm leading-relaxed text-foreground/70 min-h-[44px]">
                       {localized.tagline}
                     </p>
 
-                    <div className="mt-auto pt-6 sm:pt-8 flex flex-col gap-3">
-                      <Button asChild variant="volka" size="volka" className="w-full justify-between">
+                    {/* Key inclusions preview */}
+                    <div className="my-5 space-y-2 border-t border-border/40 pt-4">
+                      <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/60">
+                        {locale === "fr" ? "Ce que cela peut couvrir" : "What this can cover"}
+                      </p>
+                      <ul className="space-y-2">
+                        {localized.includes.slice(0, 3).map((item, itemIdx) => (
+                          <li key={itemIdx} className="flex items-start gap-2 text-xs leading-relaxed text-foreground/80">
+                            <span className="mt-0.5 flex size-3.5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                              <Check className="size-2.5" />
+                            </span>
+                            <span className="line-clamp-2">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="mt-auto flex flex-col gap-2.5 pt-2">
+                      <Button
+                        asChild
+                        variant={isFeatured ? "volka" : "outline"}
+                        size="volka"
+                        className={`w-full justify-between transition-transform active:scale-[0.99] ${
+                          !isFeatured ? "hover:bg-primary hover:text-primary-foreground border-foreground/20" : ""
+                        }`}
+                      >
                         <Link to="/start" search={{ offer: offer.id }}>
-                          {localized.cta} <ArrowUpRight className="size-4" />
+                          <span>{localized.cta}</span>
+                          <ArrowUpRight className="size-4" />
                         </Link>
                       </Button>
                       <Link
                         to="/offres/$slug"
                         params={{ slug: offer.slug }}
-                        className="text-center text-xs uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-foreground"
+                        className="text-center text-[11px] uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-foreground py-1"
                       >
                         {t.offers.learnMore}
                       </Link>
@@ -431,6 +549,41 @@ function Index() {
           <p className="mt-8 sm:mt-10 text-center text-xs leading-relaxed text-foreground/60 max-w-3xl mx-auto">
             {t.offers.pricingNote}
           </p>
+        </div>
+      </section>
+
+      {/* ─── Free Audit block ─── */}
+      <section id="audit" className="border-t border-border bg-ivory px-5 py-16 md:px-10 md:py-24 lg:px-14">
+        <div className="mx-auto max-w-7xl">
+          <Reveal>
+            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-2xl">
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">
+                  {locale === "fr" ? "Première étape sans engagement" : "A free first step"}
+                </p>
+                <h2 className="mt-3 font-display text-3xl sm:text-4xl font-medium md:text-5xl text-primary">
+                  {locale === "fr" ? "Audit croissance gratuit." : "Free growth audit."}
+                </h2>
+                <p className="mt-4 text-sm md:text-base leading-relaxed text-muted-foreground">
+                  {locale === "fr"
+                    ? "Un diagnostic écrit d'une partie de votre système de croissance, à partir d'informations publiques et de vos réponses. Il identifie les principaux points de friction, propose des actions prioritaires et indique l'offre la plus pertinente."
+                    : "A written diagnosis of one part of your growth system, based on public information and your answers. It identifies the main friction points, suggests priority actions, and points to the most relevant way to work together."}
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground/75">
+                  {locale === "fr"
+                    ? "Gratuit, avec un nombre de places limité chaque mois. Ce n'est ni un devis, ni une mise en œuvre, ni une garantie de résultat."
+                    : "Free, with a limited number of spots each month. It is not a quote, an implementation, or a guarantee of results."}
+                </p>
+              </div>
+              <div className="shrink-0">
+                <Button asChild variant="volka" size="volka" className="w-full sm:w-auto">
+                  <Link to="/audit">
+                    {locale === "fr" ? "Demander mon audit gratuit" : "Request my free audit"} <ArrowUpRight className="size-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 

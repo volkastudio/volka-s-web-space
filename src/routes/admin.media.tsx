@@ -102,8 +102,13 @@ function AdminMediaPage() {
     }
   };
 
-  const isImage = (ct: string) => ct.startsWith("image/");
-  const isVideo = (ct: string) => ct.startsWith("video/");
+  const isImage = (ct: string, name = "") =>
+    ct.startsWith("image/") ||
+    /\.(jpe?g|png|webp|gif|svg|avif)($|\?)/i.test(name) ||
+    name.startsWith("http");
+  const isVideo = (ct: string, name = "") =>
+    ct.startsWith("video/") ||
+    /\.(mp4|webm|mov|m4v)($|\?)/i.test(name);
 
   return (
     <div className="space-y-6 p-6 max-w-7xl mx-auto">
@@ -193,14 +198,14 @@ function AdminMediaPage() {
             >
               {/* Thumbnail */}
               <div className="aspect-square bg-soft-paper/80 flex items-center justify-center overflow-hidden">
-                {isImage(file.contentType) ? (
+                {isImage(file.contentType, file.name) ? (
                   <img
                     src={file.publicUrl}
                     alt={file.name}
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />
-                ) : isVideo(file.contentType) ? (
+                ) : isVideo(file.contentType, file.name) ? (
                   <FileVideo className="size-10 text-pine/40" />
                 ) : (
                   <ImageIcon className="size-10 text-pine/40" />

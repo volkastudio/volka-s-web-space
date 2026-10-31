@@ -15,7 +15,7 @@ export const Route = createFileRoute("/legal")({
       {
         name: "description",
         content:
-          "Informations légales, cadre réglementaire et politique de confidentialité de Volka Studio, studio digital indépendant basé à Cotonou, Bénin.",
+          "Informations légales, cadre réglementaire et politique de confidentialité de Volka Studio, partenaire de croissance pour les entreprises.",
       },
       { property: "og:title", content: "Mentions légales — Volka Studio" },
       {

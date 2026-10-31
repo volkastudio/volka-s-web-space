@@ -12,6 +12,8 @@ import { useEffect, useRef, type ReactNode } from "react";
 
 import { PageTransition } from "@/components/page-transition";
 import { I18nProvider, useI18n } from "@/i18n/context";
+import { getVisitorPrefs } from "@/lib/locale/prefs.functions";
+import { DEFAULT_PREFS } from "@/lib/locale/prefs";
 import { usePageTracking } from "@/lib/analytics/use-page-tracking";
 import { ArrowUpRight, RotateCcw } from "lucide-react";
 
@@ -142,12 +144,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
       { rel: "icon", href: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
-      // hreflang alternates for FR (root) and EN (/en/* — future routing)
-      { rel: "alternate", hrefLang: "fr", href: "/" },
-      { rel: "alternate", hrefLang: "en", href: "/" },
-      { rel: "alternate", hrefLang: "x-default", href: "/" },
+      // hreflang alternates arrive with the /en/... URLs (Phase 15, stage B). Until then both
+      // languages share one URL, so declaring two alternates for it would be wrong.
+
+
+
     ],
   }),
+  // Language and currency for the first paint (cookie → browser/country → defaults).
+  // Never blocks the page: any failure falls back to French and EUR.
+  loader: async () => {
+    try {
+      return { prefs: await getVisitorPrefs() };
+    } catch (error) {
+      console.error(error);
+      return { prefs: DEFAULT_PREFS };
+    }
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -166,7 +179,8 @@ function RootShell({ children }: { children: ReactNode }) {
             __html: `
               document.documentElement.classList.add('js');
               try {
-                var loc = localStorage.getItem('volka_locale');
+                var m = document.cookie.match(/(?:^|; )volka_locale=(fr|en)/);
+                var loc = m ? m[1] : null;
                 if (loc === 'en' || loc === 'fr') {
                   document.documentElement.lang = loc;
                 }
@@ -205,10 +219,11 @@ function AnalyticsListener() {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { prefs } = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider defaultLocale="fr">
+      <I18nProvider defaultLocale="fr" initialPrefs={prefs}>
         {/* Analytics router navigation tracking */}
         <AnalyticsListener />
         {/* Keeps html[lang] in sync with the active locale and invalidates router loaders */}

@@ -21,6 +21,14 @@ export interface Translations {
   };
   marquee: string[];
   stats: {
+    stat1Val: string;
+    stat1Label: string;
+    stat2Val: string;
+    stat2Label: string;
+    stat3Val: string;
+    stat3Label: string;
+    stat4Val: string;
+    stat4Label: string;
     projects: string;
     experience: string;
     countries: string;

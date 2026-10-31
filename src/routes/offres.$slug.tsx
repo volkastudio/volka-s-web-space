@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { ArrowUpRight, Check, Clock, ArrowLeft } from "lucide-react";
 
+import { CurrencySwitcher } from "@/components/currency-switcher";
 import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -92,7 +93,7 @@ const offerAccents: Record<string, { bg: string; accent: string; orb1: string; o
 
 function OfferPage() {
   const { offer: baseOffer } = Route.useLoaderData();
-  const { locale, formatPrice, t } = useI18n();
+  const { locale, formatOfferPrice, formatOfferPriceStructured, t } = useI18n();
   const isFr = locale === "fr";
   const offer = getLocalizedOffer(baseOffer, locale);
   const accent = offerAccents[offer.index] ?? offerAccents["01"]!;
@@ -167,19 +168,44 @@ function OfferPage() {
 
             {/* Price block */}
             <motion.div
-              className="flex flex-col gap-4 lg:items-end lg:text-right"
+              className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:p-8 backdrop-blur-md lg:items-end lg:text-right"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.45, ease: easeOut }}
             >
-              <span className="font-display text-4xl text-gold md:text-5xl">
-                {formatPrice(offer.prices)}
-              </span>
-              <span className="flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-primary-foreground/50">
+              {(() => {
+                const p = formatOfferPriceStructured(offer);
+                return (
+                  <div className="flex flex-col gap-1.5 lg:items-end">
+                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary-foreground/60">
+                      {p.prefix}
+                    </span>
+                    <div className="flex items-baseline flex-wrap gap-x-2 gap-y-1 lg:justify-end">
+                      <span className={`font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight tabular-nums ${accent.accent}`}>
+                        {p.amount}
+                      </span>
+                      {p.vatNote && (
+                        <span className="text-xs font-mono uppercase tracking-wider text-primary-foreground/60 font-medium">
+                          {p.vatNote}
+                        </span>
+                      )}
+                      {p.suffix && (
+                        <span className="text-base sm:text-lg font-light text-primary-foreground/70">
+                          {p.suffix}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+              <span className="flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-primary-foreground/60 font-medium">
                 <Clock className="size-3.5" />
                 {offer.duration}
               </span>
-              <Button asChild variant="volka" size="volka" className="mt-4">
+              <div className="pt-1">
+                <CurrencySwitcher variant="dark" />
+              </div>
+              <Button asChild variant="volka" size="volka" className="mt-2 w-full sm:w-auto">
                 <Link to="/start" search={{ offer: offer.id }}>
                   {offer.cta} <ArrowUpRight className="size-4" />
                 </Link>
@@ -194,11 +220,14 @@ function OfferPage() {
         <div className="mx-auto max-w-7xl">
           <Reveal>
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              {isFr ? "Ce qui est compris" : "What is included"}
+              {t.offerDetail.whatsIncluded}
             </p>
             <h2 className="mt-4 font-display text-4xl font-medium md:text-5xl">
-              {isFr ? "Périmètre d'intervention" : "Scope of work"}
+              {isFr ? "Exemples d'interventions" : "Potential interventions"}
             </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              {t.offerDetail.whatsIncludedSubtitle}
+            </p>
           </Reveal>
 
           <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -225,6 +254,36 @@ function OfferPage() {
         </div>
       </section>
 
+      {/* ─── How it works (Process) ─── */}
+      <section className="border-t border-border bg-ivory/40 px-5 py-20 md:px-10 md:py-28 lg:px-14">
+        <div className="mx-auto max-w-7xl">
+          <Reveal>
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">
+              {t.offerDetail.howItWorks}
+            </p>
+            <h2 className="mt-4 font-display text-4xl font-medium md:text-5xl">
+              {t.offerDetail.howItWorksTitle}
+            </h2>
+          </Reveal>
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {t.offerDetail.steps.map((st) => (
+              <Reveal key={st.n} delay={Number(st.n) * 80}>
+                <div className="flex h-full flex-col justify-between border border-border bg-background p-7">
+                  <div>
+                    <span className="text-xs font-mono font-medium text-gold">{st.n}</span>
+                    <h3 className="mt-4 font-display text-2xl font-medium">{st.title}</h3>
+                    <p className="mt-3 text-sm font-light leading-relaxed text-muted-foreground">
+                      {st.desc}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── Bottom CTA ─── */}
       <section className="border-t border-border bg-mint px-5 py-20 text-foreground md:px-10 md:py-28 lg:px-14">
         <div className="mx-auto max-w-7xl">
@@ -232,15 +291,15 @@ function OfferPage() {
             <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/60">
-                  {isFr ? "Prêt à démarrer ?" : "Ready to begin?"}
+                  {t.offerDetail.readyTitle}
                 </p>
                 <h2 className="mt-4 font-display text-5xl font-medium md:text-7xl">
-                  {isFr ? "Parlons de votre projet." : "Let's discuss your project."}
+                  {t.offerDetail.readyHeadline}
                 </h2>
                 <p className="mt-4 max-w-xl text-lg font-light text-foreground/80">
                   {isFr
-                    ? "Partagez votre situation, vos objectifs et vos contraintes. Nous vous répondrons avec une recommandation adaptée."
-                    : "Tell us about your business, objectives and bottlenecks. We'll respond with a considered recommendation."}
+                    ? "Partagez votre situation, vos priorités et vos objectifs. Nous étudions votre demande avec attention avant de vous proposer la suite la plus pertinente."
+                    : "Tell us about your business, priorities, and objectives. We will review your request carefully before suggesting the most relevant next step."}
                 </p>
               </div>
 

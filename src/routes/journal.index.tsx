@@ -21,17 +21,17 @@ export const Route = createFileRoute("/journal/")({
   component: JournalIndexPage,
   head: () => ({
     meta: [
-      { title: "Journal & Insights — Volka Studio" },
+      { title: "Journal & Insights — Volka" },
       {
         name: "description",
         content:
-          "Analyses, guides pratiques et retours d'expérience sur le design de marque, l'ingénierie web et le commerce digital en Afrique de l'Ouest.",
+          "Analyses, guides pratiques et retours d'expérience sur la perception de marque, les plateformes de conversion et les systèmes de croissance.",
       },
-      { property: "og:title", content: "Journal & Insights — Volka Studio" },
+      { property: "og:title", content: "Journal & Insights — Volka" },
       {
         property: "og:description",
         content:
-          "Idées, études de cas et notes techniques pour bâtir des marques et plateformes numériques d'autorité en Afrique.",
+          "Des idées concrètes et des retours d'expérience pour bâtir des systèmes de croissance cohérents et performants.",
       },
       { property: "og:type", content: "website" },
     ],

@@ -1,9 +1,9 @@
 /**
  * Single source of truth for Volka offers and pricing.
- * Matches Section 10 of "The New Volka" strategy document:
- * 1. Résoudre un problème précis (À partir de 200 000 FCFA)
- * 2. Construire un système de croissance cohérent (À partir de 800 000 FCFA)
- * 3. Faire progresser le système dans la durée (À partir de 150 000 FCFA/mois)
+ * Matches Section 10 of "The New Volka International" strategy document:
+ * 1. Résoudre un problème précis (À partir de 1 500 € HT / From €1,500 excl. VAT)
+ * 2. Construire un système de croissance cohérent (À partir de 5 000 € HT / From €5,000 excl. VAT)
+ * 3. Faire progresser le système dans la durée (À partir de 800 € HT/mois / From €800/month excl. VAT)
  */
 
 export type OfferId =
@@ -24,7 +24,21 @@ export type LocalizedOfferContent = {
   includes: string[];
 };
 
+/**
+ * Starting price per currency, as numbers. These are the amounts you decide (D27):
+ * they are never converted automatically. `xof` is FCFA. Edit them here.
+ */
+export type OfferAmounts = {
+  xof: number;
+  eur: number;
+  usd: number;
+  /** Recurring monthly price (shown as "/mois" or "/month"). */
+  monthly: boolean;
+};
+
 export type Offer = {
+  /** Numeric starting prices used for display in the visitor's currency. */
+  amounts: OfferAmounts;
   id: OfferId;
   slug: string;
   index: string;
@@ -50,42 +64,50 @@ export const offers: Offer[] = [
     slug: "resoudre-un-probleme-precis",
     index: "01",
     name: "Résoudre un problème précis",
-    tagline: "Une intervention ciblée pour résoudre un problème concret et améliorer un mécanisme précis de votre croissance.",
-    prices: { xof: "À partir de 200 000 FCFA", eur: "À partir de 320 €", usd: "From $350" },
-    duration: "1 à 2 semaines",
+    tagline:
+      "Une intervention ciblée pour résoudre un problème concret et améliorer un mécanisme précis de votre croissance.",
+    prices: {
+      eur: "À partir de 1 500 € HT",
+      usd: "From $1,650",
+      xof: "À partir de 1 000 000 FCFA",
+    },
+    amounts: { eur: 1500, usd: 1650, xof: 1000000, monthly: false },
+    duration: "Projet ciblé",
     cta: "Parler de mon projet",
     includes: [
       "Diagnostic et cadrage du point de friction",
-      "Intervention sur un pilier précis (Perception, Conversion, Ventes ou Automatisation)",
-      "Livrable opérationnel clé en main",
-      "Déploiement et transfert d'usage",
-      "Garantie de bon fonctionnement",
+      "Intervention ciblée sur un pilier précis (Perception, Conversion, Ventes ou Automatisation)",
+      "Une page de destination orientée conversion ou une clarification de message",
+      "Configuration d'un flux CRM ou automatisation bien délimitée",
+      "Déploiement, recette et transfert d'usage",
     ],
     translations: {
       fr: {
         name: "Résoudre un problème précis",
-        tagline: "Une intervention ciblée pour résoudre un problème concret et améliorer un mécanisme précis de votre croissance.",
-        duration: "1 à 2 semaines",
+        tagline:
+          "Une intervention ciblée pour résoudre un problème concret et améliorer un mécanisme précis de votre croissance.",
+        duration: "Projet ciblé",
         cta: "Parler de mon projet",
         includes: [
           "Diagnostic et cadrage du point de friction",
-          "Intervention sur un pilier précis (Perception, Conversion, Ventes ou Automatisation)",
-          "Livrable opérationnel clé en main",
-          "Déploiement et transfert d'usage",
-          "Garantie de bon fonctionnement",
+          "Intervention ciblée sur un pilier précis (Perception, Conversion, Ventes ou Automatisation)",
+          "Une page de destination orientée conversion ou une clarification de message",
+          "Configuration d'un flux CRM ou automatisation bien délimitée",
+          "Déploiement, recette et transfert d'usage",
         ],
       },
       en: {
         name: "Solve a specific problem",
-        tagline: "A targeted intervention to solve a concrete issue and improve a specific mechanism of your growth.",
-        duration: "1 to 2 weeks",
-        cta: "Discuss my project",
+        tagline:
+          "A focused intervention to solve a concrete issue and improve one specific mechanism of your growth.",
+        duration: "Focused project",
+        cta: "Talk about my project",
         includes: [
           "Diagnosis and scoping of the bottleneck",
-          "Focused intervention on one pillar (Perception, Conversion, Sales or Automation)",
-          "Turnkey operational deliverables",
-          "Deployment and team handover",
-          "Post-launch warranty",
+          "Focused intervention on a single pillar (Perception, Conversion, Sales, or Automation)",
+          "Conversion-focused landing page or brand positioning alignment",
+          "Defined CRM workflow setup or scoped automation",
+          "Deployment, quality review, and team handover",
         ],
       },
     },
@@ -95,42 +117,50 @@ export const offers: Offer[] = [
     slug: "construire-un-systeme-de-croissance-coherent",
     index: "02",
     name: "Construire un système de croissance cohérent",
-    tagline: "Des solutions pensées ensemble pour connecter les bons éléments de votre croissance et en améliorer le fonctionnement.",
-    prices: { xof: "À partir de 800 000 FCFA", eur: "À partir de 1 250 €", usd: "From $1,350" },
-    duration: "3 à 5 semaines",
+    tagline:
+      "Des solutions pensées ensemble pour connecter les bons éléments de votre croissance et en améliorer le fonctionnement.",
+    prices: {
+      eur: "À partir de 5 000 € HT",
+      usd: "From $5,500",
+      xof: "À partir de 3 300 000 FCFA",
+    },
+    amounts: { eur: 5000, usd: 5500, xof: 3300000, monthly: false },
+    duration: "Système",
     cta: "Construire mon système",
     includes: [
-      "Audit stratégique et cartographie du parcours client",
-      "Alignement Perception + Conversion ou Acquisition + Ventes",
-      "Plateforme web d'autorité ou système de marque complet",
-      "Tunnel WhatsApp / CRM et intégration des flux",
-      "Tableaux de bord et métriques de conversion",
+      "Diagnostic stratégique et cartographie du parcours client",
+      "Connexion Perception + Conversion (positionnement et plateforme web)",
+      "Connexion Acquisition + Conversion (campagnes et capture de demandes)",
+      "Connexion Conversion + Ventes (parcours prospect et pipeline commercial)",
+      "Automatisation de l'infrastructure de liaison et métriques clés",
     ],
     translations: {
       fr: {
         name: "Construire un système de croissance cohérent",
-        tagline: "Des solutions pensées ensemble pour connecter les bons éléments de votre croissance et en améliorer le fonctionnement.",
-        duration: "3 à 5 semaines",
+        tagline:
+          "Des solutions pensées ensemble pour connecter les bons éléments de votre croissance et en améliorer le fonctionnement.",
+        duration: "Système",
         cta: "Construire mon système",
         includes: [
-          "Audit stratégique et cartographie du parcours client",
-          "Alignement Perception + Conversion ou Acquisition + Ventes",
-          "Plateforme web d'autorité ou système de marque complet",
-          "Tunnel WhatsApp / CRM et intégration des flux",
-          "Tableaux de bord et métriques de conversion",
+          "Diagnostic stratégique et cartographie du parcours client",
+          "Connexion Perception + Conversion (positionnement et plateforme web)",
+          "Connexion Acquisition + Conversion (campagnes et capture de demandes)",
+          "Connexion Conversion + Ventes (parcours prospect et pipeline commercial)",
+          "Automatisation de l'infrastructure de liaison et métriques clés",
         ],
       },
       en: {
         name: "Build a coherent growth system",
-        tagline: "Coordinated systems designed together to connect your growth levers and streamline performance.",
-        duration: "3 to 5 weeks",
+        tagline:
+          "Coordinated solutions designed together to connect the right parts of your growth and improve how they work.",
+        duration: "System",
         cta: "Build my system",
         includes: [
-          "Strategic audit and customer journey mapping",
-          "Connecting Perception + Conversion or Acquisition + Sales",
-          "High-converting digital platform or full brand identity",
-          "WhatsApp funnel / CRM pipeline automation",
-          "Performance dashboards and tracking",
+          "Strategic diagnosis and customer journey mapping",
+          "Connecting Perception + Conversion (positioning and digital platform)",
+          "Connecting Acquisition + Conversion (campaigns and lead capture)",
+          "Connecting Conversion + Sales (lead routing and sales pipeline)",
+          "Infrastructure automation layer and key growth tracking",
         ],
       },
     },
@@ -140,42 +170,50 @@ export const offers: Offer[] = [
     slug: "faire-progresser-le-systeme-dans-la-duree",
     index: "03",
     name: "Faire progresser le système dans la durée",
-    tagline: "Un accompagnement continu pour piloter, mesurer et améliorer les mécanismes de croissance de votre entreprise.",
-    prices: { xof: "À partir de 150 000 FCFA/mois", eur: "À partir de 230 €/mois", usd: "From $250/mo" },
-    duration: "Mensuel récurrent",
+    tagline:
+      "Un accompagnement continu pour piloter, mesurer et améliorer les mécanismes de croissance de votre entreprise.",
+    prices: {
+      eur: "À partir de 800 € HT/mois",
+      usd: "From $900/mo",
+      xof: "À partir de 525 000 FCFA/mois",
+    },
+    amounts: { eur: 800, usd: 900, xof: 525000, monthly: true },
+    duration: "Accompagnement",
     cta: "Parlons de mes objectifs",
     includes: [
-      "Pilotage et optimisation continue des leviers de croissance",
-      "Campagnes d'acquisition, création de contenu et diffusion",
+      "Pilotage et optimisation continue des canaux prioritaires",
+      "Itérations sur les campagnes d'acquisition et les contenus",
       "Optimisation constante du taux de conversion",
-      "Maintenance, évolutions et automatisations de processus",
-      "Point stratégique mensuel et reporting transparent",
+      "Amélioration des étapes de vente et du suivi CRM",
+      "Maintenance des automatisations et revue stratégique mensuelle",
     ],
     translations: {
       fr: {
         name: "Faire progresser le système dans la durée",
-        tagline: "Un accompagnement continu pour piloter, mesurer et améliorer les mécanismes de croissance de votre entreprise.",
-        duration: "Mensuel récurrent",
+        tagline:
+          "Un accompagnement continu pour piloter, mesurer et améliorer les mécanismes de croissance de votre entreprise.",
+        duration: "Accompagnement",
         cta: "Parlons de mes objectifs",
         includes: [
-          "Pilotage et optimisation continue des leviers de croissance",
-          "Campagnes d'acquisition, création de contenu et diffusion",
+          "Pilotage et optimisation continue des canaux prioritaires",
+          "Itérations sur les campagnes d'acquisition et les contenus",
           "Optimisation constante du taux de conversion",
-          "Maintenance, évolutions et automatisations de processus",
-          "Point stratégique mensuel et reporting transparent",
+          "Amélioration des étapes de vente et du suivi CRM",
+          "Maintenance des automatisations et revue stratégique mensuelle",
         ],
       },
       en: {
-        name: "Continuous system growth",
-        tagline: "Ongoing advisory and execution to operate, measure, and refine your business growth engine.",
-        duration: "Monthly recurring",
-        cta: "Let's discuss objectives",
+        name: "Keep improving the system over time",
+        tagline:
+          "Ongoing support to run, measure, and continuously refine your business growth engine.",
+        duration: "Ongoing",
+        cta: "Let's talk about my goals",
         includes: [
-          "Ongoing management and performance optimization",
-          "Acquisition campaigns, content production and distribution",
+          "Management and continuous optimization of priority channels",
+          "Iteration on campaigns, content distribution, and creative",
           "Continuous conversion rate optimization",
-          "Maintenance, workflow refinements and automation",
-          "Monthly strategic review and transparent reporting",
+          "Sales workflow enhancements and pipeline monitoring",
+          "Automation maintenance and monthly strategic performance review",
         ],
       },
     },

@@ -185,7 +185,7 @@ function AuditWizardPage() {
         errs["contactEmail"] = "Une adresse email valide est requise pour recevoir l'audit.";
       }
       if (!formData.contactPhone.trim() || formData.contactPhone.trim().length < 6) {
-        errs["contactPhone"] = "Un numéro WhatsApp valide avec indicatif pays est requis (ex: +229 ...).";
+        errs["contactPhone"] = "Un numéro WhatsApp valide avec indicatif pays est requis (ex: +33 6 12 34 56 78).";
       }
       if (!formData.isEntitled) {
         errs["isEntitled"] = "Vous devez confirmer être habilité(e) pour cette entreprise.";
@@ -819,12 +819,12 @@ function AuditWizardPage() {
                     Numéro de téléphone WhatsApp <span className="text-terracotta">*</span>
                   </Label>
                   <p className="text-[11px] text-mint/70">
-                    Format international recommandé (ex : +229 97 00 00 00).
+                    Format international recommandé (ex : +33 6 12 34 56 78).
                   </p>
                   <Input
                     id="contactPhone"
                     type="tel"
-                    placeholder="+229 ..."
+                    placeholder="+33 6 12 34 56 78"
                     value={formData.contactPhone}
                     onChange={(e) => updateField("contactPhone", e.target.value)}
                     onBlur={() => markTouched("contactPhone")}

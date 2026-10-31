@@ -26,7 +26,7 @@ export const Route = createFileRoute("/cases/")({
       {
         name: "description",
         content:
-          "Concept projects from Volka: brand identities, digital platforms and growth systems designed for businesses across West Africa and beyond.",
+          "Concept projects from Volka: brand identities, digital platforms and growth systems designed for ambitious businesses in Europe and internationally.",
       },
       { property: "og:title", content: "Case studies — Volka Studio" },
       {

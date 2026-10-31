@@ -10,7 +10,7 @@ export const inquirySchema = z.object({
   email: z.string().trim().email("Please enter a valid email address").max(255),
   company: z.string().trim().max(120).optional().or(z.literal("")),
   phone: z.string().trim().max(40).optional().or(z.literal("")),
-  preferredChannel: z.enum(["email", "whatsapp"]),
+  preferredChannel: z.enum(["email", "whatsapp", "phone"]),
   offer: z.string().trim().min(1).max(80),
   timeline: z.string().trim().min(1).max(80),
   budgetRange: z.string().trim().min(1).max(80),
