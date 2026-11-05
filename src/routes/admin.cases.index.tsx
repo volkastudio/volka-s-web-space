@@ -154,17 +154,17 @@ function AdminCasesIndexPage() {
   });
 
   return (
-    <div className="p-6 md:p-10 lg:p-12">
+    <div className="p-4 sm:p-6 md:p-10 lg:p-12 space-y-6">
       {/* Header */}
-      <div className="flex flex-col justify-between gap-4 border-b border-border pb-8 sm:flex-row sm:items-end">
+      <div className="flex flex-col justify-between gap-4 border-b border-border pb-6 sm:pb-8 sm:flex-row sm:items-end">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">
             Portfolio
           </p>
-          <h1 className="mt-2 font-display text-4xl font-light md:text-5xl">
+          <h1 className="mt-1.5 font-display text-3xl sm:text-4xl md:text-5xl font-light">
             Études de cas
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground">
             Gérez le portfolio de réalisations du studio, l'ordre d'affichage et les contenus bilingues.
           </p>
         </div>
@@ -172,7 +172,7 @@ function AdminCasesIndexPage() {
         <Link
           to="/admin/cases/$id"
           params={{ id: "new" }}
-          className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+          className="inline-flex w-full sm:w-auto justify-center items-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-xs transition-opacity hover:opacity-90 active:scale-95"
         >
           <Plus className="size-4 text-gold" />
           <span>Nouvelle étude de cas</span>
@@ -180,14 +180,14 @@ function AdminCasesIndexPage() {
       </div>
 
       {error && (
-        <div className="mt-6 flex items-center gap-3 rounded border border-destructive/30 bg-destructive/10 p-4 text-xs text-destructive">
+        <div className="flex items-center gap-3 rounded border border-destructive/30 bg-destructive/10 p-4 text-xs text-destructive">
           <AlertCircle className="size-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Controls: Search & Filter */}
-      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -199,7 +199,7 @@ function AdminCasesIndexPage() {
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar sm:flex-wrap">
           {([
             { id: "all", label: "Tous" },
             { id: "published", label: "Publiés" },
@@ -209,9 +209,9 @@ function AdminCasesIndexPage() {
               key={filter.id}
               type="button"
               onClick={() => setStatusFilter(filter.id)}
-              className={`rounded-sm px-3 py-1.5 text-xs font-medium uppercase tracking-[0.14em] transition-colors ${
+              className={`rounded-sm px-3.5 py-1.5 min-h-[34px] text-xs font-medium uppercase tracking-[0.14em] transition-colors shrink-0 ${
                 statusFilter === filter.id
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-primary text-primary-foreground shadow-xs"
                   : "border border-border text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -221,8 +221,167 @@ function AdminCasesIndexPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="mt-6 overflow-hidden rounded-sm border border-border bg-card shadow-sm">
+      {/* Mobile Card View (< md) */}
+      <div className="block md:hidden space-y-3">
+        {loading ? (
+          <div className="rounded-sm border border-border bg-card p-8 text-center text-xs text-muted-foreground">
+            Chargement des études de cas...
+          </div>
+        ) : filteredCases.length === 0 ? (
+          <div className="rounded-sm border border-border bg-card p-8 text-center text-xs text-muted-foreground">
+            {cases.length === 0
+              ? "Aucune étude de cas dans la base pour le moment."
+              : "Aucune étude ne correspond à votre recherche."}
+          </div>
+        ) : (
+          filteredCases.map((study, idx) => {
+            const hasFr = Boolean(study.translations.fr?.tagline);
+            const hasEn = Boolean(study.translations.en?.tagline);
+            const isActioning = actionLoading === study.id;
+
+            return (
+              <div
+                key={study.id}
+                className="rounded-lg border border-border bg-card p-4 shadow-xs space-y-3"
+              >
+                {/* Header row */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-sm text-foreground truncate">
+                        {study.client}
+                      </span>
+                      {study.kind === "concept" && (
+                        <span className="rounded bg-gold/15 px-1.5 py-0.2 text-[9px] text-gold uppercase font-bold">
+                          Concept
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-0.5 text-xs text-muted-foreground truncate">
+                      /{study.slug} · {study.year} · {study.translations.fr?.sector || "—"}
+                    </div>
+                  </div>
+
+                  {/* Reorder Buttons (only when unfiltered) */}
+                  {!isFiltered && (
+                    <div className="flex items-center gap-1 shrink-0 bg-muted/40 rounded p-0.5">
+                      <button
+                        type="button"
+                        disabled={idx === 0 || isActioning !== null}
+                        onClick={() => handleMoveOrder(study.id, "up")}
+                        className="rounded p-1.5 text-muted-foreground hover:text-foreground disabled:opacity-20 active:scale-95"
+                        title="Monter d'un rang"
+                      >
+                        <ChevronUp className="size-4" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={idx === filteredCases.length - 1 || isActioning !== null}
+                        onClick={() => handleMoveOrder(study.id, "down")}
+                        className="rounded p-1.5 text-muted-foreground hover:text-foreground disabled:opacity-20 active:scale-95"
+                        title="Descendre d'un rang"
+                      >
+                        <ChevronDown className="size-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Badges strip */}
+                <div className="flex items-center justify-between border-y border-border/50 py-2.5 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                        hasFr ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      FR
+                    </span>
+                    <span
+                      className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                        hasEn ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground/40"
+                      }`}
+                    >
+                      EN
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {/* Featured toggle */}
+                    <button
+                      type="button"
+                      disabled={isActioning}
+                      onClick={() => handleToggleFeatured(study)}
+                      className={`inline-flex min-h-[30px] items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium transition-opacity ${
+                        study.featured ? "text-gold bg-gold/10" : "text-muted-foreground hover:text-gold"
+                      }`}
+                    >
+                      <Star className={`size-3.5 ${study.featured ? "fill-gold" : ""}`} />
+                      <span>{study.featured ? "À la une" : "Standard"}</span>
+                    </button>
+
+                    {/* Status toggle */}
+                    <button
+                      type="button"
+                      disabled={isActioning}
+                      onClick={() => handleToggleStatus(study)}
+                      className={`inline-flex min-h-[30px] items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
+                        study.status === "published"
+                          ? "bg-green-500/15 text-green-700 dark:text-green-400 border border-green-500/30"
+                          : "bg-muted text-muted-foreground border border-border"
+                      }`}
+                    >
+                      {study.status === "published" ? (
+                        <CheckCircle className="size-3" />
+                      ) : (
+                        <Clock className="size-3" />
+                      )}
+                      <span>{study.status === "published" ? "Publié" : "Brouillon"}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex items-center justify-end gap-2 pt-0.5">
+                  {study.status === "published" && (
+                    <a
+                      href={`/cases/${study.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-[36px] items-center gap-1 rounded border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground active:scale-95"
+                      title="Voir sur le site public"
+                    >
+                      <ExternalLink className="size-3.5" />
+                      <span>Voir</span>
+                    </a>
+                  )}
+                  <Link
+                    to="/admin/cases/$id"
+                    params={{ id: study.id }}
+                    className="inline-flex min-h-[36px] items-center gap-1 rounded bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground active:scale-95 shadow-xs"
+                    title="Modifier"
+                  >
+                    <Edit2 className="size-3.5 text-gold" />
+                    <span>Modifier</span>
+                  </Link>
+                  <button
+                    type="button"
+                    disabled={isActioning}
+                    onClick={() => handleDelete(study)}
+                    className="inline-flex min-h-[36px] items-center justify-center rounded border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs text-destructive hover:bg-destructive hover:text-destructive-foreground active:scale-95"
+                    title="Supprimer"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Table (>= md) */}
+      <div className="hidden md:block overflow-hidden rounded-sm border border-border bg-card shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="border-b border-border bg-muted/40 uppercase tracking-[0.14em] text-muted-foreground">

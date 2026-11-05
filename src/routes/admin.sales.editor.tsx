@@ -361,9 +361,9 @@ function AdminSalesEditorPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <a
             href="/admin/sales/"
@@ -383,13 +383,13 @@ function AdminSalesEditorPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           {form.slug && form.status === "published" && (
             <a
               href={`/tools/${form.slug}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-forest-black/60 hover:text-terracotta px-2 py-1"
+              className="inline-flex min-h-[36px] items-center gap-1.5 text-xs text-forest-black/60 hover:text-terracotta px-2.5 py-1.5 rounded border border-pine/20 bg-soft-paper/60 active:scale-95"
             >
               <Eye className="size-3.5" /> Prévisualiser
             </a>
@@ -408,7 +408,7 @@ function AdminSalesEditorPage() {
           <Button
             onClick={handleSave}
             disabled={saving}
-            className={`text-xs px-4 ${saved ? "bg-mint text-forest-black" : "bg-pine hover:bg-pine/90 text-paper"}`}
+            className={`text-xs px-4 min-h-[38px] active:scale-95 ${saved ? "bg-mint text-forest-black" : "bg-pine hover:bg-pine/90 text-paper"}`}
           >
             {saving ? (
               <Loader2 className="size-3.5 animate-spin mr-1" />

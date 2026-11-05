@@ -245,6 +245,7 @@ export const en: Translations = {
       "Volka Studio takes client and visitor privacy with the highest degree of seriousness.",
       "In accordance with the Digital Code of the Republic of Benin (Law No. 2017-20) and international data protection standards (including GDPR principles):",
       "— Information submitted through our onboarding form (/start) or direct email correspondence is used exclusively to evaluate prospective projects, prepare proposals, and manage client communications.",
+      "— Automated Instagram Interactions: when you comment with a designated keyword under Volka Studio's official publications or reply to one of our stories, a single direct message containing the requested resource or link may be automatically delivered to you. We temporarily store your Instagram-scoped identifier (IGSID), public handle, comment text, and interaction timestamp (30-day maximum retention for raw payloads, 90 days for processed event logs). These details are never shared with third parties or used for broadcast marketing. You can opt out at any time by replying « STOP » or by writing to hello@volkastudio.com. Meta platform terms apply.",
       "— Personal data is never sold, leased, or transferred to third parties for advertising or commercial exploitation.",
       "— You retain a permanent right to access, rectify, export, or delete your personal information. To exercise this right, contact: hello@volkastudio.com.",
     ],

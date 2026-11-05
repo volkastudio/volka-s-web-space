@@ -309,13 +309,13 @@ function AdminCaseEditorPage() {
   };
 
   return (
-    <div className="p-6 md:p-10 lg:p-12">
+    <div className="p-4 sm:p-6 md:p-10 lg:p-12 space-y-6">
       {/* Top Bar Navigation */}
       <div className="flex flex-col justify-between gap-4 border-b border-border pb-6 sm:flex-row sm:items-center">
         <div className="flex items-center gap-4">
           <Link
             to="/admin/cases"
-            className="rounded p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="rounded p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground min-h-[38px] min-w-[38px] flex items-center justify-center active:scale-95"
           >
             <ArrowLeft className="size-4" />
           </Link>
@@ -330,13 +330,13 @@ function AdminCaseEditorPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {!isNew && form.status === "published" && (
             <a
               href={`/cases/${form.slug}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-sm border border-border px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:border-gold hover:text-gold"
+              className="inline-flex items-center justify-center gap-1.5 rounded-sm border border-border px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:border-gold hover:text-gold min-h-[38px] active:scale-95"
             >
               <span>View live</span>
               <ExternalLink className="size-3.5" />
@@ -348,7 +348,7 @@ function AdminCaseEditorPage() {
             size="sm"
             disabled={saving}
             onClick={() => handleSave("draft")}
-            className="text-xs uppercase tracking-[0.14em]"
+            className="text-xs uppercase tracking-[0.14em] min-h-[38px] active:scale-95"
           >
             Save Draft
           </Button>
@@ -358,7 +358,7 @@ function AdminCaseEditorPage() {
             size="sm"
             disabled={saving}
             onClick={() => handleSave("published")}
-            className="text-xs uppercase tracking-[0.14em]"
+            className="text-xs uppercase tracking-[0.14em] min-h-[38px] active:scale-95"
           >
             {saving ? "Saving..." : "Publish to site"}
           </Button>

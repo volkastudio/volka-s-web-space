@@ -213,29 +213,29 @@ function AdminSocialsPage() {
   ];
 
   return (
-    <div className="p-6 md:p-10 lg:p-12">
+    <div className="p-4 sm:p-6 md:p-10 lg:p-12 space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex flex-col justify-between gap-4 border-b border-border pb-8 md:flex-row md:items-end">
+      <div className="flex flex-col justify-between gap-4 border-b border-border pb-6 sm:pb-8 md:flex-row md:items-end">
         <div>
           <div className="flex items-center gap-2 text-gold">
             <Share2 className="size-4" />
             <p className="text-xs font-medium uppercase tracking-[0.2em]">Paramètres Studio</p>
           </div>
-          <h1 className="mt-2 font-display text-4xl font-light md:text-5xl">
+          <h1 className="mt-1.5 font-display text-3xl sm:text-4xl md:text-5xl font-light">
             Réseaux Sociaux & Contact
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
+          <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground max-w-2xl">
             Configurez ici l'ensemble des liens officiels de Volka Studio (Instagram, LinkedIn, TikTok, YouTube, X, WhatsApp, etc.). Ces liens alimentent directement le footer, la section Journal et les composants de contact de l'ensemble du site.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={handleReset}
-            className="text-xs uppercase tracking-wider"
+            className="flex-1 sm:flex-initial text-xs uppercase tracking-wider min-h-[38px] active:scale-95"
           >
             <RotateCcw className="size-3.5 mr-1" />
             Par défaut
@@ -245,7 +245,7 @@ function AdminSocialsPage() {
             variant="volka"
             size="sm"
             onClick={handleSubmit}
-            className="text-xs uppercase tracking-wider shadow-sm"
+            className="flex-1 sm:flex-initial text-xs uppercase tracking-wider shadow-xs min-h-[38px] active:scale-95"
           >
             <Check className="size-3.5 mr-1" />
             Enregistrer

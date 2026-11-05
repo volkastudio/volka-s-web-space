@@ -28,8 +28,14 @@ function AdminLayoutInner() {
   const location = useLocation();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = React.useState<number>(0);
+  const [mobileNavOpen, setMobileNavOpen] = React.useState<boolean>(false);
 
   const isLoginPage = location.pathname === "/admin/login";
+
+  // Automatically close mobile nav drawer upon route change
+  React.useEffect(() => {
+    setMobileNavOpen(false);
+  }, [location.pathname]);
 
   // Fetch unread inquiries count periodically when authenticated
   React.useEffect(() => {
@@ -93,9 +99,17 @@ function AdminLayoutInner() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground lg:flex-row">
-      <AdminSidebar unreadInquiriesCount={unreadCount} />
+      <AdminSidebar
+        unreadInquiriesCount={unreadCount}
+        mobileOpen={mobileNavOpen}
+        onMobileOpenChange={setMobileNavOpen}
+      />
       <div className="flex flex-1 flex-col overflow-y-auto">
-        <AdminTopBar />
+        <AdminTopBar
+          unreadInquiriesCount={unreadCount}
+          isMobileNavOpen={mobileNavOpen}
+          onToggleMobileNav={() => setMobileNavOpen((prev) => !prev)}
+        />
         <main className="flex-1">
           <Outlet />
         </main>

@@ -112,17 +112,17 @@ function AdminPostsIndexPage() {
   });
 
   return (
-    <div className="p-6 md:p-10 lg:p-12">
+    <div className="p-4 sm:p-6 md:p-10 lg:p-12 space-y-6">
       {/* Header */}
-      <div className="flex flex-col justify-between gap-4 border-b border-border pb-8 sm:flex-row sm:items-end">
+      <div className="flex flex-col justify-between gap-4 border-b border-border pb-6 sm:pb-8 sm:flex-row sm:items-end">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">
             Editorial
           </p>
-          <h1 className="mt-2 font-display text-4xl font-light md:text-5xl">
+          <h1 className="mt-1.5 font-display text-3xl sm:text-4xl md:text-5xl font-light">
             Journal & Articles
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground">
             Rédigez les analyses stratégiques, publiez vos guides et associez les formats vidéo et réseaux sociaux.
           </p>
         </div>
@@ -130,7 +130,7 @@ function AdminPostsIndexPage() {
         <Link
           to="/admin/posts/$id"
           params={{ id: "new" }}
-          className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-3 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+          className="inline-flex w-full sm:w-auto justify-center items-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-xs transition-opacity hover:opacity-90 active:scale-95"
         >
           <Plus className="size-4 text-gold" />
           <span>Nouvel article</span>
@@ -139,7 +139,7 @@ function AdminPostsIndexPage() {
 
       {/* Database Warning if table not yet migrated */}
       {!dbReady && (
-        <div className="mt-6 rounded-lg border border-gold/30 bg-gold/10 p-4 text-xs text-foreground">
+        <div className="rounded-lg border border-gold/30 bg-gold/10 p-4 text-xs text-foreground">
           <div className="flex items-center gap-2 font-medium text-gold">
             <Database className="size-4" />
             <span>Migration de la table Supabase `posts` recommandée</span>
@@ -155,14 +155,14 @@ function AdminPostsIndexPage() {
       )}
 
       {error && (
-        <div className="mt-6 flex items-center gap-3 rounded border border-destructive/30 bg-destructive/10 p-4 text-xs text-destructive">
+        <div className="flex items-center gap-3 rounded border border-destructive/30 bg-destructive/10 p-4 text-xs text-destructive">
           <AlertCircle className="size-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Controls: Search & Filter */}
-      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -174,7 +174,7 @@ function AdminPostsIndexPage() {
           />
         </div>
 
-        <div className="flex items-center gap-1 rounded-sm border border-border bg-card p-1 text-xs">
+        <div className="flex items-center gap-1 rounded-sm border border-border bg-card p-1 text-xs overflow-x-auto no-scrollbar">
           {([
             { id: "all", label: "Tous" },
             { id: "published", label: "Publiés" },
@@ -184,9 +184,9 @@ function AdminPostsIndexPage() {
               key={filter.id}
               type="button"
               onClick={() => setStatusFilter(filter.id)}
-              className={`rounded px-3 py-1 font-medium transition-colors ${
+              className={`rounded px-3 py-1 font-medium min-h-[30px] transition-colors shrink-0 ${
                 statusFilter === filter.id
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-primary text-primary-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -196,8 +196,141 @@ function AdminPostsIndexPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="mt-6 overflow-hidden rounded-lg border border-border bg-card">
+      {/* Mobile Card View (< md) */}
+      <div className="block md:hidden space-y-3">
+        {loading ? (
+          <div className="rounded-lg border border-border bg-card p-8 text-center text-xs text-muted-foreground">
+            Chargement des articles...
+          </div>
+        ) : filteredPosts.length === 0 ? (
+          <div className="rounded-lg border border-border bg-card p-8 text-center text-xs text-muted-foreground">
+            Aucun article ne correspond à votre recherche.
+          </div>
+        ) : (
+          filteredPosts.map((post) => {
+            const titleFr = post.translations.fr.title;
+            const hasEn = Boolean(post.translations.en?.title?.trim());
+            const isLoading = actionLoading === post.id;
+            const hasSocial = Boolean(
+              post.social_links.youtube?.trim() ||
+              post.social_links.tiktok?.trim() ||
+              post.social_links.linkedin?.trim() ||
+              post.social_links.instagram?.trim() ||
+              post.social_links.twitter?.trim() ||
+              post.social_links.facebook?.trim()
+            );
+
+            return (
+              <div
+                key={post.id}
+                className="rounded-lg border border-border bg-card p-4 shadow-xs space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      to="/admin/posts/$id"
+                      params={{ id: post.id }}
+                      className="font-medium text-sm text-foreground hover:text-gold block truncate"
+                    >
+                      {titleFr || post.slug}
+                    </Link>
+                    <span className="text-[11px] text-muted-foreground font-mono block truncate">
+                      /journal/{post.slug}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={isLoading}
+                    onClick={() => handleToggleStatus(post)}
+                    className={`inline-flex min-h-[30px] items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider shrink-0 transition-opacity ${
+                      post.status === "published"
+                        ? "bg-mint/15 text-mint border border-mint/30"
+                        : "bg-muted text-muted-foreground border border-border"
+                    } ${isLoading ? "opacity-50" : ""}`}
+                  >
+                    {post.status === "published" ? (
+                      <>
+                        <CheckCircle className="size-3" />
+                        <span>Publié</span>
+                      </>
+                    ) : (
+                      <>
+                        <Clock className="size-3" />
+                        <span>Brouillon</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-2 border-y border-border/50 py-2.5 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="rounded bg-primary/10 text-primary px-1.5 py-0.5 text-[10px] font-bold">
+                      FR
+                    </span>
+                    <span
+                      className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                        hasEn ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground/40"
+                      }`}
+                    >
+                      EN
+                    </span>
+                    {hasSocial && (
+                      <span className="text-[10px] text-muted-foreground ml-1">
+                        · Liens sociaux configurés
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-muted-foreground">
+                    {post.published_at
+                      ? new Date(post.published_at).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "Non planifié"}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-0.5">
+                  {post.status === "published" && (
+                    <Link
+                      to="/journal/$slug"
+                      params={{ slug: post.slug }}
+                      target="_blank"
+                      className="inline-flex min-h-[36px] items-center gap-1 rounded border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground active:scale-95"
+                      title="Consulter en ligne"
+                    >
+                      <ExternalLink className="size-3.5" />
+                      <span>Voir</span>
+                    </Link>
+                  )}
+                  <Link
+                    to="/admin/posts/$id"
+                    params={{ id: post.id }}
+                    className="inline-flex min-h-[36px] items-center gap-1 rounded bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground active:scale-95 shadow-xs"
+                    title="Modifier l'article"
+                  >
+                    <Edit2 className="size-3.5 text-gold" />
+                    <span>Modifier</span>
+                  </Link>
+                  <button
+                    type="button"
+                    disabled={isLoading}
+                    onClick={() => handleDelete(post)}
+                    className="inline-flex min-h-[36px] items-center justify-center rounded border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs text-destructive hover:bg-destructive hover:text-destructive-foreground active:scale-95"
+                    title="Supprimer l'article"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Table (>= md) */}
+      <div className="hidden md:block overflow-hidden rounded-lg border border-border bg-card">
         {loading ? (
           <div className="p-12 text-center text-xs text-muted-foreground">
             Chargement des articles...

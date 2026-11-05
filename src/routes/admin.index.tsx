@@ -93,17 +93,17 @@ function AdminDashboardPage() {
   }, []);
 
   return (
-    <div className="p-6 md:p-10 lg:p-12">
+    <div className="p-4 sm:p-6 md:p-10 lg:p-12 space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex flex-col justify-between gap-4 border-b border-border pb-8 md:flex-row md:items-end">
+      <div className="flex flex-col justify-between gap-4 border-b border-border pb-6 sm:pb-8 md:flex-row md:items-end">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">
             Vue d'ensemble
           </p>
-          <h1 className="mt-2 font-display text-4xl font-light md:text-5xl">
+          <h1 className="mt-1.5 font-display text-3xl sm:text-4xl md:text-5xl font-light">
             Tableau de bord
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground">
             Gérez vos études de cas, suivez les demandes client et publiez vos articles.
           </p>
         </div>
@@ -112,7 +112,7 @@ function AdminDashboardPage() {
           <Link
             to="/admin/cases/$id"
             params={{ id: "new" }}
-            className="inline-flex items-center gap-2 rounded-sm bg-primary px-4 py-2.5 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+            className="inline-flex w-full sm:w-auto justify-center items-center gap-2 rounded-sm bg-primary px-4 py-2.5 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-xs transition-opacity hover:opacity-90 active:scale-95"
           >
             <Plus className="size-4 text-gold" />
             <span>Nouvelle étude de cas</span>
@@ -121,16 +121,16 @@ function AdminDashboardPage() {
       </div>
 
       {error && (
-        <div className="mt-6 flex items-center gap-3 rounded border border-destructive/30 bg-destructive/10 p-4 text-xs text-destructive">
+        <div className="flex items-center gap-3 rounded border border-destructive/30 bg-destructive/10 p-4 text-xs text-destructive">
           <AlertCircle className="size-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Audience Summary Banner (Phase 12a) */}
-      <div className="mt-8 rounded-sm border border-border bg-card p-6 shadow-sm">
+      <div className="rounded-sm border border-border bg-card p-4 sm:p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-start sm:items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-sm bg-pine/10 text-pine shrink-0">
               <BarChart3 className="size-5" />
             </div>
@@ -143,7 +143,7 @@ function AdminDashboardPage() {
                   Sans cookies (D18)
                 </span>
               </div>
-              <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <div className="mt-1.5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
                 <div className="flex items-baseline gap-1.5">
                   <span className="font-display text-2xl font-medium tabular-nums text-forest-black">
                     {analyticsOverview?.current.views ?? 0}
@@ -160,7 +160,7 @@ function AdminDashboardPage() {
                     </span>
                   )}
                 </div>
-                <span className="text-border">·</span>
+                <span className="hidden sm:inline text-border">·</span>
                 <div className="flex items-baseline gap-1.5">
                   <span className="font-display text-2xl font-medium tabular-nums text-forest-black">
                     {analyticsOverview?.current.reads ?? 0}
@@ -169,7 +169,7 @@ function AdminDashboardPage() {
                     lectures complètes ({analyticsOverview?.current.readRate ?? 0}%)
                   </span>
                 </div>
-                <span className="text-border">·</span>
+                <span className="hidden sm:inline text-border">·</span>
                 <div className="flex items-baseline gap-1.5">
                   <span className="font-display text-2xl font-medium tabular-nums text-forest-black">
                     {analyticsOverview?.current.visitors ?? 0}
@@ -181,7 +181,7 @@ function AdminDashboardPage() {
           </div>
           <Link
             to="/admin/insights"
-            className="inline-flex items-center gap-1.5 rounded-sm bg-primary px-4 py-2 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground hover:opacity-90 self-start sm:self-auto shrink-0"
+            className="inline-flex w-full sm:w-auto justify-center items-center gap-1.5 rounded-sm bg-primary px-4 py-2 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground hover:opacity-90 shrink-0 active:scale-95"
           >
             <span>Voir les insights</span>
             <ArrowRight className="size-3.5" />
@@ -190,22 +190,22 @@ function AdminDashboardPage() {
       </div>
 
       {/* Metrics Row */}
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Metric 1 */}
-        <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-sm border border-border bg-card p-4 sm:p-6 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
               Nouveaux Prospects
             </span>
             <Inbox className="size-4 text-gold" />
           </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-display text-4xl font-medium">{unreadCount}</span>
+          <div className="mt-3 sm:mt-4 flex items-baseline gap-2">
+            <span className="font-display text-3xl sm:text-4xl font-medium">{unreadCount}</span>
             <span className="text-xs text-muted-foreground">en attente</span>
           </div>
           <Link
             to="/admin/inquiries"
-            className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gold hover:underline"
+            className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gold hover:underline"
           >
             <span>Ouvrir la boîte de réception</span>
             <ArrowRight className="size-3" />
@@ -213,20 +213,20 @@ function AdminDashboardPage() {
         </div>
 
         {/* Metric 2 */}
-        <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-sm border border-border bg-card p-4 sm:p-6 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
               Études Publiées
             </span>
             <CheckCircle2 className="size-4 text-primary" />
           </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-display text-4xl font-medium">{casesStats.published}</span>
+          <div className="mt-3 sm:mt-4 flex items-baseline gap-2">
+            <span className="font-display text-3xl sm:text-4xl font-medium">{casesStats.published}</span>
             <span className="text-xs text-muted-foreground">en ligne</span>
           </div>
           <Link
             to="/admin/cases"
-            className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gold hover:underline"
+            className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gold hover:underline"
           >
             <span>Voir toutes les études</span>
             <ArrowRight className="size-3" />
@@ -234,39 +234,39 @@ function AdminDashboardPage() {
         </div>
 
         {/* Metric 3 */}
-        <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-sm border border-border bg-card p-4 sm:p-6 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
               Projets en Brouillon
             </span>
             <Clock className="size-4 text-muted-foreground" />
           </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-display text-4xl font-medium">{casesStats.draft}</span>
+          <div className="mt-3 sm:mt-4 flex items-baseline gap-2">
+            <span className="font-display text-3xl sm:text-4xl font-medium">{casesStats.draft}</span>
             <span className="text-xs text-muted-foreground">en cours</span>
           </div>
-          <span className="mt-4 block text-xs text-muted-foreground">
+          <span className="mt-3 sm:mt-4 block text-xs text-muted-foreground">
             {casesStats.draft > 0 ? "Prêts à modifier et publier" : "Aucun brouillon en attente"}
           </span>
         </div>
 
         {/* Metric 4 */}
-        <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-sm border border-border bg-card p-4 sm:p-6 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
               Total Inbound
             </span>
             <Sparkles className="size-4 text-gold" />
           </div>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-display text-4xl font-medium">
+          <div className="mt-3 sm:mt-4 flex items-baseline gap-2">
+            <span className="font-display text-3xl sm:text-4xl font-medium">
               {totalInquiries > 0 ? totalInquiries : "—"}
             </span>
             <span className="text-xs text-muted-foreground">briefs reçus au total</span>
           </div>
           <Link
             to="/admin/inquiries"
-            className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gold hover:underline"
+            className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gold hover:underline"
           >
             <span>Filtrer par statut</span>
             <ArrowRight className="size-3" />
@@ -275,10 +275,10 @@ function AdminDashboardPage() {
       </div>
 
       {/* Grid: Recent Inquiries + Quick Actions */}
-      <div className="mt-10 grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
         {/* Recent Inquiries (2 cols) */}
-        <div className="rounded-sm border border-border bg-card p-6 shadow-sm lg:col-span-2">
-          <div className="flex items-center justify-between border-b border-border pb-4">
+        <div className="rounded-sm border border-border bg-card p-4 sm:p-6 shadow-xs lg:col-span-2">
+          <div className="flex items-center justify-between border-b border-border pb-3.5">
             <div>
               <h2 className="font-display text-xl font-medium">Derniers Prospects</h2>
               <p className="text-xs text-muted-foreground">Derniers briefs clients reçus</p>
@@ -291,7 +291,7 @@ function AdminDashboardPage() {
             </Link>
           </div>
 
-          <div className="mt-4 divide-y divide-border">
+          <div className="mt-2 divide-y divide-border">
             {loading ? (
               <div className="py-8 text-center text-xs text-muted-foreground">
                 Chargement des prospects...
@@ -302,8 +302,11 @@ function AdminDashboardPage() {
               </div>
             ) : (
               inquiries.map((inquiry) => (
-                <div key={inquiry.id} className="flex items-center justify-between py-3.5">
-                  <div className="min-w-0 flex-1 pr-4">
+                <div
+                  key={inquiry.id}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 py-3.5 hover:bg-muted/15 transition-colors rounded px-1.5"
+                >
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p className="truncate text-sm font-medium">{inquiry.name}</p>
                       {inquiry.company && (
@@ -316,7 +319,7 @@ function AdminDashboardPage() {
                       {inquiry.offer} · {inquiry.budget_range}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
                         inquiry.status === "new"
@@ -331,9 +334,10 @@ function AdminDashboardPage() {
                     <Link
                       to="/admin/inquiries/$id"
                       params={{ id: inquiry.id }}
-                      className="text-xs text-gold hover:underline"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-gold hover:underline"
                     >
-                      Consulter
+                      <span>Consulter</span>
+                      <ArrowRight className="size-3" />
                     </Link>
                   </div>
                 </div>
@@ -345,7 +349,7 @@ function AdminDashboardPage() {
         {/* Quick Links / Studio Actions (1 col) */}
         <div className="space-y-6">
           {/* Top 3 Read Articles (Phase 12a) */}
-          <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
+          <div className="rounded-sm border border-border bg-card p-4 sm:p-6 shadow-xs">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
                 <BookOpen className="size-4 text-gold" />
@@ -383,27 +387,27 @@ function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="rounded-sm border border-border bg-card p-6 shadow-sm">
+          <div className="rounded-sm border border-border bg-card p-4 sm:p-6 shadow-xs">
             <h2 className="font-display text-xl font-medium">Actions Rapides</h2>
             <div className="mt-4 space-y-2.5">
               <Link
                 to="/admin/cases/$id"
                 params={{ id: "new" }}
-                className="flex items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold"
+                className="flex min-h-[44px] items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold active:scale-[0.99]"
               >
                 <span>Créer une étude de cas</span>
                 <Plus className="size-4" />
               </Link>
               <Link
                 to="/admin/cases"
-                className="flex items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold"
+                className="flex min-h-[44px] items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold active:scale-[0.99]"
               >
                 <span>Gérer les études de cas</span>
                 <Briefcase className="size-4" />
               </Link>
               <Link
                 to="/admin/inquiries"
-                className="flex items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold"
+                className="flex min-h-[44px] items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold active:scale-[0.99]"
               >
                 <span>Gérer les prospects</span>
                 <Inbox className="size-4" />
@@ -412,7 +416,7 @@ function AdminDashboardPage() {
                 href="/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold"
+                className="flex min-h-[44px] items-center justify-between rounded-sm border border-border p-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors hover:border-gold hover:text-gold active:scale-[0.99]"
               >
                 <span>Voir le site en direct</span>
                 <ArrowRight className="size-4" />

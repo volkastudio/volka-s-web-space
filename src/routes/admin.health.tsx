@@ -214,7 +214,7 @@ function AdminHealthPage() {
   const resolvedProblemsCount = FLAGGED_PROBLEMS.filter((p) => p.status === "resolved").length;
 
   return (
-    <div className="space-y-8 p-6 lg:p-10 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
       {/* Toast Alert */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded border border-forest/30 bg-primary px-4 py-3 text-xs text-primary-foreground shadow-xl animate-in fade-in slide-in-from-bottom-2">
@@ -230,7 +230,7 @@ function AdminHealthPage() {
             <ShieldCheck className="size-4" />
             <span>Surveillance Studio — Propriétaire</span>
           </div>
-          <h1 className="mt-1 font-display text-3xl font-light text-forest-black sm:text-4xl">
+          <h1 className="mt-1 font-display text-2xl sm:text-3xl font-light text-forest-black sm:text-4xl">
             Santé & Sécurité Système
           </h1>
           <p className="mt-1 text-xs text-muted-foreground max-w-2xl">
@@ -243,7 +243,7 @@ function AdminHealthPage() {
           onClick={handleRunChecks}
           disabled={running}
           variant="volka"
-          className="shrink-0 flex items-center gap-2"
+          className="shrink-0 flex items-center justify-center gap-2 w-full sm:w-auto min-h-[38px] active:scale-95"
         >
           <RefreshCw className={`size-3.5 ${running ? "animate-spin text-primary" : ""}`} />
           <span>{running ? "Vérification en cours..." : "Lancer les vérifications"}</span>

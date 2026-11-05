@@ -10,11 +10,12 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, useRef, type ReactNode } from "react";
 
-import { PageTransition } from "@/components/page-transition";
+import { PageTransition, type TransitionPreset } from "@/components/page-transition";
 import { I18nProvider, useI18n } from "@/i18n/context";
 import { getVisitorPrefs } from "@/lib/locale/prefs.functions";
 import { DEFAULT_PREFS } from "@/lib/locale/prefs";
 import { usePageTracking } from "@/lib/analytics/use-page-tracking";
+import { getPublicSiteSettings } from "@/lib/admin/settings.functions";
 import { ArrowUpRight, RotateCcw } from "lucide-react";
 
 import appCss from "../styles.css?url";
@@ -155,10 +156,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   // Never blocks the page: any failure falls back to French and EUR.
   loader: async () => {
     try {
-      return { prefs: await getVisitorPrefs() };
+      const [prefs, appearance] = await Promise.allSettled([
+        getVisitorPrefs(),
+        getPublicSiteSettings({ data: { key: "appearance" } }),
+      ]);
+
+      return {
+        prefs: prefs.status === "fulfilled" ? prefs.value : DEFAULT_PREFS,
+        appearance: appearance.status === "fulfilled" ? appearance.value : null,
+      };
     } catch (error) {
       console.error(error);
-      return { prefs: DEFAULT_PREFS };
+      return { prefs: DEFAULT_PREFS, appearance: null };
     }
   },
   shellComponent: RootShell,
@@ -219,7 +228,11 @@ function AnalyticsListener() {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const { prefs } = Route.useLoaderData();
+  const { prefs, appearance } = Route.useLoaderData();
+
+  // Read page-transition settings from appearance site_settings
+  const transitionEnabled = (appearance as Record<string, unknown> | null)?.['transitionEnabled'] !== false;
+  const transitionPreset = ((appearance as Record<string, unknown> | null)?.['transitionPreset'] as TransitionPreset | undefined) ?? "rise";
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -229,7 +242,7 @@ function RootComponent() {
         {/* Keeps html[lang] in sync with the active locale and invalidates router loaders */}
         <LangSync />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <PageTransition>
+        <PageTransition enabled={transitionEnabled} preset={transitionPreset}>
           <Outlet />
         </PageTransition>
       </I18nProvider>

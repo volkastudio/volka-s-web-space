@@ -251,7 +251,7 @@ function AdminAuditsPage() {
   const waitlistCount = audits.filter((a) => a.status === "waitlist").length;
 
   return (
-    <div className="space-y-8 p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-6 right-6 z-50 px-4 py-3 rounded-md bg-forest-black border border-mint text-paper text-sm shadow-xl flex items-center gap-2">
@@ -263,43 +263,50 @@ function AdminAuditsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-light text-forest-black">
+          <h1 className="font-display text-2xl sm:text-3xl font-light text-forest-black">
             File des Audits Croissance
           </h1>
-          <p className="text-sm text-forest-black/70">
+          <p className="text-xs sm:text-sm text-forest-black/70 mt-0.5">
             Suivi des demandes d'audit gratuit, délais de livraison et actions requises.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="px-3 py-1.5 rounded-full bg-mint/15 border border-mint/40 text-xs font-medium text-forest-black">
             <strong>{queuedCount}</strong> en file active
           </div>
           {waitlistCount > 0 && (
             <div className="px-3 py-1.5 rounded-full bg-ochre/15 border border-ochre/40 text-xs font-medium text-forest-black">
-              <strong>{waitlistCount}</strong> en liste d'attente
+              <strong>{waitlistCount}</strong> en attente
             </div>
           )}
           {capacity && (
             <div className="px-3 py-1.5 rounded-full bg-pine/10 border border-pine/20 text-xs font-medium text-forest-black">
-              Capacité : <strong>{capacity.used}/{capacity.capacity}</strong> ({capacity.remaining} rest.)
+              Capacité : <strong>{capacity.used}/{capacity.capacity}</strong>
             </div>
           )}
           <Button
             variant="outline"
             size="sm"
             onClick={() => setShowSettingsModal(true)}
-            className="text-xs h-8 border-pine/20 hover:bg-soft-paper flex items-center gap-1.5"
+            className="text-xs min-h-[34px] border-pine/20 hover:bg-soft-paper flex items-center gap-1.5 active:scale-95"
           >
             <SlidersHorizontal className="size-3.5 text-forest-black/70" />
-            Paramètres
+            <span>Paramètres</span>
           </Button>
+          <a
+            href="/admin/audits/workbench"
+            className="inline-flex min-h-[34px] items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-pine hover:bg-pine/90 text-paper text-xs font-semibold shadow-xs transition-colors active:scale-95"
+          >
+            <Sparkles className="size-3.5 text-mint" />
+            <span>Workbench</span>
+          </a>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-soft-paper/50 p-4 rounded-lg border border-pine/10">
-        <div className="relative w-full md:w-80">
+      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between bg-soft-paper/50 p-3.5 rounded-lg border border-pine/10">
+        <div className="relative w-full sm:w-80">
           <Search className="size-4 text-forest-black/40 absolute left-3 top-1/2 -translate-y-1/2" />
           <Input
             type="text"
@@ -310,12 +317,12 @@ function AdminAuditsPage() {
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Status Filter */}
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-9 px-3 rounded-md bg-warm-ivory border border-pine/20 text-xs text-forest-black focus:outline-none"
+            className="h-9 px-3 rounded-md bg-warm-ivory border border-pine/20 text-xs text-forest-black focus:outline-none flex-1 sm:flex-initial"
           >
             <option value="all">Tous les statuts</option>
             <option value="queued">En file (Queued)</option>
@@ -330,7 +337,7 @@ function AdminAuditsPage() {
           <select
             value={trackFilter}
             onChange={(e) => setTrackFilter(e.target.value)}
-            className="h-9 px-3 rounded-md bg-warm-ivory border border-pine/20 text-xs text-forest-black focus:outline-none"
+            className="h-9 px-3 rounded-md bg-warm-ivory border border-pine/20 text-xs text-forest-black focus:outline-none flex-1 sm:flex-initial"
           >
             <option value="all">Tous les parcours</option>
             <option value="website">Site Web</option>
@@ -341,8 +348,103 @@ function AdminAuditsPage() {
         </div>
       </div>
 
-      {/* Audits Table */}
-      <div className="bg-warm-ivory rounded-lg border border-pine/10 shadow-sm overflow-hidden">
+      {/* Mobile Card View (< md) */}
+      <div className="block md:hidden space-y-3">
+        {filteredAudits.length === 0 ? (
+          <div className="rounded-lg border border-pine/10 bg-warm-ivory p-8 text-center text-forest-black/50 text-sm">
+            Aucun audit ne correspond aux filtres appliqués.
+          </div>
+        ) : (
+          filteredAudits.map((a) => {
+            const statusConf = STATUS_CONFIG[a.status] || {
+              label: a.status,
+              badgeClass: "bg-pine/10 text-forest-black",
+            };
+
+            const isOverdue =
+              a.due_at &&
+              new Date(a.due_at).getTime() < Date.now() &&
+              a.status !== "completed" &&
+              a.status !== "rejected";
+
+            return (
+              <div
+                key={a.id}
+                className="rounded-lg border border-pine/10 bg-warm-ivory p-4 shadow-xs space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <span className="font-semibold text-forest-black text-sm block truncate">
+                      {a.company_name}
+                    </span>
+                    <span className="text-forest-black/60 text-xs block truncate mt-0.5">
+                      {a.contact_name} ({a.country}) · {a.contact_email}
+                    </span>
+                  </div>
+                  <span
+                    className={`inline-block px-2.5 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wider shrink-0 ${statusConf.badgeClass}`}
+                  >
+                    {statusConf.label}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs border-y border-pine/10 py-2.5">
+                  <div>
+                    <span className="text-[10px] uppercase tracking-wider text-forest-black/50 block">
+                      Parcours
+                    </span>
+                    <span className="inline-block px-2 py-0.5 rounded bg-pine/10 font-medium text-forest-black text-[11px] mt-0.5">
+                      {TRACK_LABELS[a.track]}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase tracking-wider text-forest-black/50 block">
+                      Échéance
+                    </span>
+                    {a.due_at ? (
+                      <span
+                        className={`text-xs block mt-0.5 ${
+                          isOverdue ? "text-terracotta font-semibold" : "text-forest-black/70"
+                        }`}
+                      >
+                        {isOverdue && "⚠️ "}
+                        {new Date(a.due_at).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "short",
+                        })}
+                      </span>
+                    ) : (
+                      <span className="text-forest-black/40 text-xs block mt-0.5">—</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-0.5 gap-2">
+                  <a
+                    href={`/admin/audits/workbench?id=${a.id}`}
+                    className="inline-flex min-h-[34px] items-center gap-1 px-3 py-1.5 rounded bg-pine/10 hover:bg-pine/20 text-pine text-xs font-semibold active:scale-95"
+                  >
+                    <Sparkles className="size-3 text-pine" />
+                    <span>Workbench</span>
+                  </a>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedAudit(a)}
+                    className="min-h-[34px] text-xs border-pine/20 hover:bg-pine/10 active:scale-95"
+                  >
+                    <span>Détails & Actions</span>
+                    <ChevronRight className="ml-1 size-3.5" />
+                  </Button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Audits Table (>= md) */}
+      <div className="hidden md:block bg-warm-ivory rounded-lg border border-pine/10 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-soft-paper/80 border-b border-pine/10 text-forest-black/70 font-semibold uppercase tracking-wider text-[11px]">

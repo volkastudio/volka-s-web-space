@@ -1049,6 +1049,234 @@ export type Database = {
         }
         Relationships: []
       }
+      ig_connection: {
+        Row: {
+          id: string
+          ig_user_id: string | null
+          page_id: string | null
+          username: string | null
+          access_token: string | null
+          token_expires_at: string | null
+          scopes: string[]
+          webhook_last_received_at: string | null
+          is_paused: boolean
+          daily_cap: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          ig_user_id?: string | null
+          page_id?: string | null
+          username?: string | null
+          access_token?: string | null
+          token_expires_at?: string | null
+          scopes?: string[]
+          webhook_last_received_at?: string | null
+          is_paused?: boolean
+          daily_cap?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          ig_user_id?: string | null
+          page_id?: string | null
+          username?: string | null
+          access_token?: string | null
+          token_expires_at?: string | null
+          scopes?: string[]
+          webhook_last_received_at?: string | null
+          is_paused?: boolean
+          daily_cap?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ig_automations: {
+        Row: {
+          id: string
+          name: string
+          is_active: boolean
+          trigger: 'comment' | 'story_reply'
+          target_mode: 'any' | 'selected'
+          match_mode: 'word' | 'contains' | 'exact' | 'starts_with'
+          keywords: string[]
+          exclude_keywords: string[]
+          dm_text: string
+          public_reply_variants: string[]
+          product_id: string | null
+          link_src_tag: string | null
+          one_per_user: boolean
+          cooldown_hours: number
+          starts_at: string | null
+          ends_at: string | null
+          position: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          is_active?: boolean
+          trigger?: 'comment' | 'story_reply'
+          target_mode?: 'any' | 'selected'
+          match_mode?: 'word' | 'contains' | 'exact' | 'starts_with'
+          keywords?: string[]
+          exclude_keywords?: string[]
+          dm_text: string
+          public_reply_variants?: string[]
+          product_id?: string | null
+          link_src_tag?: string | null
+          one_per_user?: boolean
+          cooldown_hours?: number
+          starts_at?: string | null
+          ends_at?: string | null
+          position?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          is_active?: boolean
+          trigger?: 'comment' | 'story_reply'
+          target_mode?: 'any' | 'selected'
+          match_mode?: 'word' | 'contains' | 'exact' | 'starts_with'
+          keywords?: string[]
+          exclude_keywords?: string[]
+          dm_text?: string
+          public_reply_variants?: string[]
+          product_id?: string | null
+          link_src_tag?: string | null
+          one_per_user?: boolean
+          cooldown_hours?: number
+          starts_at?: string | null
+          ends_at?: string | null
+          position?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ig_automation_targets: {
+        Row: {
+          id: string
+          automation_id: string
+          media_id: string
+          media_type: 'post' | 'reel' | 'story'
+          permalink: string | null
+          caption_excerpt: string | null
+          thumbnail_url: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          automation_id: string
+          media_id: string
+          media_type?: 'post' | 'reel' | 'story'
+          permalink?: string | null
+          caption_excerpt?: string | null
+          thumbnail_url?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          automation_id?: string
+          media_id?: string
+          media_type?: 'post' | 'reel' | 'story'
+          permalink?: string | null
+          caption_excerpt?: string | null
+          thumbnail_url?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      ig_events: {
+        Row: {
+          id: string
+          kind: 'comment' | 'story_reply' | 'story_mention'
+          external_id: string
+          ig_user_id: string | null
+          username: string | null
+          text: string | null
+          media_id: string | null
+          parent_comment_id: string | null
+          payload: Json
+          received_at: string
+          status: 'received' | 'matched' | 'sent' | 'skipped' | 'failed'
+          automation_id: string | null
+          skip_reason: string | null
+          error: string | null
+          attempts: number
+          sent_at: string | null
+        }
+        Insert: {
+          id?: string
+          kind?: 'comment' | 'story_reply' | 'story_mention'
+          external_id: string
+          ig_user_id?: string | null
+          username?: string | null
+          text?: string | null
+          media_id?: string | null
+          parent_comment_id?: string | null
+          payload?: Json
+          received_at?: string
+          status?: 'received' | 'matched' | 'sent' | 'skipped' | 'failed'
+          automation_id?: string | null
+          skip_reason?: string | null
+          error?: string | null
+          attempts?: number
+          sent_at?: string | null
+        }
+        Update: {
+          id?: string
+          kind?: 'comment' | 'story_reply' | 'story_mention'
+          external_id?: string
+          ig_user_id?: string | null
+          username?: string | null
+          text?: string | null
+          media_id?: string | null
+          parent_comment_id?: string | null
+          payload?: Json
+          received_at?: string
+          status?: 'received' | 'matched' | 'sent' | 'skipped' | 'failed'
+          automation_id?: string | null
+          skip_reason?: string | null
+          error?: string | null
+          attempts?: number
+          sent_at?: string | null
+        }
+        Relationships: []
+      }
+      ig_contacts: {
+        Row: {
+          ig_user_id: string
+          username: string | null
+          first_seen_at: string
+          last_event_at: string
+          events_count: number
+          blocked: boolean
+        }
+        Insert: {
+          ig_user_id: string
+          username?: string | null
+          first_seen_at?: string
+          last_event_at?: string
+          events_count?: number
+          blocked?: boolean
+        }
+        Update: {
+          ig_user_id?: string
+          username?: string | null
+          first_seen_at?: string
+          last_event_at?: string
+          events_count?: number
+          blocked?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

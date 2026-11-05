@@ -14,9 +14,11 @@ import { Route as AdminRouteRouteImport } from './routes/admin.route'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as StartRouteImport } from './routes/start'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAppearanceRouteImport } from './routes/admin.appearance'
 import { Route as AdminAuditsRouteImport } from './routes/admin.audits'
 import { Route as AdminHealthRouteImport } from './routes/admin.health'
 import { Route as AdminInsightsRouteImport } from './routes/admin.insights'
+import { Route as AdminInstagramRouteImport } from './routes/admin.instagram'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminSocialsRouteImport } from './routes/admin.socials'
@@ -70,6 +72,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAppearanceRoute = AdminAppearanceRouteImport.update({
+  id: '/appearance',
+  path: '/appearance',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAuditsRoute = AdminAuditsRouteImport.update({
   id: '/audits',
   path: '/audits',
@@ -83,6 +90,11 @@ const AdminHealthRoute = AdminHealthRouteImport.update({
 const AdminInsightsRoute = AdminInsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminInstagramRoute = AdminInstagramRouteImport.update({
+  id: '/instagram',
+  path: '/instagram',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -226,9 +238,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/legal': typeof LegalRoute
   '/start': typeof StartRoute
+  '/admin/appearance': typeof AdminAppearanceRoute
   '/admin/audits': typeof AdminAuditsRouteWithChildren
   '/admin/health': typeof AdminHealthRoute
   '/admin/insights': typeof AdminInsightsRoute
+  '/admin/instagram': typeof AdminInstagramRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/socials': typeof AdminSocialsRoute
@@ -262,9 +276,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/legal': typeof LegalRoute
   '/start': typeof StartRoute
+  '/admin/appearance': typeof AdminAppearanceRoute
   '/admin/audits': typeof AdminAuditsRouteWithChildren
   '/admin/health': typeof AdminHealthRoute
   '/admin/insights': typeof AdminInsightsRoute
+  '/admin/instagram': typeof AdminInstagramRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/socials': typeof AdminSocialsRoute
@@ -300,9 +316,11 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/legal': typeof LegalRoute
   '/start': typeof StartRoute
+  '/admin/appearance': typeof AdminAppearanceRoute
   '/admin/audits': typeof AdminAuditsRouteWithChildren
   '/admin/health': typeof AdminHealthRoute
   '/admin/insights': typeof AdminInsightsRoute
+  '/admin/instagram': typeof AdminInstagramRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/socials': typeof AdminSocialsRoute
@@ -339,9 +357,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/legal'
     | '/start'
+    | '/admin/appearance'
     | '/admin/audits'
     | '/admin/health'
     | '/admin/insights'
+    | '/admin/instagram'
     | '/admin/login'
     | '/admin/media'
     | '/admin/socials'
@@ -375,9 +395,11 @@ export interface FileRouteTypes {
     | '/'
     | '/legal'
     | '/start'
+    | '/admin/appearance'
     | '/admin/audits'
     | '/admin/health'
     | '/admin/insights'
+    | '/admin/instagram'
     | '/admin/login'
     | '/admin/media'
     | '/admin/socials'
@@ -412,9 +434,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/legal'
     | '/start'
+    | '/admin/appearance'
     | '/admin/audits'
     | '/admin/health'
     | '/admin/insights'
+    | '/admin/instagram'
     | '/admin/login'
     | '/admin/media'
     | '/admin/socials'
@@ -502,6 +526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/appearance': {
+      id: '/admin/appearance'
+      path: '/appearance'
+      fullPath: '/admin/appearance'
+      preLoaderRoute: typeof AdminAppearanceRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/audits': {
       id: '/admin/audits'
       path: '/audits'
@@ -521,6 +552,13 @@ declare module '@tanstack/react-router' {
       path: '/insights'
       fullPath: '/admin/insights'
       preLoaderRoute: typeof AdminInsightsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/instagram': {
+      id: '/admin/instagram'
+      path: '/instagram'
+      fullPath: '/admin/instagram'
+      preLoaderRoute: typeof AdminInstagramRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/login': {
@@ -728,9 +766,11 @@ const AdminAuditsRouteWithChildren = AdminAuditsRoute._addFileChildren(
 )
 
 interface AdminRouteRouteChildren {
+  AdminAppearanceRoute: typeof AdminAppearanceRoute
   AdminAuditsRoute: typeof AdminAuditsRouteWithChildren
   AdminHealthRoute: typeof AdminHealthRoute
   AdminInsightsRoute: typeof AdminInsightsRoute
+  AdminInstagramRoute: typeof AdminInstagramRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminSocialsRoute: typeof AdminSocialsRoute
@@ -748,9 +788,11 @@ interface AdminRouteRouteChildren {
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAppearanceRoute: AdminAppearanceRoute,
   AdminAuditsRoute: AdminAuditsRouteWithChildren,
   AdminHealthRoute: AdminHealthRoute,
   AdminInsightsRoute: AdminInsightsRoute,
+  AdminInstagramRoute: AdminInstagramRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminSocialsRoute: AdminSocialsRoute,

@@ -53,6 +53,19 @@ export default {
         return await handleAnalyticsIngest(request);
       }
 
+      // Instagram Webhook (Phase IG-1/IG-2)
+      if (url.pathname === "/api/ig/webhook") {
+        if (request.method === "GET") {
+          const { handleWebhookChallenge } = await import("./lib/instagram/webhook.server");
+          return handleWebhookChallenge(url);
+        }
+        if (request.method === "POST") {
+          const { handleWebhookPost } = await import("./lib/instagram/webhook.server");
+          return await handleWebhookPost(request);
+        }
+        return new Response("Method Not Allowed", { status: 405 });
+      }
+
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

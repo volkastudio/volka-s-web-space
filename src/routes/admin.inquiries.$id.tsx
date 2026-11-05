@@ -187,29 +187,29 @@ function AdminInquiryDetailPage() {
   )}`;
 
   return (
-    <div className="p-6 md:p-10 lg:p-12">
+    <div className="p-4 sm:p-6 md:p-10 lg:p-12 space-y-6">
       {/* Top Bar Navigation */}
       <div className="flex flex-col justify-between gap-4 border-b border-border pb-6 sm:flex-row sm:items-center">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <Link
             to="/admin/inquiries"
-            className="rounded p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="rounded p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground shrink-0"
           >
             <ArrowLeft className="size-4" />
           </Link>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-display text-2xl font-medium sm:text-3xl">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="font-display text-2xl font-medium sm:text-3xl truncate">
                 {inquiry.name}
               </h1>
               {inquiry.company && (
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-muted-foreground truncate">
                   ({inquiry.company})
                 </span>
               )}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Submitted on{" "}
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Reçu le{" "}
               {new Date(inquiry.created_at).toLocaleString("fr-FR", {
                 dateStyle: "long",
                 timeStyle: "short",
@@ -223,17 +223,17 @@ function AdminInquiryDetailPage() {
         <div className="flex flex-wrap items-center gap-2.5">
           <a
             href={mailtoUrl}
-            className="inline-flex items-center gap-1.5 rounded-sm bg-primary px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+            className="inline-flex min-h-[38px] flex-1 sm:flex-initial justify-center items-center gap-1.5 rounded-sm bg-primary px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-xs transition-opacity hover:opacity-90 active:scale-95"
           >
             <Mail className="size-3.5 text-gold" />
-            <span>Email Reply</span>
+            <span>Répondre par Email</span>
           </a>
           {whatsappUrl && (
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-sm border border-border px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-foreground transition-colors hover:border-gold hover:text-gold"
+              className="inline-flex min-h-[38px] flex-1 sm:flex-initial justify-center items-center gap-1.5 rounded-sm border border-border bg-card px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-foreground transition-colors hover:border-gold hover:text-gold active:scale-95"
             >
               <MessageSquare className="size-3.5 text-green-500" />
               <span>WhatsApp</span>

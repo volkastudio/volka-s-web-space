@@ -225,7 +225,7 @@ function AdminBuyersPage() {
   };
 
   return (
-    <div className="space-y-8 p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
       {/* Toast */}
       {toast && (
         <div className="fixed top-6 right-6 z-50 px-4 py-3 rounded-md bg-forest-black border border-mint text-paper text-sm shadow-xl flex items-center gap-2">
@@ -237,8 +237,8 @@ function AdminBuyersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-light text-forest-black">Acheteurs</h1>
-          <p className="text-sm text-forest-black/70">
+          <h1 className="font-display text-2xl sm:text-3xl font-light text-forest-black">Acheteurs</h1>
+          <p className="text-xs sm:text-sm text-forest-black/70 mt-0.5">
             {buyers.length} acheteur{buyers.length > 1 ? "s" : ""} ·{" "}
             <span className="text-mint font-medium">{consentCounts.yes} consentements oui</span> ·{" "}
             <span className="text-forest-black/50">{consentCounts.unknown} inconnus</span>
@@ -247,13 +247,13 @@ function AdminBuyersPage() {
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           <Link
             to="/admin/sales"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-pine/20 hover:bg-pine/10 text-forest-black/70 transition-colors"
+            className="inline-flex min-h-[34px] items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-pine/20 hover:bg-pine/10 text-forest-black/70 transition-colors active:scale-95"
           >
             <ShoppingBag className="size-3.5" /> Pages de vente
           </Link>
           <Link
             to="/admin/sales/sequences"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-pine/20 hover:bg-pine/10 text-forest-black/70 transition-colors"
+            className="inline-flex min-h-[34px] items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-pine/20 hover:bg-pine/10 text-forest-black/70 transition-colors active:scale-95"
           >
             <Mail className="size-3.5" /> Séquences
           </Link>
@@ -261,7 +261,7 @@ function AdminBuyersPage() {
             variant="outline"
             size="sm"
             onClick={exportCsv}
-            className="text-xs border-pine/20 hover:bg-pine/10"
+            className="min-h-[34px] text-xs border-pine/20 hover:bg-pine/10 active:scale-95"
           >
             <Download className="size-3.5 mr-1.5" /> Exporter CSV
           </Button>
@@ -269,14 +269,14 @@ function AdminBuyersPage() {
             variant="outline"
             size="sm"
             onClick={() => setShowCsvImport(true)}
-            className="text-xs border-pine/20 hover:bg-pine/10"
+            className="min-h-[34px] text-xs border-pine/20 hover:bg-pine/10 active:scale-95"
           >
             <Upload className="size-3.5 mr-1.5" /> Importer CSV
           </Button>
           <Button
             size="sm"
             onClick={() => setShowManualForm(true)}
-            className="text-xs bg-pine hover:bg-pine/90 text-paper"
+            className="min-h-[34px] text-xs bg-pine hover:bg-pine/90 text-paper active:scale-95"
           >
             <Plus className="size-3.5 mr-1.5" /> Ajouter manuellement
           </Button>
@@ -284,13 +284,13 @@ function AdminBuyersPage() {
       </div>
 
       {/* Stats bar */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {[
           { label: "Consentement oui", value: consentCounts.yes, color: "text-mint" },
           { label: "Refus / Non-email", value: consentCounts.no, color: "text-terracotta" },
           { label: "Inconnus", value: consentCounts.unknown, color: "text-ochre" },
         ].map((s) => (
-          <div key={s.label} className="bg-warm-ivory rounded-lg border border-pine/10 p-4 text-center">
+          <div key={s.label} className="bg-warm-ivory rounded-lg border border-pine/10 p-4 text-center shadow-xs">
             <div className={`font-display text-2xl font-medium ${s.color}`}>{s.value}</div>
             <div className="text-xs text-forest-black/60 mt-0.5">{s.label}</div>
           </div>
@@ -298,8 +298,8 @@ function AdminBuyersPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4 items-center bg-soft-paper/50 p-4 rounded-lg border border-pine/10">
-        <div className="relative w-full md:w-80">
+      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center bg-soft-paper/50 p-3.5 rounded-lg border border-pine/10">
+        <div className="relative w-full sm:w-80">
           <Search className="size-4 text-forest-black/40 absolute left-3 top-1/2 -translate-y-1/2" />
           <Input
             placeholder="Rechercher par email, nom, produit..."
@@ -308,11 +308,11 @@ function AdminBuyersPage() {
             className="pl-9 bg-warm-ivory border-pine/20 text-xs"
           />
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 flex-wrap">
           <select
             value={consentFilter}
             onChange={(e) => setConsentFilter(e.target.value)}
-            className="h-9 px-3 rounded-md bg-warm-ivory border border-pine/20 text-xs text-forest-black focus:outline-none"
+            className="h-9 px-3 rounded-md bg-warm-ivory border border-pine/20 text-xs text-forest-black focus:outline-none flex-1 sm:flex-initial"
           >
             <option value="all">Tout consentement</option>
             <option value="yes">Oui</option>
@@ -322,7 +322,7 @@ function AdminBuyersPage() {
           <select
             value={platformFilter}
             onChange={(e) => setPlatformFilter(e.target.value)}
-            className="h-9 px-3 rounded-md bg-warm-ivory border border-pine/20 text-xs text-forest-black focus:outline-none"
+            className="h-9 px-3 rounded-md bg-warm-ivory border border-pine/20 text-xs text-forest-black focus:outline-none flex-1 sm:flex-initial"
           >
             <option value="all">Toutes plateformes</option>
             <option value="whop">Whop</option>
@@ -332,8 +332,80 @@ function AdminBuyersPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-warm-ivory rounded-lg border border-pine/10 shadow-sm overflow-hidden">
+      {/* Mobile Card View (< md) */}
+      <div className="block md:hidden space-y-3">
+        {filteredBuyers.length === 0 ? (
+          <div className="rounded-lg border border-pine/10 bg-warm-ivory p-8 text-center text-forest-black/50 text-sm space-y-2">
+            <Users className="size-8 mx-auto text-forest-black/20" />
+            <p>Aucun acheteur ne correspond aux filtres appliqués.</p>
+          </div>
+        ) : (
+          filteredBuyers.map((b) => {
+            const consent = CONSENT_LABELS[b.marketing_consent];
+            return (
+              <div
+                key={b.id}
+                onClick={() => setSelectedBuyer(b)}
+                className="rounded-lg border border-pine/10 bg-warm-ivory p-4 shadow-xs space-y-3 cursor-pointer active:scale-[0.99] transition-transform"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <span className="font-semibold text-forest-black text-sm block truncate">
+                      {b.name || "Acheteur anonyme"}
+                    </span>
+                    <span className="text-forest-black/60 text-xs block truncate mt-0.5">
+                      {b.email}
+                    </span>
+                  </div>
+                  <span
+                    className={`inline-block px-2.5 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wider shrink-0 ${consent.className}`}
+                  >
+                    {consent.label}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs border-y border-pine/10 py-2.5">
+                  <div>
+                    <span className="text-[10px] uppercase tracking-wider text-forest-black/50 block">
+                      Produit
+                    </span>
+                    <span className="font-medium text-forest-black truncate block mt-0.5">
+                      {b.product_title}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase tracking-wider text-forest-black/50 block">
+                      Plateforme / Montant
+                    </span>
+                    <span className="text-forest-black/70 block mt-0.5">
+                      {PLATFORM_LABELS[b.platform] ?? b.platform} ·{" "}
+                      {b.amount_cents ? `${(b.amount_cents / 100).toFixed(2)} ${b.currency}` : "Gratuit"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-0.5 gap-2 text-xs">
+                  <span className="text-forest-black/50 text-[11px]">
+                    {b.purchased_at
+                      ? new Date(b.purchased_at).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "short",
+                        })
+                      : "Date inconnue"}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-pine font-medium text-xs">
+                    <span>Voir le profil</span>
+                    <ChevronRight className="size-3.5" />
+                  </span>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Table (>= md) */}
+      <div className="hidden md:block bg-warm-ivory rounded-lg border border-pine/10 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-soft-paper/80 border-b border-pine/10 text-forest-black/70 font-semibold uppercase tracking-wider text-[11px]">

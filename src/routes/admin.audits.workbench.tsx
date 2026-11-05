@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import {
   ArrowLeft,
@@ -270,15 +270,15 @@ function AuditWorkbenchPage() {
   return (
     <div className="min-h-screen bg-warm-ivory text-forest-black">
       {/* TOP HEADER */}
-      <header className="sticky top-0 z-30 bg-warm-ivory/90 backdrop-blur-md border-b border-pine/15 px-6 py-4">
+      <header className="sticky top-0 z-30 bg-warm-ivory/90 backdrop-blur-md border-b border-pine/15 px-4 sm:px-6 py-3 sm:py-4">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <a
-              href="/admin/audits"
-              className="p-2 rounded-lg hover:bg-soft-paper text-forest-black/70 hover:text-forest-black transition-colors"
+            <Link
+              to="/admin/audits"
+              className="p-2 rounded-lg hover:bg-soft-paper text-forest-black/70 hover:text-forest-black transition-colors min-h-[38px] min-w-[38px] flex items-center justify-center active:scale-95"
             >
               <ArrowLeft className="size-4" />
-            </a>
+            </Link>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs uppercase font-mono tracking-wider text-forest-black/50">
@@ -298,7 +298,7 @@ function AuditWorkbenchPage() {
           </div>
 
           {/* Stopwatch & Action Bar */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {/* Stopwatch Timer (feeds D15 time-box) */}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-soft-paper border border-pine/20 text-xs">
               <Clock className="size-3.5 text-ochre" />
@@ -335,7 +335,7 @@ function AuditWorkbenchPage() {
               variant="outline"
               size="sm"
               onClick={() => setPreviewOpen(true)}
-              className="text-xs border-pine/20 hover:bg-soft-paper flex items-center gap-1.5"
+              className="text-xs border-pine/20 hover:bg-soft-paper flex items-center gap-1.5 min-h-[38px] active:scale-95"
             >
               <Eye className="size-3.5 text-forest-black/70" />
               Prévisualiser
@@ -345,7 +345,7 @@ function AuditWorkbenchPage() {
               size="sm"
               onClick={handleSendReport}
               disabled={submitting}
-              className="text-xs bg-pine text-paper hover:bg-pine/90 flex items-center gap-1.5 shadow-sm"
+              className="text-xs bg-pine text-paper hover:bg-pine/90 flex items-center gap-1.5 shadow-sm min-h-[38px] active:scale-95"
             >
               {submitting ? (
                 <Loader2 className="size-3.5 animate-spin" />
@@ -359,7 +359,7 @@ function AuditWorkbenchPage() {
       </header>
 
       {/* MAIN TWO-COLUMN WORKBENCH */}
-      <main className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
         {/* LEFT COLUMN: CLIENT DOSSIER & CONTEXT (4 COLS) */}
         <section className="lg:col-span-4 space-y-6">
           {/* Client Card */}

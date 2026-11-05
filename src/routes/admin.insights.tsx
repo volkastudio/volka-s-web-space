@@ -163,9 +163,9 @@ function AdminInsightsPage() {
   };
 
   return (
-    <div className="p-6 md:p-10 lg:p-12 space-y-8 max-w-7xl">
+    <div className="p-4 sm:p-6 md:p-10 lg:p-12 space-y-6 sm:space-y-8 max-w-7xl">
       {/* Header */}
-      <div className="flex flex-col justify-between gap-6 border-b border-border pb-8 md:flex-row md:items-end">
+      <div className="flex flex-col justify-between gap-6 border-b border-border pb-6 sm:pb-8 md:flex-row md:items-end">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
@@ -250,7 +250,7 @@ function AdminInsightsPage() {
 
       {/* Navigation Tabs */}
       <div className="border-b border-border">
-        <nav className="flex space-x-8">
+        <nav className="flex items-center gap-4 sm:gap-8 overflow-x-auto no-scrollbar -mx-1 px-1">
           {[
             { id: "traffic", label: "Trafic & Audience", icon: BarChart3 },
             { id: "content", label: "Contenu & Lectures (D17)", icon: BookOpen },
@@ -263,7 +263,7 @@ function AdminInsightsPage() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex items-center gap-2 border-b-2 py-3 px-1 text-xs uppercase tracking-[0.14em] font-medium transition-colors ${
+                className={`flex shrink-0 min-h-[44px] items-center gap-2 border-b-2 py-3 px-1 text-xs uppercase tracking-[0.14em] font-medium transition-colors ${
                   active
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"

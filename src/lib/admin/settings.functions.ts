@@ -6,7 +6,7 @@ import type { Database, Json } from "@/integrations/supabase/types";
 export type SiteSettingPrimitive = string | number | boolean | null;
 export type SiteSettingValue = Record<string, SiteSettingPrimitive>;
 
-const PUBLIC_SETTING_KEYS = ["socials", "contact", "audit", "general"] as const;
+const PUBLIC_SETTING_KEYS = ["socials", "contact", "audit", "general", "appearance"] as const;
 
 export const getPublicSiteSettings = createServerFn({ method: "GET" })
   .validator((data: { key: string }) =>

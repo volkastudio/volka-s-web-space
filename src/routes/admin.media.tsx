@@ -10,6 +10,7 @@ import {
   Loader2,
   AlertTriangle,
   ExternalLink,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signUpload } from "@/lib/admin/cases.functions";
@@ -46,6 +47,7 @@ function AdminMediaPage() {
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
   const [deleting, setDeleting] = React.useState<string | null>(null);
   const [dragOver, setDragOver] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFiles = async (fileList: FileList | null) => {
@@ -110,13 +112,17 @@ function AdminMediaPage() {
     ct.startsWith("video/") ||
     /\.(mp4|webm|mov|m4v)($|\?)/i.test(name);
 
+  const filteredFiles = files.filter((f) =>
+    searchQuery.trim() ? f.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) : true,
+  );
+
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-light text-forest-black">Médiathèque</h1>
-          <p className="text-sm text-forest-black/70 mt-0.5">
+          <h1 className="font-display text-2xl sm:text-3xl font-light text-forest-black">Médiathèque</h1>
+          <p className="text-xs sm:text-sm text-forest-black/70 mt-0.5">
             Fichiers stockés dans le bucket Supabase{" "}
             <code className="text-xs bg-pine/10 px-1 rounded">media</code>.
           </p>
@@ -124,7 +130,7 @@ function AdminMediaPage() {
         <Button
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="bg-pine hover:bg-pine/90 text-paper text-xs shrink-0"
+          className="bg-pine hover:bg-pine/90 text-paper text-xs shrink-0 w-full sm:w-auto justify-center min-h-[38px] active:scale-95"
         >
           {uploading ? (
             <Loader2 className="size-3.5 animate-spin mr-1.5" />
@@ -166,7 +172,7 @@ function AdminMediaPage() {
         }`}
       >
         <Upload className="size-5" />
-        <span className="text-sm">
+        <span className="text-xs sm:text-sm text-center px-2">
           Glissez des images ou vidéos ici, ou cliquez pour parcourir
         </span>
       </div>
@@ -178,26 +184,40 @@ function AdminMediaPage() {
         </div>
       )}
 
-      {/* Stats strip */}
-      <div className="text-xs text-forest-black/50 font-mono">
-        {files.length} fichier{files.length !== 1 ? "s" : ""} —{" "}
-        {formatBytes(files.reduce((sum, f) => sum + (f.size || 0), 0))} total
+      {/* Search and Stats strip */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-soft-paper/50 p-2.5 rounded-lg border border-pine/10">
+        <div className="relative w-full sm:w-72">
+          <Search className="size-3.5 text-forest-black/40 absolute left-2.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Filtrer par nom de fichier..."
+            className="w-full pl-8 pr-3 py-1.5 text-xs bg-warm-ivory border border-pine/20 rounded focus:border-pine focus:outline-none"
+          />
+        </div>
+        <div className="text-xs text-forest-black/60 font-mono">
+          {filteredFiles.length} / {files.length} fichier{files.length !== 1 ? "s" : ""} —{" "}
+          {formatBytes(files.reduce((sum, f) => sum + (f.size || 0), 0))} total
+        </div>
       </div>
 
       {/* Grid */}
-      {files.length === 0 ? (
+      {filteredFiles.length === 0 ? (
         <div className="py-20 text-center text-forest-black/40 text-sm">
-          Aucun fichier dans la médiathèque. Importez votre premier média ci-dessus.
+          {files.length === 0
+            ? "Aucun fichier dans la médiathèque. Importez votre premier média ci-dessus."
+            : "Aucun fichier ne correspond à votre recherche."}
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {files.map((file) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+          {filteredFiles.map((file) => (
             <div
               key={file.id}
-              className="group relative rounded-lg overflow-hidden border border-pine/10 bg-warm-ivory shadow-sm hover:shadow-md transition-shadow"
+              className="group relative rounded-lg overflow-hidden border border-pine/10 bg-warm-ivory shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between"
             >
               {/* Thumbnail */}
-              <div className="aspect-square bg-soft-paper/80 flex items-center justify-center overflow-hidden">
+              <div className="aspect-square bg-soft-paper/80 flex items-center justify-center overflow-hidden relative">
                 {isImage(file.contentType, file.name) ? (
                   <img
                     src={file.publicUrl}
@@ -210,62 +230,108 @@ function AdminMediaPage() {
                 ) : (
                   <ImageIcon className="size-10 text-pine/40" />
                 )}
+
+                {/* Desktop hover overlay (hidden on mobile) */}
+                <div className="hidden sm:flex absolute inset-0 bg-forest-black/0 group-hover:bg-forest-black/50 transition-all items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      copyUrl(file.id, file.publicUrl);
+                    }}
+                    className="p-2 bg-warm-ivory rounded-md shadow text-forest-black hover:bg-ochre hover:text-white transition-colors"
+                    title="Copier l'URL"
+                  >
+                    {copiedId === file.id ? (
+                      <Check className="size-3.5" />
+                    ) : (
+                      <Copy className="size-3.5" />
+                    )}
+                  </button>
+                  <a
+                    href={file.publicUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="p-2 bg-warm-ivory rounded-md shadow text-forest-black hover:bg-pine hover:text-paper transition-colors"
+                    title="Ouvrir"
+                  >
+                    <ExternalLink className="size-3.5" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(file);
+                    }}
+                    disabled={deleting === file.id}
+                    className="p-2 bg-warm-ivory rounded-md shadow text-forest-black hover:bg-terracotta hover:text-white transition-colors"
+                    title="Supprimer"
+                  >
+                    {deleting === file.id ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="size-3.5" />
+                    )}
+                  </button>
+                </div>
               </div>
 
-              {/* Overlay actions */}
-              <div className="absolute inset-0 bg-forest-black/0 group-hover:bg-forest-black/50 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    copyUrl(file.id, file.publicUrl);
-                  }}
-                  className="p-2 bg-warm-ivory rounded-md shadow text-forest-black hover:bg-ochre hover:text-white transition-colors"
-                  title="Copier l'URL"
-                >
-                  {copiedId === file.id ? (
-                    <Check className="size-3.5" />
-                  ) : (
-                    <Copy className="size-3.5" />
-                  )}
-                </button>
-                <a
-                  href={file.publicUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="p-2 bg-warm-ivory rounded-md shadow text-forest-black hover:bg-pine hover:text-paper transition-colors"
-                  title="Ouvrir"
-                >
-                  <ExternalLink className="size-3.5" />
-                </a>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(file);
-                  }}
-                  disabled={deleting === file.id}
-                  className="p-2 bg-warm-ivory rounded-md shadow text-forest-black hover:bg-terracotta hover:text-white transition-colors"
-                  title="Supprimer"
-                >
-                  {deleting === file.id ? (
-                    <Loader2 className="size-3.5 animate-spin" />
-                  ) : (
-                    <Trash2 className="size-3.5" />
-                  )}
-                </button>
-              </div>
+              {/* File info + Mobile Action Bar */}
+              <div className="p-2 border-t border-pine/10 bg-warm-ivory space-y-1.5">
+                <div>
+                  <p
+                    className="text-[11px] font-mono text-forest-black/80 truncate leading-tight"
+                    title={file.name}
+                  >
+                    {file.name}
+                  </p>
+                  <p className="text-[10px] text-forest-black/40 mt-0.5">{formatBytes(file.size)}</p>
+                </div>
 
-              {/* File info */}
-              <div className="p-2 border-t border-pine/10">
-                <p
-                  className="text-[11px] font-mono text-forest-black/70 truncate"
-                  title={file.name}
-                >
-                  {file.name}
-                </p>
-                <p className="text-[10px] text-forest-black/40">{formatBytes(file.size)}</p>
+                {/* Mobile action buttons (always visible on phones) */}
+                <div className="flex sm:hidden items-center justify-between gap-1 pt-1 border-t border-pine/10">
+                  <button
+                    type="button"
+                    onClick={() => copyUrl(file.id, file.publicUrl)}
+                    className="flex-1 inline-flex items-center justify-center gap-1 min-h-[32px] rounded bg-soft-paper/80 text-[10px] font-medium text-forest-black active:scale-95 px-1.5"
+                    title="Copier l'URL"
+                  >
+                    {copiedId === file.id ? (
+                      <>
+                        <Check className="size-3 text-mint" />
+                        <span>Copié</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="size-3" />
+                        <span>Copier</span>
+                      </>
+                    )}
+                  </button>
+                  <a
+                    href={file.publicUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center size-8 rounded bg-soft-paper/80 text-forest-black active:scale-95"
+                    title="Ouvrir"
+                  >
+                    <ExternalLink className="size-3" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(file)}
+                    disabled={deleting === file.id}
+                    className="inline-flex items-center justify-center size-8 rounded bg-destructive/10 text-destructive active:scale-95"
+                    title="Supprimer"
+                  >
+                    {deleting === file.id ? (
+                      <Loader2 className="size-3 animate-spin" />
+                    ) : (
+                      <Trash2 className="size-3" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           ))}

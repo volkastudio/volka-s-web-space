@@ -245,7 +245,7 @@ function AdminSalesSequencesPage() {
   };
 
   return (
-    <div className="space-y-8 p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8 lg:p-12 max-w-7xl mx-auto">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-6 right-6 z-50 px-4 py-3 rounded-md bg-forest-black border border-mint text-paper text-sm shadow-xl flex items-center gap-2">
@@ -257,25 +257,25 @@ function AdminSalesSequencesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-light text-forest-black">
+          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-light text-forest-black">
             Séquences & Suivi Acheteurs
           </h1>
-          <p className="text-sm text-forest-black/70">
+          <p className="mt-1 text-xs sm:text-sm text-forest-black/70">
             Automatisations d'emails de courtoisie et d'orientation post-achat (Phase 14.2).
           </p>
         </div>
 
         {/* Quick Nav */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 flex-wrap shrink-0">
           <Link
             to="/admin/sales"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium border border-pine/20 hover:bg-pine/10 text-forest-black/70 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium border border-pine/20 hover:bg-pine/10 text-forest-black/70 transition-colors min-h-[38px] active:scale-95"
           >
             <ShoppingBag className="size-3.5" /> Pages de vente
           </Link>
           <Link
             to="/admin/sales/buyers"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium border border-pine/20 hover:bg-pine/10 text-forest-black/70 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium border border-pine/20 hover:bg-pine/10 text-forest-black/70 transition-colors min-h-[38px] active:scale-95"
           >
             <Users className="size-3.5" /> Acheteurs
           </Link>

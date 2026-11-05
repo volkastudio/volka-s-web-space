@@ -470,6 +470,64 @@ export async function checkDataIntegrity(): Promise<HealthCheckResult[]> {
       hint: hasErrors ? "Vérifier la connectivité SMTP et les adresses destinataires." : null,
       checkedAt: now,
     });
+
+    // Instagram Automation Health & Token Status (Phase IG-1/IG-5)
+    const { data: igConn } = await supabaseAdmin
+      .from("ig_connection")
+      .select("username, access_token, token_expires_at, is_paused, webhook_last_received_at")
+      .maybeSingle();
+
+    if (igConn?.access_token) {
+      let isExpired = false;
+      let daysLeft: number | null = null;
+      if (igConn.token_expires_at) {
+        const diffMs = new Date(igConn.token_expires_at).getTime() - Date.now();
+        daysLeft = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+        isExpired = diffMs <= 0;
+      }
+
+      const isWarning = isExpired || (daysLeft !== null && daysLeft <= 10);
+      results.push({
+        key: "data_ig_token",
+        groupName: "data",
+        status: isExpired ? "error" : isWarning ? "warning" : "ok",
+        detail: isExpired
+          ? `Jeton Meta Instagram expiré (@${igConn.username || "compte"})`
+          : daysLeft !== null && daysLeft <= 10
+            ? `Jeton Meta Instagram expire dans ${daysLeft} jour(s) (@${igConn.username || "compte"})`
+            : `Jeton Meta Instagram valide (@${igConn.username || "volkastudio"}) — Système ${igConn.is_paused ? "en pause" : "actif"}`,
+        hint: isWarning ? "Renouveler le jeton d'accès dans Admin > Instagram > Connexion." : null,
+        checkedAt: now,
+      });
+
+      // Recent failed Instagram events in last 24h
+      const { count: igFailuresCount } = await supabaseAdmin
+        .from("ig_events")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "failed")
+        .gte("received_at", oneDayAgo);
+
+      const hasIgFailures = (igFailuresCount ?? 0) > 0;
+      results.push({
+        key: "data_ig_failures_24h",
+        groupName: "data",
+        status: hasIgFailures ? "warning" : "ok",
+        detail: hasIgFailures
+          ? `${igFailuresCount} échec(s) d'envoi de message Instagram sur les dernières 24h`
+          : "Aucun échec d'automatisation Instagram sur les dernières 24h",
+        hint: hasIgFailures ? "Consulter le journal dans Admin > Instagram pour inspecter les erreurs." : null,
+        checkedAt: now,
+      });
+    } else {
+      results.push({
+        key: "data_ig_token",
+        groupName: "data",
+        status: "ok",
+        detail: "Module Instagram non configuré (en attente de jeton Meta)",
+        hint: null,
+        checkedAt: now,
+      });
+    }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     results.push({
