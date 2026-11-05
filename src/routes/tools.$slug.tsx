@@ -2,7 +2,7 @@ import * as React from "react";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
-import { WaveBackground } from "@/components/wave-background";
+import { TealBackground } from "@/components/teal-background";
 import {
   getPublicProduct,
   trackProductCta,
@@ -158,8 +158,8 @@ function ToolsProductPage() {
   const noRegions = product.regions.length === 0;
 
   return (
-    <div className="relative isolate min-h-screen flex flex-col overflow-hidden bg-forest-black text-paper font-sans selection:bg-mint selection:text-forest-black">
-      <WaveBackground />
+    <div className="relative isolate min-h-svh flex flex-col overflow-hidden bg-forest-black text-paper font-sans selection:bg-mint selection:text-forest-black">
+      <TealBackground variant="glow" />
       <header className="relative z-10 px-6 sm:px-10 py-5">
         <a
           href="/"

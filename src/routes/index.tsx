@@ -8,19 +8,16 @@ import { CursorFollower } from "@/components/cursor-follower";
 import { ImageReveal } from "@/components/image-reveal";
 import { LiquidGlassCard } from "@/components/liquid-glass-card";
 import { Marquee } from "@/components/marquee";
-import { Parallax } from "@/components/parallax";
 import { Reveal } from "@/components/reveal";
 import { SplitHeading } from "@/components/split-heading";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { TealBackground } from "@/components/teal-background";
 import { Button } from "@/components/ui/button";
 import { getStaticCaseStudies, getStaticCaseStudy } from "@/data/case-studies";
 import { getFeaturedCaseStudies } from "@/lib/cases.functions";
 import { offers, getLocalizedOffer } from "@/data/offers";
 import { useI18n } from "@/i18n/context";
-
-import heroImage from "@/assets/volka-hero.jpg";
-import heroMobileImage from "@/assets/volka-hero-mobile.jpg";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -106,42 +103,13 @@ function Index() {
   return (
     <main className="bg-background text-foreground">
       {/* ─── Hero ─── */}
-      <section className="relative min-h-[92svh] overflow-hidden bg-primary text-primary-foreground">
-        {/* Parallax hero image (responsive: mobile 9:16 portrait, desktop 16:9 landscape) */}
-        <Parallax speed={80} className="absolute inset-0 h-full w-full">
-          <picture className="h-full w-full">
-            <source media="(max-width: 767px)" srcSet={heroMobileImage} />
-            <source media="(min-width: 768px)" srcSet={heroImage} />
-            <img
-              src={heroImage}
-              alt="Volka — Systèmes de croissance d'entreprise"
-              width={1920}
-              height={1088}
-              fetchPriority="high"
-              className="h-full w-full object-cover object-center"
-              style={{ minHeight: "110%" }}
-            />
-          </picture>
-        </Parallax>
-
-        {/* Overlays */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-primary/80 mix-blend-multiply"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary via-primary/30 to-primary/50"
-        />
-        {/* Subtle radial focus on headline */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(0,0,0,0)_0%,rgba(21,38,25,0.6)_100%)]"
-        />
+      <section className="relative isolate min-h-svh overflow-hidden bg-forest-black text-primary-foreground">
+        {/* Code-made background: teal slats + slow moving light (no image) */}
+        <TealBackground variant="lines" />
 
         <SiteHeader variant="overlay" />
 
-        <div className="relative mx-auto flex min-h-[92svh] max-w-7xl flex-col justify-end px-5 pt-28 pb-16 md:px-10 md:pt-36 md:pb-24 lg:px-14">
+        <div className="relative mx-auto flex min-h-svh max-w-7xl flex-col justify-end px-5 pt-28 pb-12 md:px-10 md:pt-36 md:pb-20 lg:px-14">
           <motion.p
             className="text-xs font-medium uppercase tracking-[0.24em] text-gold"
             initial={{ opacity: 0, y: 16 }}

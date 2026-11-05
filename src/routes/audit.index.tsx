@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ChevronDown, Globe, TrendingUp, Workflow, HelpCircle } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { TealBackground } from "@/components/teal-background";
 import { getPublicAuditCapacity } from "@/lib/audit/audit.functions";
 import type { AuditCapacityStatus } from "@/lib/audit/audit.server";
 
@@ -91,13 +92,13 @@ function AuditLandingPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-forest-black text-paper font-sans selection:bg-mint selection:text-forest-black">
-      <SiteHeader />
-
+    <div className="min-h-svh flex flex-col bg-forest-black text-paper font-sans selection:bg-mint selection:text-forest-black">
       <main className="flex-1">
-        {/* HERO */}
-        <section className="px-6 py-16 sm:py-24">
-          <div className="mx-auto max-w-2xl text-center space-y-6">
+        {/* HERO: fills the whole first screen, content centred */}
+        <section className="relative isolate flex min-h-svh flex-col justify-center overflow-hidden px-6 pb-16 pt-28 sm:pb-20 sm:pt-32">
+          <TealBackground variant="glow" />
+          <SiteHeader variant="overlay" />
+          <div className="relative z-10 mx-auto max-w-2xl text-center space-y-6">
             <p className="text-xs font-mono uppercase tracking-[0.2em] text-mint">
               Audit croissance gratuit
             </p>
