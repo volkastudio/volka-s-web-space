@@ -2,32 +2,51 @@ import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { TealBackground } from "@/components/teal-background";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/context";
 import { useStudioSocials, isPlaceholderWhatsApp } from "@/lib/studio-socials";
 
 export function SiteFooter() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const socials = useStudioSocials();
 
   return (
-    <section className="bg-primary px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14">
-      <div className="mx-auto max-w-7xl">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-mint">
-          {t.footer.ctaEyebrow}
-        </p>
-        <div className="mt-8 flex flex-col gap-10 border-b border-primary-foreground/20 pb-16 md:flex-row md:items-end md:justify-between">
-          <h2 className="max-w-4xl font-display text-6xl font-medium leading-[0.9] md:text-8xl">
-            {t.footer.ctaHeadline}
-          </h2>
-          <Button asChild variant="volka" size="volka" className="shrink-0 shadow-lg">
-            <Link to="/start">
-              {t.nav.start} <ArrowUpRight className="size-4" />
-            </Link>
-          </Button>
-        </div>
-        {/* Footer nav — top row: links; bottom row: lang + copyright */}
-        <div className="pt-8 text-xs uppercase tracking-[0.14em] text-primary-foreground/60">
+    <footer className="relative isolate overflow-hidden bg-forest-black text-paper">
+      {/* Code-made teal glow background for cohesive dark aesthetic */}
+      <TealBackground variant="glow" />
+
+      <div className="relative z-10 px-5 pt-20 pb-16 md:px-10 md:pt-28 lg:px-14">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-mint">
+            {t.footer.ctaEyebrow}
+          </p>
+          <div className="mt-8 flex flex-col gap-10 border-b border-paper/15 pb-16 md:flex-row md:items-end md:justify-between">
+            <h2 className="max-w-4xl font-display text-4xl sm:text-6xl md:text-7xl font-light leading-[1.05] tracking-tight text-balance">
+              {locale === "fr" ? (
+                <>
+                  Commençons par{" "}
+                  <span className="italic text-mint font-light">le comprendre</span>.
+                </>
+              ) : (
+                <>
+                  Let's start by{" "}
+                  <span className="italic text-mint font-light">understanding it</span>.
+                </>
+              )}
+            </h2>
+            <Button
+              asChild
+              className="shrink-0 rounded-full bg-ochre px-8 py-3.5 text-sm sm:text-base font-semibold text-forest-black shadow-xl hover:bg-ochre/90 active:scale-[0.98] transition-all min-h-12 inline-flex items-center justify-center gap-2 border-none"
+            >
+              <Link to="/start">
+                <span>{t.nav.start}</span>
+                <ArrowUpRight className="size-4" />
+              </Link>
+            </Button>
+          </div>
+          {/* Footer nav — top row: links; bottom row: lang + copyright */}
+          <div className="pt-8 text-xs uppercase tracking-[0.14em] text-paper/60">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <span className="font-semibold text-primary-foreground">VOLKA</span>
             <span>{t.footer.location}</span>
@@ -116,12 +135,13 @@ export function SiteFooter() {
               {t.footer.legalNotice}
             </Link>
           </div>
-          <div className="mt-5 flex items-center justify-between gap-4 border-t border-primary-foreground/10 pt-5">
+          <div className="mt-5 flex items-center justify-between gap-4 border-t border-paper/15 pt-5">
             <span>© {new Date().getFullYear()} Volka Studio</span>
             <LanguageSwitcher />
           </div>
+          </div>
         </div>
       </div>
-    </section>
+    </footer>
   );
 }

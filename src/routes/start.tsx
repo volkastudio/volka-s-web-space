@@ -22,6 +22,7 @@ import { z } from "zod";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { TealBackground } from "@/components/teal-background";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -105,10 +106,10 @@ function StepDots({ current, total }: { current: number; total: number }) {
             width: i === current ? 24 : 6,
             backgroundColor:
               i < current
-                ? "oklch(0.69 0.151 65.8)"
+                ? "rgba(0, 196, 164, 0.45)"
                 : i === current
-                  ? "oklch(0.82 0.055 168.8)"
-                  : "rgba(255, 255, 255, 0.25)",
+                  ? "#00C4A4"
+                  : "rgba(250, 247, 242, 0.15)",
           }}
           transition={{ duration: 0.35, ease: easeOut }}
           className="h-1.5 rounded-full"
@@ -137,19 +138,19 @@ function Field({
   return (
     <div className="space-y-1.5">
       <div className="flex items-baseline justify-between gap-2">
-        <Label htmlFor={id} className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
-          {label} {required && <span className="text-primary">*</span>}
+        <Label htmlFor={id} className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
+          {label} {required && <span className="text-terracotta">*</span>}
         </Label>
       </div>
       {children}
       {helperText && !error && (
-        <p className="text-[11px] text-muted-foreground/80 leading-normal">{helperText}</p>
+        <p className="text-[11px] text-mint/70 leading-normal">{helperText}</p>
       )}
       {error && (
         <motion.p
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-xs text-destructive font-medium"
+          className="text-xs text-terracotta font-medium"
         >
           {error}
         </motion.p>
@@ -182,16 +183,16 @@ function SelectCard({
       className={[
         "group relative flex w-full items-start gap-3.5 rounded-xl border p-4 text-left transition-all duration-200",
         selected
-          ? "border-primary bg-primary text-primary-foreground shadow-md ring-1 ring-primary"
-          : "border-border/70 bg-background/60 hover:border-primary/40 hover:bg-muted/40",
+          ? "border-mint bg-pine/70 text-paper shadow-md ring-1 ring-mint"
+          : "border-paper/15 bg-paper/[0.03] text-paper hover:border-mint/40 hover:bg-paper/[0.06]",
       ].join(" ")}
     >
       {icon && (
         <span
           className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border transition-colors ${
             selected
-              ? "border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground"
-              : "border-border bg-background text-muted-foreground group-hover:text-foreground"
+              ? "border-mint/40 bg-mint/20 text-mint"
+              : "border-paper/20 bg-paper/5 text-paper/60 group-hover:text-paper"
           }`}
         >
           {icon}
@@ -199,7 +200,7 @@ function SelectCard({
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="block font-display text-base sm:text-lg font-medium leading-snug">
+          <span className="block font-display text-base sm:text-lg font-medium leading-snug text-paper">
             {title}
           </span>
           {badge && (
@@ -207,7 +208,7 @@ function SelectCard({
               className={`rounded-full px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider font-semibold ${
                 selected
                   ? "bg-mint text-forest-black"
-                  : "bg-primary/10 text-primary"
+                  : "bg-ochre/20 text-ochre border border-ochre/30"
               }`}
             >
               {badge}
@@ -217,7 +218,7 @@ function SelectCard({
         {subtitle && (
           <span
             className={`mt-1 block text-xs leading-relaxed ${
-              selected ? "text-primary-foreground/75" : "text-muted-foreground"
+              selected ? "text-paper/85" : "text-paper/60"
             }`}
           >
             {subtitle}
@@ -229,7 +230,7 @@ function SelectCard({
           className={`flex size-4 items-center justify-center rounded-full border transition-colors ${
             selected
               ? "border-mint bg-mint text-forest-black"
-              : "border-border/80 bg-background"
+              : "border-paper/30 bg-paper/5"
           }`}
         >
           {selected && <Check className="size-2.5 stroke-[3]" />}
@@ -257,23 +258,23 @@ function MultiPill({
       onClick={onClick}
       className={`flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition-all duration-200 ${
         selected
-          ? "border-primary bg-primary/10 ring-1 ring-primary text-foreground"
-          : "border-border/60 bg-background/50 hover:border-primary/40 hover:bg-muted/30 text-foreground/80"
+          ? "border-mint bg-pine/70 ring-1 ring-mint text-paper"
+          : "border-paper/15 bg-paper/[0.03] hover:border-mint/40 hover:bg-paper/[0.06] text-paper/80"
       }`}
     >
       <div
         className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border transition-colors ${
           selected
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border/80 bg-background"
+            ? "border-mint bg-mint text-forest-black"
+            : "border-paper/30 bg-paper/5"
         }`}
       >
         {selected && <Check className="size-2.5 stroke-[3]" />}
       </div>
       <div className="min-w-0">
-        <span className="block text-sm font-medium leading-snug">{title}</span>
+        <span className="block text-sm font-medium leading-snug text-paper">{title}</span>
         {subtitle && (
-          <span className="mt-0.5 block text-xs text-muted-foreground leading-normal">
+          <span className="mt-0.5 block text-xs text-paper/60 leading-normal">
             {subtitle}
           </span>
         )}
@@ -302,21 +303,21 @@ function ChannelCard({
       className={[
         "flex w-full items-center gap-3.5 rounded-xl border p-3.5 text-left transition-all duration-200",
         selected
-          ? "border-primary bg-primary text-primary-foreground shadow-sm ring-1 ring-primary"
-          : "border-border/70 bg-background/60 hover:border-primary/50 hover:bg-muted/40",
+          ? "border-mint bg-pine/70 text-paper shadow-sm ring-1 ring-mint"
+          : "border-paper/15 bg-paper/[0.03] hover:border-mint/50 hover:bg-paper/[0.06] text-paper/80",
       ].join(" ")}
     >
       <span
         className={[
           "flex size-9 shrink-0 items-center justify-center rounded-full border transition-colors duration-200",
           selected
-            ? "border-gold/60 bg-gold text-forest-black"
-            : "border-border bg-background text-muted-foreground",
+            ? "border-ochre bg-ochre text-forest-black"
+            : "border-paper/20 bg-paper/5 text-paper/60",
         ].join(" ")}
       >
         {icon}
       </span>
-      <span className="font-display text-base font-medium">{title}</span>
+      <span className="font-display text-base font-medium text-paper">{title}</span>
     </motion.button>
   );
 }
@@ -596,7 +597,7 @@ function StartProject() {
 
       track("start_submit", {
         path: "/start",
-        source: location || undefined,
+        ...(location ? { source: location } : {}),
         metadata: {
           offer: selectedOffer,
           timeline,
@@ -827,16 +828,17 @@ function StartProject() {
   }
 
   return (
-    <main className="bg-background text-foreground">
+    <main className="relative isolate min-h-screen bg-forest-black text-paper font-sans overflow-hidden">
+      <TealBackground variant="glow" />
       <SiteHeader />
 
       {/* ─── Page header ─── */}
-      <section className="border-b border-border bg-primary px-5 py-12 text-primary-foreground md:px-10 md:py-16 lg:px-14">
+      <section className="relative z-10 border-b border-paper/10 px-5 py-12 md:px-10 md:py-16 lg:px-14">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
               <motion.p
-                className="text-xs font-medium uppercase tracking-[0.2em] text-gold"
+                className="text-xs font-mono uppercase tracking-[0.2em] text-ochre font-medium"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: easeOut }}
@@ -844,15 +846,25 @@ function StartProject() {
                 {t.form.eyebrow}
               </motion.p>
               <motion.h1
-                className="mt-3 font-display text-4xl sm:text-5xl md:text-6xl font-medium leading-tight"
+                className="mt-3 font-display text-4xl sm:text-5xl md:text-6xl font-light leading-tight tracking-[-0.03em] text-paper"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.1, ease: easeOut }}
               >
-                {t.form.title}
+                {isFr ? (
+                  <>
+                    Démarrons{" "}
+                    <span className="italic text-mint font-light">votre projet</span>.
+                  </>
+                ) : (
+                  <>
+                    Let's start{" "}
+                    <span className="italic text-mint font-light">your project</span>.
+                  </>
+                )}
               </motion.h1>
               <motion.p
-                className="mt-4 max-w-2xl text-sm md:text-base font-light text-primary-foreground/75 leading-relaxed"
+                className="mt-4 max-w-2xl text-sm md:text-base font-light text-paper/75 leading-relaxed"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.15, ease: easeOut }}
@@ -867,7 +879,7 @@ function StartProject() {
               transition={{ duration: 0.6, delay: 0.25 }}
             >
               <StepDots current={step} total={TOTAL_STEPS} />
-              <p className="text-xs font-mono uppercase tracking-[0.14em] text-primary-foreground/60">
+              <p className="text-xs font-mono uppercase tracking-[0.14em] text-paper/60">
                 {isFr
                   ? `Étape ${step + 1}/${TOTAL_STEPS} — ${stepLabels[step]}`
                   : `Step ${step + 1} of ${TOTAL_STEPS} — ${stepLabels[step]}`}
@@ -878,8 +890,8 @@ function StartProject() {
       </section>
 
       {/* ─── Onboarding wizard ─── */}
-      <section className="min-h-[60vh] px-5 py-12 md:px-10 md:py-16 lg:px-14">
-        <div className="mx-auto max-w-2xl">
+      <section className="relative z-10 min-h-[60vh] px-5 py-12 md:px-10 md:py-16 lg:px-14">
+        <div className="mx-auto max-w-2xl rounded-2xl border border-paper/15 bg-paper/[0.04] p-6 sm:p-10 backdrop-blur-md shadow-2xl">
           {/* Honeypot */}
           <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
             <label htmlFor="website">Leave this field empty</label>
@@ -908,14 +920,14 @@ function StartProject() {
               {step === 0 && (
                 <div className="space-y-7">
                   <div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-primary">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-mint font-medium">
                       <Building2 className="size-3.5" />
                       {isFr ? "Étape 01 — Votre entreprise" : "Step 01 — Your business"}
                     </span>
-                    <h2 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">
+                    <h2 className="mt-2 font-display text-2xl sm:text-3xl font-light text-paper">
                       {isFr ? "Commençons par comprendre votre activité." : "Let's start by understanding your business."}
                     </h2>
-                    <p className="mt-2 text-sm text-muted-foreground">
+                    <p className="mt-2 text-sm text-paper/70 font-light">
                       {isFr
                         ? "Quelques détails pour contextualiser votre environnement de marché."
                         : "A few details to understand your market and context."}
@@ -932,7 +944,7 @@ function StartProject() {
                       >
                         <Input
                           id="company"
-                          className="h-12 rounded-lg border-border bg-background text-base"
+                          className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
                           value={company}
                           onChange={(e) => setCompany(e.target.value)}
                           maxLength={120}
@@ -952,10 +964,10 @@ function StartProject() {
                           id="sector"
                           value={sector}
                           onChange={(e) => setSector(e.target.value)}
-                          className="h-12 w-full rounded-lg border border-border bg-background px-3 text-sm focus:border-primary focus:outline-none"
+                          className="h-12 w-full rounded-lg border border-paper/20 bg-paper/5 text-paper px-3 text-sm focus:border-mint focus:outline-none"
                         >
                           {SECTORS.map((s) => (
-                            <option key={s} value={s}>
+                            <option key={s} value={s} className="bg-forest-black text-paper">
                               {s}
                             </option>
                           ))}
@@ -972,17 +984,17 @@ function StartProject() {
                       >
                         <Input
                           id="location"
-                          className="h-12 rounded-lg border-border bg-background text-base"
+                          className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
                           value={location}
                           onChange={(e) => setLocation(e.target.value)}
                           maxLength={100}
-                          placeholder={isFr ? "Paris, France ou Cotonou, Bénin" : "City, Country"}
+                          placeholder={isFr ? "Paris, Bruxelles, Genève ou international" : "Paris, London, New York or international"}
                         />
                       </Field>
                     </div>
 
                     <div className="sm:col-span-2 space-y-3">
-                      <Label className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
+                      <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
                         {isFr ? "Avez-vous déjà un site web ?" : "Do you already have a website?"} *
                       </Label>
                       <div className="grid gap-2 sm:grid-cols-3">
@@ -997,8 +1009,8 @@ function StartProject() {
                             onClick={() => setWebsiteStatus(opt.id as any)}
                             className={`rounded-lg border p-3 text-center text-xs font-medium transition-all ${
                               websiteStatus === opt.id
-                                ? "border-primary bg-primary text-primary-foreground font-semibold"
-                                : "border-border bg-background hover:border-primary/50 text-foreground/80"
+                                ? "border-mint bg-pine/70 text-paper font-semibold ring-1 ring-mint"
+                                : "border-paper/15 bg-paper/[0.03] hover:border-mint/50 text-paper/80"
                             }`}
                           >
                             {opt.label}
@@ -1017,7 +1029,7 @@ function StartProject() {
                             <Input
                               id="websiteUrl"
                               type="url"
-                              className="h-12 rounded-lg border-border bg-background text-base"
+                              className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
                               value={websiteUrl}
                               onChange={(e) => setWebsiteUrl(e.target.value)}
                               placeholder="https://acmecorp.com"
@@ -1028,7 +1040,7 @@ function StartProject() {
                     </div>
 
                     <div className="sm:col-span-2 space-y-2">
-                      <Label className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
+                      <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
                         {isFr ? "Quel est votre rôle dans l'entreprise ?" : "Your role in the business"} *
                       </Label>
                       <div className="grid gap-2 sm:grid-cols-2">
@@ -1039,8 +1051,8 @@ function StartProject() {
                             onClick={() => setRole(r)}
                             className={`rounded-lg border p-3 text-left text-xs font-medium transition-all ${
                               role === r
-                                ? "border-primary bg-primary text-primary-foreground font-semibold"
-                                : "border-border bg-background hover:border-primary/50 text-foreground/80"
+                                ? "border-mint bg-pine/70 text-paper font-semibold ring-1 ring-mint"
+                                : "border-paper/15 bg-paper/[0.03] hover:border-mint/50 text-paper/80"
                             }`}
                           >
                             {r}
@@ -1056,14 +1068,14 @@ function StartProject() {
               {step === 1 && (
                 <div className="space-y-7">
                   <div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-primary">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-mint font-medium">
                       <Target className="size-3.5" />
                       {isFr ? "Étape 02 — Ce que vous voulez améliorer" : "Step 02 — What you want to improve"}
                     </span>
-                    <h2 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">
+                    <h2 className="mt-2 font-display text-2xl sm:text-3xl font-light text-paper">
                       {isFr ? "Qu'est-ce qui vous amène chez Volka aujourd'hui ?" : "What brings you to Volka today?"}
                     </h2>
-                    <p className="mt-2 text-sm text-muted-foreground">
+                    <p className="mt-2 text-sm text-paper/70 font-light">
                       {isFr
                         ? "Identifions le blocage qui freine votre dynamique commerciale."
                         : "Let's identify the bottleneck slowing down your growth."}
@@ -1071,7 +1083,7 @@ function StartProject() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
+                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
                       {isFr ? "Quel est votre principal objectif aujourd'hui ?" : "Primary goal today"} *
                     </Label>
                     <div className="grid gap-2">
@@ -1087,10 +1099,10 @@ function StartProject() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
+                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
                       {isFr ? "Quels domaines souhaitez-vous améliorer ?" : "Pillars to improve"} *
                     </Label>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-paper/60">
                       {isFr
                         ? "Choisissez tout ce qui vous semble pertinent. Pas besoin de connaître le jargon technique."
                         : "Select all that apply. No need to know technical agency terms."}
@@ -1119,7 +1131,7 @@ function StartProject() {
                       <Textarea
                         id="problemDescription"
                         rows={4}
-                        className="rounded-lg border-border bg-background text-base"
+                        className="rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
                         value={problemDescription}
                         onChange={(e) => setProblemDescription(e.target.value)}
                         maxLength={1000}
@@ -1138,14 +1150,14 @@ function StartProject() {
               {step === 2 && (
                 <div className="space-y-7">
                   <div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-primary">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-mint font-medium">
                       <Workflow className="size-3.5" />
                       {isFr ? "Étape 03 — Votre fonctionnement actuel" : "Step 03 — Current operations"}
                     </span>
-                    <h2 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">
+                    <h2 className="mt-2 font-display text-2xl sm:text-3xl font-light text-paper">
                       {isFr ? "Quelques détails sur votre point de départ." : "A few details on where you stand."}
                     </h2>
-                    <p className="mt-2 text-sm text-muted-foreground">
+                    <p className="mt-2 text-sm text-paper/70 font-light">
                       {isFr
                         ? "Comprendre vos flux existants permet de concevoir une intervention réaliste."
                         : "Understanding your current setup allows us to scope a realistic intervention."}
@@ -1153,7 +1165,7 @@ function StartProject() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
+                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
                       {isFr ? "Où vos prospects peuvent-ils passer à l'action aujourd'hui ?" : "Where can prospects take action today?"}
                     </Label>
                     <div className="grid gap-2 sm:grid-cols-2">
@@ -1169,7 +1181,7 @@ function StartProject() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
+                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
                       {isFr ? "Comment suivez-vous les prospects et opportunités aujourd'hui ?" : "How do you track opportunities today?"}
                     </Label>
                     <div className="grid gap-2">
@@ -1193,7 +1205,7 @@ function StartProject() {
                       <Textarea
                         id="automationNeeds"
                         rows={3}
-                        className="rounded-lg border-border bg-background text-base"
+                        className="rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
                         value={automationNeeds}
                         onChange={(e) => setAutomationNeeds(e.target.value)}
                         maxLength={1000}
@@ -1208,14 +1220,14 @@ function StartProject() {
               {step === 3 && (
                 <div className="space-y-7">
                   <div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-primary">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-mint font-medium">
                       <Compass className="size-3.5" />
                       {isFr ? "Étape 04 — Résultat souhaité & Cadre" : "Step 04 — Target outcome & Framework"}
                     </span>
-                    <h2 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">
+                    <h2 className="mt-2 font-display text-2xl sm:text-3xl font-light text-paper">
                       {isFr ? "Définissons le cadre de votre projet." : "Let's define your project framework."}
                     </h2>
-                    <p className="mt-2 text-sm text-muted-foreground">
+                    <p className="mt-2 text-sm text-paper/70 font-light">
                       {isFr
                         ? "Précisez votre niveau d'ambition et les repères budgétaires envisagés."
                         : "Outline your desired outcome and initial budget expectations."}
@@ -1233,7 +1245,7 @@ function StartProject() {
                       <Textarea
                         id="vision"
                         rows={4}
-                        className="rounded-lg border-border bg-background text-base"
+                        className="rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
                         value={vision}
                         onChange={(e) => setVision(e.target.value)}
                         maxLength={2000}
@@ -1247,7 +1259,7 @@ function StartProject() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
+                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
                       {isFr ? "Quel type d'accompagnement vous semble le plus adapté ?" : "Preferred engagement type"} *
                     </Label>
                     <div className="grid gap-2.5">
@@ -1261,7 +1273,7 @@ function StartProject() {
                             title={loc.name}
                             subtitle={loc.tagline}
                             badge={formatOfferPrice(o)}
-                            icon={<Sparkles className="size-3.5 text-primary" />}
+                            icon={<Sparkles className="size-3.5 text-mint" />}
                           />
                         );
                       })}
@@ -1279,10 +1291,10 @@ function StartProject() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
+                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
                       {isFr ? "Quel budget avez-vous envisagé ? (repère indicatif HT)" : "Budget range (excl. VAT)"} *
                     </Label>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-paper/60">
                       {isFr
                         ? "Les montants indiqués sont des repères pour cadrer le projet, pas un devis final."
                         : "These amounts are planning benchmarks, not a final quote."}
@@ -1295,8 +1307,8 @@ function StartProject() {
                           onClick={() => setBudgetRange(b)}
                           className={`rounded-xl border p-3.5 text-left text-xs font-medium transition-all ${
                             budgetRange === b
-                              ? "border-primary bg-primary text-primary-foreground font-semibold shadow-sm"
-                              : "border-border/70 bg-background hover:border-primary/50 text-foreground/85"
+                              ? "border-mint bg-pine/70 text-paper font-semibold shadow-sm ring-1 ring-mint"
+                              : "border-paper/15 bg-paper/[0.03] hover:border-mint/50 text-paper/85"
                           }`}
                         >
                           {b}
@@ -1306,7 +1318,7 @@ function StartProject() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
+                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
                       {isFr ? "Quand aimeriez-vous démarrer ?" : "When would you like to start?"} *
                     </Label>
                     <div className="grid gap-2 sm:grid-cols-2">
@@ -1317,8 +1329,8 @@ function StartProject() {
                           onClick={() => setTimeline(tl)}
                           className={`rounded-xl border p-3.5 text-left text-xs font-medium transition-all ${
                             timeline === tl
-                              ? "border-primary bg-primary text-primary-foreground font-semibold shadow-sm"
-                              : "border-border/70 bg-background hover:border-primary/50 text-foreground/85"
+                              ? "border-mint bg-pine/70 text-paper font-semibold shadow-sm ring-1 ring-mint"
+                              : "border-paper/15 bg-paper/[0.03] hover:border-mint/50 text-paper/85"
                           }`}
                         >
                           {tl}
@@ -1333,14 +1345,14 @@ function StartProject() {
               {step === 4 && (
                 <div className="space-y-7">
                   <div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-primary">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-mint font-medium">
                       <FileText className="size-3.5" />
                       {isFr ? "Étape 05 — Vos coordonnées" : "Step 05 — Your contact details"}
                     </span>
-                    <h2 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">
+                    <h2 className="mt-2 font-display text-2xl sm:text-3xl font-light text-paper">
                       {isFr ? "Où pouvons-nous vous recontacter ?" : "Where can we get back to you?"}
                     </h2>
-                    <p className="mt-2 text-sm text-muted-foreground">
+                    <p className="mt-2 text-sm text-paper/70 font-light">
                       {isFr
                         ? "Dernière étape. Nous reviendrons vers vous avec une analyse préliminaire."
                         : "Final step. We will get back to you with a preliminary review."}
@@ -1357,7 +1369,7 @@ function StartProject() {
                       >
                         <Input
                           id="name"
-                          className="h-12 rounded-lg border-border bg-background text-base"
+                          className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           maxLength={100}
@@ -1377,7 +1389,7 @@ function StartProject() {
                         <Input
                           id="email"
                           type="email"
-                          className="h-12 rounded-lg border-border bg-background text-base"
+                          className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           maxLength={255}
@@ -1396,7 +1408,7 @@ function StartProject() {
                       >
                         <Input
                           id="phone"
-                          className="h-12 rounded-lg border-border bg-background text-base"
+                          className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           maxLength={40}
@@ -1407,7 +1419,7 @@ function StartProject() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-foreground/80">
+                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
                       {isFr ? "Quel est le meilleur moyen de vous contacter ?" : "Best way to reach you"} *
                     </Label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1439,13 +1451,13 @@ function StartProject() {
                         type="checkbox"
                         checked={consent}
                         onChange={(e) => setConsent(e.target.checked)}
-                        className="mt-1 size-4 rounded border-border text-primary focus:ring-primary"
+                        className="mt-1 size-4 rounded border-paper/20 bg-paper/10 text-ochre focus:ring-mint"
                       />
-                      <span className="text-xs text-muted-foreground leading-relaxed group-hover:text-foreground">
+                      <span className="text-xs text-paper/70 leading-relaxed group-hover:text-paper">
                         {isFr ? (
                           <>
                             J'accepte que Volka utilise les informations transmises pour examiner ma demande et me recontacter à ce sujet. Consultez nos{" "}
-                            <Link to="/legal" className="text-primary underline underline-offset-2">
+                            <Link to="/legal" className="text-mint underline underline-offset-2">
                               mentions légales et politique de confidentialité
                             </Link>
                             .
@@ -1453,7 +1465,7 @@ function StartProject() {
                         ) : (
                           <>
                             I agree that Volka may process this information to review my project and contact me. View our{" "}
-                            <Link to="/legal" className="text-primary underline underline-offset-2">
+                            <Link to="/legal" className="text-mint underline underline-offset-2">
                               privacy policy
                             </Link>
                             .
@@ -1462,7 +1474,7 @@ function StartProject() {
                       </span>
                     </label>
                     {errors["consent"] && (
-                      <p className="mt-1.5 text-xs text-destructive font-medium">
+                      <p className="mt-1.5 text-xs text-terracotta font-medium">
                         {errors["consent"]}
                       </p>
                     )}
@@ -1472,7 +1484,7 @@ function StartProject() {
                     <motion.div
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-xs text-destructive"
+                      className="rounded-lg border border-terracotta/40 bg-terracotta/10 p-4 text-xs text-terracotta"
                     >
                       {errorMessage}
                     </motion.div>
@@ -1483,43 +1495,42 @@ function StartProject() {
           </AnimatePresence>
 
           {/* ─── Navigation buttons ─── */}
-          <div className="mt-10 flex items-center justify-between gap-4 border-t border-border pt-6">
+          <div className="mt-10 flex items-center justify-between gap-4 border-t border-paper/15 pt-6">
             {step > 0 ? (
               <button
                 type="button"
                 onClick={goPrev}
-                className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-foreground"
+                className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.14em] text-paper/60 transition-colors hover:text-paper"
               >
                 <ArrowLeft className="size-4" /> {isFr ? "Précédent" : "Previous"}
               </button>
             ) : (
               <Link
                 to="/"
-                className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground hover:text-foreground"
+                className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.14em] text-paper/60 hover:text-paper"
               >
                 {isFr ? "Annuler" : "Cancel"}
               </Link>
             )}
 
             {step < TOTAL_STEPS - 1 ? (
-              <Button onClick={handleNext} variant="volka" size="volka">
-                {isFr ? "Continuer" : "Continue"} <ArrowRight className="size-4" />
+              <Button onClick={handleNext} className="rounded-full bg-ochre hover:bg-ochre/90 text-forest-black font-semibold min-h-12 px-7 shadow-xl">
+                {isFr ? "Continuer" : "Continue"} <ArrowRight className="size-4 ml-2" />
               </Button>
             ) : (
               <Button
                 onClick={handleSubmit}
-                variant="volka"
-                size="volka"
+                className="rounded-full bg-ochre hover:bg-ochre/90 text-forest-black font-semibold min-h-12 px-8 shadow-xl"
                 disabled={status === "sending"}
               >
                 {status === "sending" ? (
                   <span className="flex items-center gap-2">
-                    <span className="size-3.5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                    <span className="size-3.5 rounded-full border-2 border-forest-black border-t-transparent animate-spin" />
                     {isFr ? "Envoi de votre demande..." : "Submitting..."}
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
-                    {isFr ? "Envoyer ma demande" : "Submit my inquiry"} <ArrowUpRight className="size-4" />
+                    {isFr ? "Envoyer ma demande" : "Submit my inquiry"} <ArrowUpRight className="size-4 ml-1" />
                   </span>
                 )}
               </Button>
@@ -1527,21 +1538,21 @@ function StartProject() {
           </div>
 
           {/* Legal disclaimer under button matching Section 13 */}
-          <p className="mt-4 text-center text-[11px] leading-relaxed text-muted-foreground/80 max-w-xl mx-auto">
+          <p className="mt-4 text-center text-[11px] leading-relaxed text-paper/50 max-w-xl mx-auto">
             {isFr
               ? "L'envoi de ce formulaire ne vaut pas acceptation du projet ni validation d'un devis. Nous étudierons votre demande avant de vous proposer la suite la plus pertinente."
               : "Submitting this form does not mean the project is accepted or that a quote has been issued. We will review your request before proposing the most relevant next step."}
           </p>
 
           {/* Progress bar */}
-          <div className="mt-8 h-1 w-full overflow-hidden rounded-full bg-border/60">
+          <div className="mt-8 h-1.5 w-full overflow-hidden rounded-full bg-paper/10">
             <motion.div
-              className="h-full bg-primary"
+              className="h-full bg-mint"
               animate={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }}
               transition={{ duration: 0.4, ease: easeOut }}
             />
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] font-mono text-muted-foreground">
+          <div className="mt-2 flex items-center justify-between text-[11px] font-mono text-paper/50">
             <span>
               {isFr ? `Étape ${step + 1} sur ${TOTAL_STEPS}` : `Step ${step + 1} of ${TOTAL_STEPS}`}
             </span>

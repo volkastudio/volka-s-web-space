@@ -121,8 +121,7 @@ function Index() {
 
           <div className="mt-6 max-w-5xl">
             <h1
-              className="font-display text-5xl font-medium leading-[0.94] tracking-tight sm:text-6xl md:text-8xl lg:text-9xl"
-              style={{ textWrap: "balance" }}
+              className="font-display text-5xl font-light leading-[0.94] tracking-[-0.03em] sm:text-6xl md:text-8xl lg:text-9xl text-balance"
             >
               {/* Line 1 */}
               <motion.span
@@ -140,7 +139,14 @@ function Index() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.95, delay: 0.65, ease: easeOut }}
               >
-                {t.hero.titleLine2}
+                {locale === "fr" ? (
+                  <span className="italic text-mint font-light">la croissance.</span>
+                ) : (
+                  <>
+                    behind business{" "}
+                    <span className="italic text-mint font-light">growth.</span>
+                  </>
+                )}
               </motion.span>
             </h1>
           </div>
@@ -242,16 +248,27 @@ function Index() {
       </section>
 
       {/* ─── Selected Work (Concepts sélectionnés: up to 4 concepts) ─── */}
-      <section id="work" className="border-b border-border bg-forest px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14">
-        <div className="mx-auto max-w-7xl">
+      <section id="work" className="relative isolate overflow-hidden border-b border-border bg-forest-black px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14">
+        {/* Code-made architectural teal slats band */}
+        <TealBackground variant="lines" />
+
+        <div className="relative z-10 mx-auto max-w-7xl">
           <Reveal>
             <div className="mb-14 flex items-end justify-between">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-mint">
+                <p className="text-xs font-mono uppercase tracking-[0.2em] text-mint">
                   {t.work.eyebrow}
                 </p>
-                <h2 className="mt-3 font-display text-4xl font-medium md:text-6xl">
-                  {t.work.title}
+                <h2 className="mt-3 font-display text-4xl sm:text-5xl md:text-6xl font-light tracking-tight text-balance">
+                  {locale === "fr" ? (
+                    <>
+                      Concepts <span className="italic text-mint font-light">sélectionnés</span>
+                    </>
+                  ) : (
+                    <>
+                      Selected <span className="italic text-mint font-light">work</span>
+                    </>
+                  )}
                 </h2>
               </div>
               <Link
@@ -367,38 +384,46 @@ function Index() {
         </div>
       </section>
 
-      {/* ─── Pricing / The 3 Offers ─── */}
-      <section id="offers" className="relative overflow-hidden bg-mint px-5 py-14 sm:py-20 md:py-28 lg:px-14">
+      {/* ─── Pricing / The 3 Offers (Dark Glass Architecture) ─── */}
+      <section id="offers" className="relative isolate overflow-hidden border-b border-border bg-forest-black px-5 py-14 sm:py-20 md:py-28 lg:px-14 text-paper">
         {/* Soft liquid ambient lighting orbs */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -top-32 left-1/4 h-80 w-80 rounded-full bg-forest/10 blur-3xl animate-liquid-glow"
+          className="pointer-events-none absolute -top-32 left-1/4 h-80 w-80 rounded-full bg-mint/10 blur-3xl animate-liquid-glow"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -bottom-32 right-1/4 h-80 w-80 rounded-full bg-gold/20 blur-3xl animate-liquid-glow"
+          className="pointer-events-none absolute -bottom-32 right-1/4 h-80 w-80 rounded-full bg-ochre/15 blur-3xl animate-liquid-glow"
           style={{ animationDelay: "3s" }}
         />
 
-        <div className="relative mx-auto max-w-7xl">
+        <div className="relative z-10 mx-auto max-w-7xl">
           <Reveal>
             <div className="mb-8 sm:mb-12 flex flex-col justify-between gap-4 md:flex-row md:items-end">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/70">
+                <p className="text-xs font-mono uppercase tracking-[0.2em] text-mint">
                   {t.offers.eyebrow}
                 </p>
-                <h2 className="mt-3 font-display text-3xl sm:text-4xl font-medium md:text-6xl">
-                  {t.offers.title}
+                <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-6xl font-light text-paper tracking-tight text-balance">
+                  {locale === "fr" ? (
+                    <>
+                      Trois façons de <span className="italic text-mint font-light">collaborer</span>.
+                    </>
+                  ) : (
+                    <>
+                      Three ways to <span className="italic text-mint font-light">collaborate</span>.
+                    </>
+                  )}
                 </h2>
               </div>
-              <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">
+              <p className="text-xs font-mono uppercase tracking-[0.16em] text-paper/60">
                 {t.offers.subtitle}
               </p>
             </div>
           </Reveal>
 
           <div className="mb-8 flex justify-start md:justify-end">
-            <CurrencySwitcher variant="light" />
+            <CurrencySwitcher variant="dark" />
           </div>
 
           {/* 3-card clean architecture matching Strategy Document */}
@@ -411,52 +436,52 @@ function Index() {
               return (
                 <Reveal key={offer.id} delay={index * 100} className="h-full">
                   <LiquidGlassCard
-                    variant="light"
-                    className={`flex h-full flex-col p-6 sm:p-8 transition-all duration-300 ${
+                    variant="dark"
+                    className={`flex h-full flex-col p-6 sm:p-8 rounded-2xl border transition-all duration-300 ${
                       isFeatured
-                        ? "ring-2 ring-primary/20 shadow-2xl relative bg-background/90 md:-translate-y-2"
-                        : "hover:shadow-xl hover:border-foreground/20"
+                        ? "ring-1 ring-mint/60 bg-pine/50 border-mint/50 shadow-2xl relative md:-translate-y-2 backdrop-blur-md"
+                        : "bg-pine/20 border-paper/15 text-paper hover:border-mint/40 hover:bg-pine/30 backdrop-blur-md"
                     }`}
                   >
                     {/* Header: index + badge + duration */}
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="rounded-full border border-border/70 bg-background/80 px-2.5 py-0.5 text-[11px] font-mono font-medium text-foreground/70">
+                        <span className="rounded-full border border-paper/20 bg-paper/5 px-2.5 py-0.5 text-[11px] font-mono font-medium text-paper/70">
                           {offer.index}
                         </span>
                         {isFeatured && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-mint/15 text-mint border border-mint/30 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
                             <Sparkles className="size-3" />
                             {locale === "fr" ? "Système complet" : "Core system"}
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground/80">
+                      <span className="text-[11px] font-mono uppercase tracking-[0.14em] text-paper/60">
                         {localized.duration}
                       </span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="mt-5 font-display text-2xl sm:text-3xl font-semibold leading-tight text-foreground">
+                    <h3 className="mt-5 font-display text-2xl sm:text-3xl font-light leading-tight text-paper">
                       {localized.name}
                     </h3>
 
                     {/* Elevated Price Block */}
-                    <div className="my-5 rounded-xl border border-border/60 bg-foreground/[0.02] p-4 transition-colors">
-                      <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground/70">
+                    <div className="my-5 rounded-xl border border-paper/15 bg-paper/5 p-4 transition-colors">
+                      <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-paper/50">
                         {p.prefix}
                       </span>
                       <div className="mt-1 flex items-baseline flex-wrap gap-x-1.5 gap-y-0.5">
-                        <span className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-primary tabular-nums">
+                        <span className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-paper tabular-nums">
                           {p.amount}
                         </span>
                         {p.vatNote && (
-                          <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground/80 font-medium">
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-mint font-medium">
                             {p.vatNote}
                           </span>
                         )}
                         {p.suffix && (
-                          <span className="text-sm font-normal text-muted-foreground">
+                          <span className="text-sm font-normal text-paper/60">
                             {p.suffix}
                           </span>
                         )}
@@ -464,19 +489,19 @@ function Index() {
                     </div>
 
                     {/* Tagline */}
-                    <p className="text-xs sm:text-sm leading-relaxed text-foreground/70 min-h-[44px]">
+                    <p className="text-xs sm:text-sm leading-relaxed text-paper/75 min-h-[44px]">
                       {localized.tagline}
                     </p>
 
                     {/* Key inclusions preview */}
-                    <div className="my-5 space-y-2 border-t border-border/40 pt-4">
-                      <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground/60">
+                    <div className="my-5 space-y-2 border-t border-paper/15 pt-4">
+                      <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-paper/50">
                         {locale === "fr" ? "Ce que cela peut couvrir" : "What this can cover"}
                       </p>
                       <ul className="space-y-2">
                         {localized.includes.slice(0, 3).map((item, itemIdx) => (
-                          <li key={itemIdx} className="flex items-start gap-2 text-xs leading-relaxed text-foreground/80">
-                            <span className="mt-0.5 flex size-3.5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                          <li key={itemIdx} className="flex items-start gap-2 text-xs leading-relaxed text-paper/85">
+                            <span className="mt-0.5 flex size-3.5 shrink-0 items-center justify-center rounded-full bg-mint/15 text-mint">
                               <Check className="size-2.5" />
                             </span>
                             <span className="line-clamp-2">{item}</span>
@@ -485,14 +510,14 @@ function Index() {
                       </ul>
                     </div>
 
-                    {/* Action buttons */}
+                    {/* Action buttons (Ochre pill buttons) */}
                     <div className="mt-auto flex flex-col gap-2.5 pt-2">
                       <Button
                         asChild
-                        variant={isFeatured ? "volka" : "outline"}
-                        size="volka"
-                        className={`w-full justify-between transition-transform active:scale-[0.99] ${
-                          !isFeatured ? "hover:bg-primary hover:text-primary-foreground border-foreground/20" : ""
+                        className={`w-full justify-between transition-all rounded-full min-h-12 px-6 active:scale-[0.98] ${
+                          isFeatured
+                            ? "bg-ochre text-forest-black font-semibold hover:bg-ochre/90 shadow-xl border-none"
+                            : "bg-paper/10 border border-paper/20 text-paper font-medium hover:bg-paper/20 hover:border-mint/50"
                         }`}
                       >
                         <Link to="/start" search={{ offer: offer.id }}>
@@ -503,7 +528,7 @@ function Index() {
                       <Link
                         to="/offres/$slug"
                         params={{ slug: offer.slug }}
-                        className="text-center text-[11px] uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-foreground py-1"
+                        className="text-center text-[11px] font-mono uppercase tracking-[0.16em] text-paper/50 transition-colors hover:text-mint py-1"
                       >
                         {t.offers.learnMore}
                       </Link>
@@ -514,7 +539,7 @@ function Index() {
             })}
           </div>
 
-          <p className="mt-8 sm:mt-10 text-center text-xs leading-relaxed text-foreground/60 max-w-3xl mx-auto">
+          <p className="mt-8 sm:mt-10 text-center text-xs leading-relaxed text-paper/50 max-w-3xl mx-auto">
             {t.offers.pricingNote}
           </p>
         </div>
@@ -529,8 +554,16 @@ function Index() {
                 <p className="text-xs font-medium uppercase tracking-[0.2em] text-gold">
                   {locale === "fr" ? "Première étape sans engagement" : "A free first step"}
                 </p>
-                <h2 className="mt-3 font-display text-3xl sm:text-4xl font-medium md:text-5xl text-primary">
-                  {locale === "fr" ? "Audit croissance gratuit." : "Free growth audit."}
+                <h2 className="mt-3 font-display text-3xl sm:text-4xl font-light md:text-5xl text-primary">
+                  {locale === "fr" ? (
+                    <>
+                      Audit croissance <span className="italic text-primary font-light">gratuit</span>.
+                    </>
+                  ) : (
+                    <>
+                      Free growth <span className="italic text-primary font-light">audit</span>.
+                    </>
+                  )}
                 </h2>
                 <p className="mt-4 text-sm md:text-base leading-relaxed text-muted-foreground">
                   {locale === "fr"
@@ -544,9 +577,10 @@ function Index() {
                 </p>
               </div>
               <div className="shrink-0">
-                <Button asChild variant="volka" size="volka" className="w-full sm:w-auto">
+                <Button asChild className="w-full sm:w-auto rounded-full bg-ochre px-8 py-3.5 text-forest-black font-semibold hover:bg-ochre/90 shadow-md border-none min-h-12 inline-flex items-center justify-center gap-2">
                   <Link to="/audit">
-                    {locale === "fr" ? "Demander mon audit gratuit" : "Request my free audit"} <ArrowUpRight className="size-4" />
+                    <span>{locale === "fr" ? "Demander mon audit gratuit" : "Request my free audit"}</span>
+                    <ArrowUpRight className="size-4" />
                   </Link>
                 </Button>
               </div>

@@ -69,6 +69,14 @@ const CSS = `
   linear-gradient(to bottom,rgba(0,8,7,.5) 0%,rgba(0,8,7,0) 18%)}
 
 .tb-grain{inset:0;opacity:.07;background-size:200px 200px}
+.tb-drift{position:absolute;inset:0;pointer-events:none}
+@media (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .tb-drift{transform:translate3d(var(--tb-dx,0px),var(--tb-dy,0px),0);transition:transform .7s cubic-bezier(.22,1,.36,1);will-change:transform}
+  .tb-cursor{position:absolute;width:680px;height:680px;border-radius:50%;pointer-events:none;
+    transform:translate3d(calc(var(--tb-cx,-9999px) - 340px),calc(var(--tb-cy,-9999px) - 340px),0);
+    background:radial-gradient(circle,rgba(0,196,164,.12) 0%,rgba(0,150,128,.04) 45%,rgba(0,0,0,0) 70%);
+    opacity:var(--tb-co,0);transition:opacity .5s ease-out;will-change:transform}
+}
 .tb[data-paused="true"] .tb-light{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){.tb-light{animation:none!important}}
 `;
@@ -87,17 +95,75 @@ export function TealBackground({
     const el = ref.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
     const observer = new IntersectionObserver(([entry]) => {
-      el.dataset.paused = entry && !entry.isIntersecting ? "true" : "false";
+      el.dataset["paused"] = entry && !entry.isIntersecting ? "true" : "false";
     });
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
+  // Desktop mouse tracking: gently drifts illumination toward the pointer.
+  // Strictly disabled on phones and touch devices (pointer: coarse) and reduced motion.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    if (
+      typeof window === "undefined" ||
+      !window.matchMedia("(pointer: fine)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+
+    let ticking = false;
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (el.dataset["paused"] === "true") return;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const rect = el.getBoundingClientRect();
+          // Only compute if section is reasonably near viewport
+          if (rect.bottom > -200 && rect.top < window.innerHeight + 200) {
+            const normX = e.clientX / window.innerWidth - 0.5;
+            const normY = e.clientY / window.innerHeight - 0.5;
+            const cx = e.clientX - rect.left;
+            const cy = e.clientY - rect.top;
+
+            el.style.setProperty("--tb-dx", `${(normX * 36).toFixed(1)}px`);
+            el.style.setProperty("--tb-dy", `${(normY * 24).toFixed(1)}px`);
+            el.style.setProperty("--tb-cx", `${cx.toFixed(1)}px`);
+            el.style.setProperty("--tb-cy", `${cy.toFixed(1)}px`);
+            el.style.setProperty("--tb-co", "1");
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    const onMouseLeave = () => {
+      el.style.setProperty("--tb-co", "0");
+      el.style.setProperty("--tb-dx", "0px");
+      el.style.setProperty("--tb-dy", "0px");
+    };
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    document.addEventListener("mouseleave", onMouseLeave);
+
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("mouseleave", onMouseLeave);
+    };
+  }, []);
+
   return (
     <div ref={ref} aria-hidden="true" className={`tb tb-${variant} ${className}`}>
       <style>{CSS}</style>
-      <div className="tb-light tb-a" />
-      <div className="tb-light tb-b" />
+      <div className="tb-drift">
+        <div className="tb-light tb-a" />
+        <div className="tb-light tb-b" />
+        <div className="tb-cursor" />
+      </div>
       {variant === "lines" && <div className="tb-slats" />}
       <div className="tb-scrim" />
       <div className="tb-grain" style={{ backgroundImage: GRAIN }} />
