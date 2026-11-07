@@ -38,8 +38,108 @@ export type FlowLabels = {
   exit: string;
 };
 
+/** Rectangular buttons everywhere. Only the EN/FR toggle is a pill. */
+export const flowPrimaryButton =
+  "inline-flex h-14 items-center justify-center gap-2 rounded-sm bg-ochre px-9 text-base font-semibold text-forest-black transition hover:bg-ochre/90 active:scale-[0.98]";
+export const flowSecondaryButton =
+  "inline-flex h-14 items-center justify-center gap-2 rounded-sm border border-paper/30 px-9 text-base font-medium text-paper transition hover:border-mint hover:text-mint";
+
 type FlowContextValue = { autoAdvance: boolean; advance: () => void };
 const FlowContext = React.createContext<FlowContextValue>({ autoAdvance: false, advance: () => {} });
+
+/** Shared page frame: calm background, logo, and a way out. */
+export function FlowFrame({
+  exitHref,
+  exitLabel,
+  children,
+}: {
+  exitHref: string;
+  exitLabel: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="relative isolate flex min-h-svh flex-col bg-[#070a09] font-sans text-paper selection:bg-mint selection:text-forest-black">
+      <TealBackground variant="quiet" fixed />
+      <header className="relative z-10 flex items-center justify-between gap-3 px-4 pb-3 pt-4 sm:px-8 sm:pt-6">
+        <span className="size-11" aria-hidden="true" />
+        <a
+          href="/"
+          className="inline-flex items-center gap-2.5 font-display text-xl tracking-tight text-paper transition-colors hover:text-mint"
+        >
+          <img src="/volka-icon-light.png" alt="" className="size-6 object-contain" />
+          <span>VOLKA</span>
+        </a>
+        <a
+          href={exitHref}
+          aria-label={exitLabel}
+          className="inline-flex size-11 items-center justify-center rounded-sm text-paper/70 transition hover:bg-paper/10 hover:text-paper"
+        >
+          <X className="size-5" />
+        </a>
+      </header>
+      <div className="relative z-10 flex flex-1 flex-col">{children}</div>
+    </div>
+  );
+}
+
+/** The page shown before the first question: what to expect, so nobody feels rushed. */
+export function FlowIntro({
+  eyebrow,
+  title,
+  body,
+  facts,
+  startLabel,
+  onStart,
+  exitHref,
+  exitLabel,
+}: {
+  eyebrow: string;
+  title: React.ReactNode;
+  body: React.ReactNode;
+  facts: { value: string; label: string }[];
+  startLabel: string;
+  onStart: () => void;
+  exitHref: string;
+  exitLabel: string;
+}) {
+  const reduce = useReducedMotion();
+  return (
+    <FlowFrame exitHref={exitHref} exitLabel={exitLabel}>
+      <main className="flex flex-1 flex-col justify-center px-5 pb-6 pt-6 sm:px-8">
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto w-full max-w-xl"
+        >
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-mint">{eyebrow}</p>
+          <h1 className="mt-4 text-balance font-display text-[2.4rem] font-medium leading-[1.05] tracking-[-0.01em] text-paper sm:text-6xl">
+            {title}
+          </h1>
+          <p className="mt-5 text-pretty text-base leading-relaxed text-paper/70 sm:text-lg">{body}</p>
+
+          <dl className="mt-9 grid grid-cols-3 gap-3 border-y border-paper/10 py-5">
+            {facts.map((fact) => (
+              <div key={fact.label}>
+                <dt className="font-display text-2xl text-paper sm:text-3xl">{fact.value}</dt>
+                <dd className="mt-1 text-xs leading-snug text-paper/55 sm:text-sm">{fact.label}</dd>
+              </div>
+            ))}
+          </dl>
+        </motion.div>
+      </main>
+
+      <div className="sticky bottom-0 z-20 bg-gradient-to-t from-[#070a09] via-[#070a09]/95 to-transparent px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-8 sm:px-8">
+        <div className="mx-auto flex w-full max-w-xl">
+          <button type="button" onClick={onStart} className={`${flowPrimaryButton} w-full sm:w-auto`}>
+            {startLabel}
+            <ArrowRight className="size-5" />
+          </button>
+        </div>
+      </div>
+    </FlowFrame>
+  );
+}
 
 export function QuestionFlow({
   questions,
@@ -127,7 +227,7 @@ export function QuestionFlow({
             type="button"
             onClick={back}
             aria-label={labels.back}
-            className="inline-flex size-11 items-center justify-center rounded-full text-paper/70 transition hover:bg-paper/10 hover:text-paper"
+            className="inline-flex size-11 items-center justify-center rounded-sm text-paper/70 transition hover:bg-paper/10 hover:text-paper"
           >
             <ArrowLeft className="size-5" />
           </button>
@@ -146,7 +246,7 @@ export function QuestionFlow({
         <a
           href={exitHref}
           aria-label={labels.exit}
-          className="inline-flex size-11 items-center justify-center rounded-full text-paper/70 transition hover:bg-paper/10 hover:text-paper"
+          className="inline-flex size-11 items-center justify-center rounded-sm text-paper/70 transition hover:bg-paper/10 hover:text-paper"
         >
           <X className="size-5" />
         </a>
@@ -245,7 +345,7 @@ export function QuestionFlow({
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ochre px-9 text-base font-semibold text-forest-black transition hover:bg-ochre/90 active:scale-[0.98] disabled:opacity-70 sm:w-auto"
+              className={`${flowPrimaryButton} w-full sm:w-auto disabled:opacity-70`}
             >
               {submitting ? (
                 <>
@@ -305,7 +405,7 @@ export type ChoiceOption = {
 };
 
 const cardBase =
-  "group flex w-full items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint";
+  "group flex w-full items-center gap-4 rounded-md border px-5 py-4 text-left transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint";
 const cardIdle = "border-paper/15 bg-paper/[0.03] hover:border-paper/40 hover:bg-paper/[0.06]";
 const cardOn = "border-mint bg-mint/10";
 
@@ -433,7 +533,7 @@ export function CheckRow({
 }) {
   return (
     <label
-      className={`flex cursor-pointer items-start gap-4 rounded-2xl border px-5 py-4 transition-colors ${
+      className={`flex cursor-pointer items-start gap-4 rounded-md border px-5 py-4 transition-colors ${
         checked ? cardOn : cardIdle
       }`}
     >

@@ -120,7 +120,7 @@ function JournalIndexPage() {
               <button
                 type="button"
                 onClick={() => setSelectedTag("all")}
-                className={`rounded-full px-4 py-1.5 text-xs font-medium uppercase tracking-[0.14em] transition-colors ${
+                className={`rounded-sm px-4 py-1.5 text-xs font-medium uppercase tracking-[0.14em] transition-colors ${
                   selectedTag === "all"
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:text-foreground"
@@ -133,7 +133,7 @@ function JournalIndexPage() {
                   key={tag}
                   type="button"
                   onClick={() => setSelectedTag(tag)}
-                  className={`rounded-full px-4 py-1.5 text-xs font-medium uppercase tracking-[0.14em] transition-colors ${
+                  className={`rounded-sm px-4 py-1.5 text-xs font-medium uppercase tracking-[0.14em] transition-colors ${
                     selectedTag === tag
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground hover:text-foreground"

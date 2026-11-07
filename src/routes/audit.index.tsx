@@ -147,7 +147,7 @@ function AuditLandingPage() {
             <div className="pt-2 space-y-4">
               <Link
                 to="/audit/demande"
-                className="inline-flex w-full sm:w-auto min-h-14 items-center justify-center gap-2 rounded-full bg-ochre px-10 text-base font-semibold text-forest-black transition hover:bg-ochre/90 active:scale-[0.98] shadow-xl"
+                className="inline-flex w-full sm:w-auto min-h-14 items-center justify-center gap-2 rounded-sm bg-ochre px-10 text-base font-semibold text-forest-black transition hover:bg-ochre/90 active:scale-[0.98] shadow-xl"
               >
                 <span>{isEn ? "Request my free audit" : "Demander mon audit gratuit"}</span>
                 <ArrowRight className="size-5" />
@@ -295,7 +295,7 @@ function AuditLandingPage() {
             <div className="text-center">
               <Link
                 to="/audit/demande"
-                className="inline-flex w-full sm:w-auto min-h-14 items-center justify-center gap-2 rounded-full bg-ochre px-10 text-base font-semibold text-forest-black transition hover:bg-ochre/90 active:scale-[0.98] shadow-md"
+                className="inline-flex w-full sm:w-auto min-h-14 items-center justify-center gap-2 rounded-sm bg-ochre px-10 text-base font-semibold text-forest-black transition hover:bg-ochre/90 active:scale-[0.98] shadow-md"
               >
                 <span>{isEn ? "Request my free audit" : "Demander mon audit gratuit"}</span>
                 <ArrowRight className="size-5" />

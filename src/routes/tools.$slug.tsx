@@ -47,12 +47,12 @@ export const Route = createFileRoute("/tools/$slug")({
 type Step = "start" | "region" | "email";
 
 const primaryButton =
-  "inline-flex w-full sm:w-auto min-h-14 items-center justify-center gap-2 rounded-full bg-ochre px-10 text-base font-semibold text-forest-black transition hover:bg-ochre/90 active:scale-[0.98] disabled:opacity-70 cursor-pointer";
+  "inline-flex w-full sm:w-auto min-h-14 items-center justify-center gap-2 rounded-sm bg-ochre px-10 text-base font-semibold text-forest-black transition hover:bg-ochre/90 active:scale-[0.98] disabled:opacity-70 cursor-pointer";
 const submitButton = primaryButton.replace("sm:w-auto", "sm:w-full");
 const optionButton =
-  "flex w-full min-h-14 items-center justify-center gap-2 rounded-full border border-paper/25 bg-paper/5 px-6 text-base font-medium text-paper transition hover:border-ochre hover:bg-paper/10 active:scale-[0.98] disabled:opacity-60 cursor-pointer";
+  "flex w-full min-h-14 items-center justify-center gap-2 rounded-sm border border-paper/25 bg-paper/5 px-6 text-base font-medium text-paper transition hover:border-ochre hover:bg-paper/10 active:scale-[0.98] disabled:opacity-60 cursor-pointer";
 const inputClass =
-  "w-full min-h-14 rounded-2xl border border-paper/25 bg-paper/5 px-5 text-base text-paper placeholder:text-paper/40 focus:border-ochre focus:outline-none";
+  "w-full min-h-14 rounded-sm border border-paper/25 bg-paper/5 px-5 text-base text-paper placeholder:text-paper/40 focus:border-ochre focus:outline-none";
 
 function ToolsProductPage() {
   const product = Route.useLoaderData() as DigitalProductWithRegions;

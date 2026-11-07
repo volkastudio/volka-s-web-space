@@ -507,11 +507,11 @@ function Index() {
                       </ul>
                     </div>
 
-                    {/* Action buttons (Ochre pill buttons) */}
+                    {/* Action buttons (Ochre rectangular buttons) */}
                     <div className="mt-auto flex flex-col gap-2.5 pt-2">
                       <Button
                         asChild
-                        className={`w-full justify-between transition-all rounded-full min-h-12 px-6 active:scale-[0.98] ${
+                        className={`w-full justify-between transition-all rounded-sm min-h-12 px-6 active:scale-[0.98] ${
                           isFeatured
                             ? "bg-ochre text-forest-black font-semibold hover:bg-ochre/90 shadow-xl border-none"
                             : "bg-paper/10 border border-paper/20 text-paper font-medium hover:bg-paper/20 hover:border-mint/50"
@@ -574,7 +574,7 @@ function Index() {
                 </p>
               </div>
               <div className="shrink-0">
-                <Button asChild className="w-full sm:w-auto rounded-full bg-ochre px-8 py-3.5 text-forest-black font-semibold hover:bg-ochre/90 shadow-md border-none min-h-12 inline-flex items-center justify-center gap-2">
+                <Button asChild className="w-full sm:w-auto rounded-sm bg-ochre px-8 py-3.5 text-forest-black font-semibold hover:bg-ochre/90 shadow-md border-none min-h-12 inline-flex items-center justify-center gap-2">
                   <Link to="/audit">
                     <span>{locale === "fr" ? "Demander mon audit gratuit" : "Request my free audit"}</span>
                     <ArrowUpRight className="size-4" />

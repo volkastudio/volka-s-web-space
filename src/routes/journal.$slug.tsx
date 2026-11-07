@@ -172,7 +172,7 @@ function JournalArticlePage() {
             <button
               type="button"
               onClick={handleShare}
-              className="inline-flex items-center gap-2 rounded-full border border-border px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-gold hover:text-foreground"
+              className="inline-flex items-center gap-2 rounded-sm border border-border px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-gold hover:text-foreground"
             >
               {copied ? (
                 <>

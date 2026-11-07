@@ -37,7 +37,7 @@ export function SiteFooter() {
             </h2>
             <Button
               asChild
-              className="shrink-0 rounded-full bg-ochre px-8 py-3.5 text-sm sm:text-base font-semibold text-forest-black shadow-xl hover:bg-ochre/90 active:scale-[0.98] transition-all min-h-12 inline-flex items-center justify-center gap-2 border-none"
+              className="shrink-0 rounded-sm bg-ochre px-8 py-3.5 text-sm sm:text-base font-semibold text-forest-black shadow-xl hover:bg-ochre/90 active:scale-[0.98] transition-all min-h-12 inline-flex items-center justify-center gap-2 border-none"
             >
               <Link to="/start">
                 <span>{t.nav.start}</span>
