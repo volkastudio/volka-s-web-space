@@ -16,7 +16,7 @@ export const en: Translations = {
     titleLine1: "Your growth deserves more than",
     titleLine2: "isolated efforts.",
     subtitle:
-      "Volka brings strategy, brand, technology, marketing, sales and automation together, so your brand, website, marketing and sales move together instead of in separate corners.",
+      "Volka designs digital ecosystems where strategy, brand identity, marketing and technology work in the same direction: attracting the right clients, converting more opportunities and supporting the growth of your business.",
     cta: "Start a project",
     seeApproach: "Explore our approach",
   },

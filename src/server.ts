@@ -53,6 +53,12 @@ export default {
         return await handleAnalyticsIngest(request);
       }
 
+      // Dynamic sitemap: includes every published journal article and case study
+      if (url.pathname === "/sitemap.xml" && (request.method === "GET" || request.method === "HEAD")) {
+        const { handleSitemap } = await import("./lib/sitemap.server");
+        return await handleSitemap();
+      }
+
       // Instagram Webhook (Phase IG-1/IG-2)
       if (url.pathname === "/api/ig/webhook") {
         if (request.method === "GET") {

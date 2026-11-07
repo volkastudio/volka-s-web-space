@@ -14,6 +14,7 @@ import { getPostsList } from "@/lib/posts.functions";
 import { getStaticPosts, getStaticPost } from "@/data/posts";
 import { useStudioSocials } from "@/lib/studio-socials";
 import type { ResolvedPost } from "@/lib/post-schema";
+import { canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/journal/")({
   loader: async () => {
@@ -33,10 +34,11 @@ export const Route = createFileRoute("/journal/")({
       {
         property: "og:description",
         content:
-          "Des idées concrètes pour faire fonctionner vos leviers de croissance dans la même direction : acquisition, conversion, automatisation.",
+          "Des idées concrètes pour faire avancer votre croissance dans la bonne direction : acquisition, conversion, automatisation.",
       },
       { property: "og:type", content: "website" },
     ],
+    links: [canonicalLink("/journal")],
   }),
 });
 

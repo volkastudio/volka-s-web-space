@@ -11,6 +11,7 @@ import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getOffer, getLocalizedOffer, offers } from "@/data/offers";
 import { useI18n } from "@/i18n/context";
+import { canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/offres/$slug")({
   loader: ({ params }) => {
@@ -57,6 +58,7 @@ export const Route = createFileRoute("/offres/$slug")({
         { property: "og:description", content: currentSeo.description },
         { property: "og:type", content: "website" },
       ],
+      links: [canonicalLink(`/offres/${offer.slug}`)],
     };
   },
   component: OfferPage,

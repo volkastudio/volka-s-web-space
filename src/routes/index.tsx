@@ -18,6 +18,7 @@ import { getStaticCaseStudies, getStaticCaseStudy } from "@/data/case-studies";
 import { getFeaturedCaseStudies } from "@/lib/cases.functions";
 import { offers, getLocalizedOffer } from "@/data/offers";
 import { useI18n } from "@/i18n/context";
+import { absoluteUrl, canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -40,10 +41,10 @@ export const Route = createFileRoute("/")({
           "Avoir les bons éléments ne suffit pas. Encore faut-il qu'ils travaillent ensemble. Découvrez l'approche intégrée de Volka Studio.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: absoluteUrl("/") },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [canonicalLink("/")],
     scripts: [
       {
         type: "application/ld+json",

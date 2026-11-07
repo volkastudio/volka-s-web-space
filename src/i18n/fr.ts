@@ -16,7 +16,7 @@ export const fr: Translations = {
     titleLine1: "Votre croissance mérite mieux que",
     titleLine2: "des actions isolées.",
     subtitle:
-      "Volka réunit stratégie, marque, technologie, marketing, ventes et automatisation pour que votre marque, votre site, votre marketing et vos ventes avancent ensemble plutôt que chacun de leur côté.",
+      "Volka conçoit des écosystèmes digitaux où stratégie, image de marque, marketing et technologie travaillent dans une même direction : attirer les bons clients, convertir davantage d'opportunités et soutenir la croissance de votre entreprise.",
     cta: "Démarrer un projet",
     seeApproach: "Découvrir notre approche",
   },
@@ -166,7 +166,7 @@ export const fr: Translations = {
     rights: "Tous droits réservés.",
     quickLinks: "Navigation",
     ctaEyebrow: "Votre projet commence ici",
-    ctaHeadline: "Faisons avancer votre activité dans la même direction.",
+    ctaHeadline: "Faisons avancer votre activité dans la bonne direction.",
     legalNotice: "Mentions légales",
   },
   caseStudy: {

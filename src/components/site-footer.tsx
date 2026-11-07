@@ -26,7 +26,7 @@ export function SiteFooter() {
               {locale === "fr" ? (
                 <>
                   Faisons avancer votre activité{" "}
-                  <span className="italic text-mint font-light">dans la même direction</span>.
+                  <span className="italic text-mint font-light">dans la bonne direction</span>.
                 </>
               ) : (
                 <>
