@@ -203,7 +203,7 @@ function AdminAppearancePage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
-            className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded border px-4 py-3 text-xs shadow-xl ${
+            className={`fixed inset-x-4 bottom-4 sm:inset-x-auto sm:bottom-6 sm:right-6 z-50 flex items-center gap-3 rounded border px-4 py-3 text-xs shadow-xl ${
               toast.type === "success"
                 ? "border-forest/30 bg-primary text-primary-foreground"
                 : "border-terracotta/30 bg-terracotta/10 text-terracotta"

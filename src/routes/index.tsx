@@ -195,7 +195,7 @@ function Index() {
             </div>
             <div className="flex flex-col gap-1">
               <p className="font-display text-4xl sm:text-5xl font-medium text-primary md:text-6xl">
-                <CountUp to={8} suffix={locale === "fr" ? " ans" : " yrs"} />
+                <CountUp to={5} suffix="+" />
               </p>
               <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
                 {t.stats.stat2Label}

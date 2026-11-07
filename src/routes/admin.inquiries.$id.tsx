@@ -5,6 +5,7 @@ import {
   Mail,
   Phone,
   MessageSquare,
+  Inbox,
   Building,
   Calendar,
   Send,
@@ -96,7 +97,7 @@ function AdminInquiryDetailPage() {
         },
       });
       setInquiry(updated);
-      setFeedback(`Status updated to "${newStatus}"`);
+      setFeedback("Statut mis à jour.");
       setTimeout(() => setFeedback(null), 3000);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to update status");
@@ -113,7 +114,7 @@ function AdminInquiryDetailPage() {
         },
       });
       setInquiry(updated);
-      setFeedback("Internal notes saved successfully.");
+      setFeedback("Notes enregistrées.");
       setTimeout(() => setFeedback(null), 3000);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to save notes");
@@ -162,7 +163,7 @@ function AdminInquiryDetailPage() {
   if (loading) {
     return (
       <div className="flex h-96 items-center justify-center text-xs text-muted-foreground">
-        Loading inquiry details...
+        Chargement du brief…
       </div>
     );
   }
@@ -170,7 +171,7 @@ function AdminInquiryDetailPage() {
   if (!inquiry) {
     return (
       <div className="p-8 text-center text-xs text-muted-foreground">
-        Inquiry not found.
+        Brief introuvable.
       </div>
     );
   }
@@ -193,7 +194,8 @@ function AdminInquiryDetailPage() {
         <div className="flex items-center gap-3 sm:gap-4">
           <Link
             to="/admin/inquiries"
-            className="rounded p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground shrink-0"
+            aria-label="Retour aux prospects"
+            className="flex size-11 shrink-0 items-center justify-center rounded-sm border border-border bg-card text-muted-foreground transition-colors hover:border-gold hover:text-gold"
           >
             <ArrowLeft className="size-4" />
           </Link>
@@ -220,20 +222,28 @@ function AdminInquiryDetailPage() {
         </div>
 
         {/* Quick Contact Actions */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
           <a
             href={mailtoUrl}
-            className="inline-flex min-h-[38px] flex-1 sm:flex-initial justify-center items-center gap-1.5 rounded-sm bg-primary px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-xs transition-opacity hover:opacity-90 active:scale-95"
+            className="inline-flex min-h-11 w-full sm:w-auto sm:flex-initial justify-center items-center gap-1.5 rounded-sm bg-primary px-4 py-2 text-xs font-medium uppercase tracking-[0.14em] text-primary-foreground shadow-xs transition-opacity hover:opacity-90 active:scale-95"
           >
             <Mail className="size-3.5 text-gold" />
             <span>Répondre par Email</span>
           </a>
+          <Link
+            to="/admin/mail"
+            search={{ q: inquiry.email }}
+            className="inline-flex min-h-11 w-full sm:w-auto sm:flex-initial justify-center items-center gap-1.5 rounded-sm border border-border bg-card px-4 py-2 text-xs font-medium uppercase tracking-[0.14em] text-foreground transition-colors hover:border-gold hover:text-gold active:scale-95"
+          >
+            <Inbox className="size-3.5 text-gold" />
+            <span>Échanges email</span>
+          </Link>
           {whatsappUrl && (
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[38px] flex-1 sm:flex-initial justify-center items-center gap-1.5 rounded-sm border border-border bg-card px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-foreground transition-colors hover:border-gold hover:text-gold active:scale-95"
+              className="inline-flex min-h-11 w-full sm:w-auto sm:flex-initial justify-center items-center gap-1.5 rounded-sm border border-border bg-card px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-foreground transition-colors hover:border-gold hover:text-gold active:scale-95"
             >
               <MessageSquare className="size-3.5 text-green-500" />
               <span>WhatsApp</span>
@@ -256,7 +266,7 @@ function AdminInquiryDetailPage() {
         </div>
       )}
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-3">
+      <div className="mt-6 grid gap-6 lg:mt-8 lg:gap-8 lg:grid-cols-3">
         {/* Left 2 Cols: The Brief */}
         <div className="space-y-6 lg:col-span-2">
           {/* Section: Ambition & Vision */}
@@ -266,7 +276,7 @@ function AdminInquiryDetailPage() {
             </h2>
             <div className="space-y-1">
               <span className="text-[11px] font-medium uppercase tracking-wider text-gold">
-                What they are building & 1-year goal
+                Ce qu'ils construisent et objectif à 1 an
               </span>
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
                 {inquiry.vision}
@@ -276,7 +286,7 @@ function AdminInquiryDetailPage() {
             {inquiry.challenge && (
               <div className="space-y-1 pt-4 border-t border-border">
                 <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                  Current friction or bottleneck
+                  Frein ou blocage actuel
                 </span>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
                   {inquiry.challenge}
@@ -288,25 +298,25 @@ function AdminInquiryDetailPage() {
           {/* Section: Project Scope & Specs */}
           <div className="rounded-sm border border-border bg-card p-6 shadow-sm space-y-4">
             <h2 className="font-display text-lg font-medium border-b border-border pb-3">
-              02 Project Scope & Fit
+              02 Cadre du projet
             </h2>
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Offer / Engagement
+                  Offre
                 </span>
                 <p className="mt-1 font-display text-base font-medium">{inquiry.offer}</p>
               </div>
               <div>
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Target Timeline
+                  Délai visé
                 </span>
                 <p className="mt-1 font-display text-base font-medium">{inquiry.timeline}</p>
               </div>
               <div>
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Budget Envelope
+                  Budget
                 </span>
                 <p className="mt-1 font-display text-base font-medium text-gold">
                   {inquiry.budget_range}
@@ -317,7 +327,7 @@ function AdminInquiryDetailPage() {
             {inquiry.referral_source && (
               <div className="pt-3 border-t border-border">
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Referral Source
+                  Source
                 </span>
                 <p className="mt-1 text-xs text-foreground/80">{inquiry.referral_source}</p>
               </div>
@@ -327,7 +337,7 @@ function AdminInquiryDetailPage() {
           {/* Section: Internal Studio Notes */}
           <div className="rounded-sm border border-border bg-card p-6 shadow-sm space-y-3">
             <div className="flex items-center justify-between border-b border-border pb-3">
-              <h2 className="font-display text-lg font-medium">Internal Notes</h2>
+              <h2 className="font-display text-lg font-medium">Notes internes</h2>
               <Button
                 type="button"
                 variant="outline"
@@ -337,17 +347,17 @@ function AdminInquiryDetailPage() {
                 className="text-xs uppercase tracking-wider"
               >
                 <Save className="size-3.5 mr-1" />
-                {savingNotes ? "Saving..." : "Save Notes"}
+                {savingNotes ? "Enregistrement…" : "Enregistrer"}
               </Button>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Private notes visible only to studio administrators. Keep track of calls, discovery notes, and pricing decisions.
+              Visibles uniquement par l'équipe. Gardez ici les appels, les notes de découverte et les décisions de prix.
             </p>
             <Textarea
               rows={5}
               value={internalNotes}
               onChange={(e) => setInternalNotes(e.target.value)}
-              placeholder="Record initial impression, qualification notes, or next follow-up date..."
+              placeholder="Première impression, qualification, date de relance…"
               className="text-sm font-sans"
             />
           </div>
@@ -358,30 +368,30 @@ function AdminInquiryDetailPage() {
           {/* Triage Status Card */}
           <div className="rounded-sm border border-border bg-card p-6 shadow-sm space-y-4">
             <h2 className="font-display text-lg font-medium border-b border-border pb-3">
-              Triage Status
+              Suivi
             </h2>
 
             <div className="space-y-2">
               <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                Pipeline Stage
+                Étape
               </span>
               <select
                 value={status}
                 onChange={(e) => handleStatusChange(e.target.value)}
-                className="w-full rounded-sm border border-border bg-card p-2.5 text-xs font-medium uppercase tracking-wider"
+                className="h-11 w-full rounded-sm border border-border bg-card px-3 text-xs font-medium uppercase tracking-wider"
               >
-                <option value="new">New / Unread</option>
-                <option value="read">Read / In Review</option>
-                <option value="replied">Replied</option>
-                <option value="won">Won (Deal Closed)</option>
-                <option value="lost">Lost / Declined</option>
-                <option value="spam">Spam / Bot</option>
+                <option value="new">Nouveau</option>
+                <option value="read">Lu, en analyse</option>
+                <option value="replied">Répondu</option>
+                <option value="won">Gagné</option>
+                <option value="lost">Perdu ou refusé</option>
+                <option value="spam">Spam</option>
               </select>
             </div>
 
             <div className="space-y-2 pt-2 border-t border-border">
               <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                Preferred Channel
+                Canal préféré
               </span>
               <p className="text-xs font-medium capitalize text-foreground">
                 {inquiry.preferred_channel}
@@ -392,7 +402,7 @@ function AdminInquiryDetailPage() {
           {/* Client Details Card */}
           <div className="rounded-sm border border-border bg-card p-6 shadow-sm space-y-3">
             <h2 className="font-display text-lg font-medium border-b border-border pb-3">
-              Contact Information
+              Coordonnées
             </h2>
 
             <div className="space-y-3 text-xs">
@@ -458,7 +468,7 @@ function AdminInquiryDetailPage() {
                   size="sm"
                   disabled={resendingMail}
                   onClick={handleResendNotification}
-                  className="w-full text-xs justify-center"
+                  className="h-11 w-full text-xs justify-center"
                 >
                   <RotateCw className={`size-3 mr-1.5 ${resendingMail ? "animate-spin" : ""}`} />
                   {resendingMail ? "Envoi en cours..." : "Renvoyer alerte interne studio"}
@@ -470,7 +480,7 @@ function AdminInquiryDetailPage() {
                   size="sm"
                   disabled={resendingAutoReply}
                   onClick={handleResendAutoReply}
-                  className="w-full text-xs justify-center"
+                  className="h-11 w-full text-xs justify-center"
                 >
                   <Send className={`size-3 mr-1.5 ${resendingAutoReply ? "animate-spin" : ""}`} />
                   {resendingAutoReply ? "Envoi en cours..." : "Renvoyer accusé prospect"}

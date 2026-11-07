@@ -217,7 +217,7 @@ function AdminHealthPage() {
     <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
       {/* Toast Alert */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded border border-forest/30 bg-primary px-4 py-3 text-xs text-primary-foreground shadow-xl animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed inset-x-4 bottom-4 sm:inset-x-auto sm:bottom-6 sm:right-6 z-50 flex items-center gap-3 rounded border border-forest/30 bg-primary px-4 py-3 text-xs text-primary-foreground shadow-xl animate-in fade-in slide-in-from-bottom-2">
           <Sparkles className="size-4 text-gold shrink-0" />
           <span>{toastMessage}</span>
         </div>

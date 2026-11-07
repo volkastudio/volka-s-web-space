@@ -442,7 +442,7 @@ function AdminInstagramPage() {
       {/* Toast Notification */}
       {toastMessage && (
         <div
-          className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded border px-4 py-3 text-xs shadow-xl animate-in fade-in slide-in-from-bottom-2 ${
+          className={`fixed inset-x-4 bottom-4 sm:inset-x-auto sm:bottom-6 sm:right-6 z-50 flex items-center gap-3 rounded border px-4 py-3 text-xs shadow-xl animate-in fade-in slide-in-from-bottom-2 ${
             toastMessage.type === "error"
               ? "border-terracotta/40 bg-terracotta text-paper"
               : toastMessage.type === "info"
@@ -1027,7 +1027,7 @@ function AdminInstagramPage() {
                 value={eventSearch}
                 onChange={(e) => setEventSearch(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && refreshEvents()}
-                className="rounded border border-border bg-background px-3 py-1.5 text-xs w-64 focus:border-gold focus:outline-none"
+                className="rounded border border-border bg-background px-3 py-1.5 text-xs w-full sm:w-64 focus:border-gold focus:outline-none"
               />
 
               <select

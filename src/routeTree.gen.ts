@@ -20,6 +20,7 @@ import { Route as AdminHealthRouteImport } from './routes/admin.health'
 import { Route as AdminInsightsRouteImport } from './routes/admin.insights'
 import { Route as AdminInstagramRouteImport } from './routes/admin.instagram'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminMailRouteImport } from './routes/admin.mail'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminSocialsRouteImport } from './routes/admin.socials'
 import { Route as AuditIndexRouteImport } from './routes/audit.index'
@@ -100,6 +101,11 @@ const AdminInstagramRoute = AdminInstagramRouteImport.update({
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminMailRoute = AdminMailRouteImport.update({
+  id: '/mail',
+  path: '/mail',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminMediaRoute = AdminMediaRouteImport.update({
@@ -244,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/admin/insights': typeof AdminInsightsRoute
   '/admin/instagram': typeof AdminInstagramRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/mail': typeof AdminMailRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/socials': typeof AdminSocialsRoute
   '/audit/confirmation': typeof AuditConfirmationRoute
@@ -282,6 +289,7 @@ export interface FileRoutesByTo {
   '/admin/insights': typeof AdminInsightsRoute
   '/admin/instagram': typeof AdminInstagramRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/mail': typeof AdminMailRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/socials': typeof AdminSocialsRoute
   '/audit/confirmation': typeof AuditConfirmationRoute
@@ -322,6 +330,7 @@ export interface FileRoutesById {
   '/admin/insights': typeof AdminInsightsRoute
   '/admin/instagram': typeof AdminInstagramRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/mail': typeof AdminMailRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/socials': typeof AdminSocialsRoute
   '/audit/confirmation': typeof AuditConfirmationRoute
@@ -363,6 +372,7 @@ export interface FileRouteTypes {
     | '/admin/insights'
     | '/admin/instagram'
     | '/admin/login'
+    | '/admin/mail'
     | '/admin/media'
     | '/admin/socials'
     | '/audit/confirmation'
@@ -401,6 +411,7 @@ export interface FileRouteTypes {
     | '/admin/insights'
     | '/admin/instagram'
     | '/admin/login'
+    | '/admin/mail'
     | '/admin/media'
     | '/admin/socials'
     | '/audit/confirmation'
@@ -440,6 +451,7 @@ export interface FileRouteTypes {
     | '/admin/insights'
     | '/admin/instagram'
     | '/admin/login'
+    | '/admin/mail'
     | '/admin/media'
     | '/admin/socials'
     | '/audit/confirmation'
@@ -566,6 +578,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/mail': {
+      id: '/admin/mail'
+      path: '/mail'
+      fullPath: '/admin/mail'
+      preLoaderRoute: typeof AdminMailRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/media': {
@@ -772,6 +791,7 @@ interface AdminRouteRouteChildren {
   AdminInsightsRoute: typeof AdminInsightsRoute
   AdminInstagramRoute: typeof AdminInstagramRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMailRoute: typeof AdminMailRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminSocialsRoute: typeof AdminSocialsRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -794,6 +814,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminInsightsRoute: AdminInsightsRoute,
   AdminInstagramRoute: AdminInstagramRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminMailRoute: AdminMailRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminSocialsRoute: AdminSocialsRoute,
   AdminIndexRoute: AdminIndexRoute,

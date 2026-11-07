@@ -22,7 +22,7 @@ export function isMailConfigured(): boolean {
 
 // One pooled transport, reused across requests. 10 s timeouts so a dead SMTP
 // server can never hang a visitor's submission.
-function getTransporter(): Transporter {
+export function getTransporter(): Transporter {
   if (transporter) return transporter;
 
   const user = process.env["SMTP_USER"];

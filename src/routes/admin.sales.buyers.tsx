@@ -228,7 +228,7 @@ function AdminBuyersPage() {
     <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
       {/* Toast */}
       {toast && (
-        <div className="fixed top-6 right-6 z-50 px-4 py-3 rounded-md bg-forest-black border border-mint text-paper text-sm shadow-xl flex items-center gap-2">
+        <div className="fixed inset-x-4 top-4 sm:inset-x-auto sm:top-6 sm:right-6 z-50 px-4 py-3 rounded-md bg-forest-black border border-mint text-paper text-sm shadow-xl flex items-center gap-2">
           <CheckCircle2 className="size-4 text-mint" />
           <span>{toast}</span>
         </div>

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { ChevronRight, Globe, Menu, X, Inbox } from "lucide-react";
+import { ChevronRight, Globe, Menu, X, Inbox, Mail } from "lucide-react";
 import { useAdminAuth } from "@/lib/admin/admin-auth-context";
 
 const ROLE_LABELS: Record<string, string> = {
@@ -13,12 +13,14 @@ export interface AdminTopBarProps {
   onToggleMobileNav?: () => void;
   isMobileNavOpen?: boolean;
   unreadInquiriesCount?: number;
+  unreadMailCount?: number;
 }
 
 export function AdminTopBar({
   onToggleMobileNav,
   isMobileNavOpen = false,
   unreadInquiriesCount = 0,
+  unreadMailCount = 0,
 }: AdminTopBarProps) {
   const { user, role } = useAdminAuth();
   const location = useLocation();
@@ -50,6 +52,10 @@ export function AdminTopBar({
       const parts = [{ label: "Prospects", to: "/admin/inquiries" }];
       if (path !== "/admin/inquiries") parts.push({ label: "Détail du brief", to: path });
       return parts;
+    }
+
+    if (path.startsWith("/admin/mail")) {
+      return [{ label: "Messagerie", to: "/admin/mail" }];
     }
 
     if (path.startsWith("/admin/audits")) {
@@ -102,7 +108,7 @@ export function AdminTopBar({
         <button
           type="button"
           onClick={onToggleMobileNav}
-          className="flex size-9 items-center justify-center rounded-sm border border-border/70 bg-background text-foreground transition-colors hover:border-gold hover:text-gold lg:hidden shrink-0 active:scale-95"
+          className="flex size-11 items-center justify-center rounded-sm border border-border/70 bg-background text-foreground transition-colors hover:border-gold hover:text-gold lg:hidden shrink-0 active:scale-95"
           aria-label={isMobileNavOpen ? "Fermer le menu" : "Ouvrir le menu de navigation"}
         >
           {isMobileNavOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -119,12 +125,12 @@ export function AdminTopBar({
             alt=""
             className="size-6 object-contain invert dark:invert-0"
           />
-          <span className="hidden xs:inline font-display text-base font-light tracking-[0.14em]">
+          <span className="hidden min-[400px]:inline font-display text-base font-light tracking-[0.14em]">
             VOLKA
           </span>
         </Link>
 
-        <span className="hidden xs:inline-block text-border lg:hidden">|</span>
+        <span className="hidden min-[400px]:inline-block text-border lg:hidden">|</span>
 
         {/* Semantic Breadcrumbs (Full on desktop, compact on mobile) */}
         <nav aria-label="Fil d'Ariane" className="flex items-center gap-1 sm:gap-1.5 text-xs truncate">
@@ -159,7 +165,7 @@ export function AdminTopBar({
           </div>
 
           {/* Mobile compact title */}
-          <div className="flex sm:hidden items-center text-xs font-semibold text-foreground tracking-tight truncate max-w-[150px] xs:max-w-[200px]">
+          <div className="flex sm:hidden items-center text-xs font-semibold text-foreground tracking-tight truncate max-w-[140px] min-[400px]:max-w-[200px]">
             {currentCrumb?.label}
           </div>
         </nav>
@@ -167,14 +173,24 @@ export function AdminTopBar({
 
       {/* Right status & profile cluster */}
       <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
-        {/* Unread Inquiries Notification Badge */}
+        {/* Unread mail + unread inquiries: each badge is a full-size tap target */}
+        {unreadMailCount > 0 && (
+          <Link
+            to="/admin/mail"
+            className="flex min-h-11 items-center gap-1 rounded-sm px-2 text-[11px] font-bold text-foreground transition-colors hover:text-gold"
+            title={`${unreadMailCount} message(s) non lu(s)`}
+          >
+            <Mail className="size-4 text-gold" />
+            <span>{unreadMailCount}</span>
+          </Link>
+        )}
         {unreadInquiriesCount > 0 && (
           <Link
             to="/admin/inquiries"
-            className="flex items-center gap-1 rounded-full bg-gold px-2 py-0.5 text-[11px] font-bold text-primary transition-transform active:scale-95 shadow-sm"
+            className="flex min-h-11 items-center gap-1 rounded-sm px-2 text-[11px] font-bold text-foreground transition-colors hover:text-gold"
             title={`${unreadInquiriesCount} prospect(s) non lu(s)`}
           >
-            <Inbox className="size-3.5" />
+            <Inbox className="size-4 text-gold" />
             <span>{unreadInquiriesCount}</span>
           </Link>
         )}
@@ -186,7 +202,7 @@ export function AdminTopBar({
         </div>
 
         {/* Immediate Language Indicator Toggle (D11) */}
-        <div className="hidden xs:flex items-center gap-1 rounded border border-border bg-background px-2 py-1 text-[11px] font-mono">
+        <div className="hidden sm:flex items-center gap-1 rounded border border-border bg-background px-2 py-1 text-[11px] font-mono">
           <Globe className="size-3 text-muted-foreground" />
           <span className="font-bold text-foreground">FR</span>
           <span className="text-muted-foreground/40">|</span>

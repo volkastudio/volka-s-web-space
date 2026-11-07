@@ -196,7 +196,7 @@ function AdminInquiriesIndexPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Rechercher nom, entreprise, email..."
-            className="w-full rounded-sm border border-border bg-card pl-9 pr-4 py-2 text-xs focus:border-gold focus:outline-none"
+            className="h-11 w-full rounded-sm border border-border bg-card pl-9 pr-4 text-xs focus:border-gold focus:outline-none"
           />
         </div>
 
@@ -207,13 +207,13 @@ function AdminInquiriesIndexPage() {
               key={st}
               type="button"
               onClick={() => setStatusFilter(st)}
-              className={`rounded-sm px-3 py-1.5 min-h-[34px] text-xs font-medium uppercase tracking-[0.14em] transition-colors shrink-0 ${
+              className={`rounded-sm px-3.5 py-1.5 min-h-11 text-xs font-medium uppercase tracking-[0.14em] transition-colors shrink-0 ${
                 statusFilter === st
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "border border-border text-muted-foreground hover:text-foreground"
               }`}
             >
-              {st}
+              {({ all: "Tous", new: "Nouveaux", read: "Lus", replied: "Répondus", won: "Gagnés", lost: "Perdus", spam: "Spam" } as Record<string, string>)[st]}
             </button>
           ))}
         </div>
@@ -298,7 +298,7 @@ function AdminInquiriesIndexPage() {
                   <Link
                     to="/admin/inquiries/$id"
                     params={{ id: inquiry.id }}
-                    className="inline-flex min-h-[36px] items-center gap-1 rounded bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground active:scale-95 shadow-xs shrink-0"
+                    className="inline-flex min-h-11 items-center gap-1 rounded-sm bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground active:scale-95 shadow-xs shrink-0"
                   >
                     <span>Consulter</span>
                     <ChevronRight className="size-3.5 text-gold" />

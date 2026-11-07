@@ -413,3 +413,15 @@ html:not(.js) .motion-safe-hidden {
   }
 }
 
+/*
+ * Back office on phones: iOS Safari zooms the whole page when a field smaller than 16px gets
+ * focus. Keep fields at 16px below the desktop breakpoint (unlayered, so it wins over utilities).
+ */
+@media (max-width: 1023px) {
+  .admin-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+  .admin-root select,
+  .admin-root textarea {
+    font-size: 16px;
+  }
+}
+

@@ -16,17 +16,20 @@ import {
   BarChart3,
   Paintbrush,
   Instagram,
+  Mail,
 } from "lucide-react";
 import { useAdminAuth } from "@/lib/admin/admin-auth-context";
 
 interface AdminSidebarProps {
   unreadInquiriesCount?: number;
+  unreadMailCount?: number;
   mobileOpen?: boolean;
   onMobileOpenChange?: (open: boolean) => void;
 }
 
 export function AdminSidebar({
   unreadInquiriesCount = 0,
+  unreadMailCount = 0,
   mobileOpen = false,
   onMobileOpenChange,
 }: AdminSidebarProps) {
@@ -65,6 +68,17 @@ export function AdminSidebar({
       badge: unreadInquiriesCount > 0 ? unreadInquiriesCount : undefined,
       exact: false,
     },
+    ...(role !== "editor"
+      ? [
+          {
+            label: "Messagerie",
+            to: "/admin/mail",
+            icon: Mail,
+            badge: unreadMailCount > 0 ? unreadMailCount : undefined,
+            exact: false,
+          },
+        ]
+      : []),
     {
       label: "Audits",
       to: "/admin/audits",
@@ -148,14 +162,14 @@ export function AdminSidebar({
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-medium text-gold">
               <span className="size-1.5 rounded-full bg-gold animate-pulse" />
-              <span className="hidden xs:inline">En direct</span>
+              <span className="hidden min-[400px]:inline">En direct</span>
             </div>
             {/* Close button inside mobile drawer */}
             {onMobileOpenChange && (
               <button
                 type="button"
                 onClick={() => onMobileOpenChange(false)}
-                className="flex size-7 items-center justify-center rounded p-1 text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground lg:hidden"
+                className="flex size-11 items-center justify-center rounded-sm text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground lg:hidden"
                 aria-label="Fermer le tiroir de navigation"
               >
                 <X className="size-5" />
@@ -185,7 +199,7 @@ export function AdminSidebar({
               key={item.to}
               to={item.to}
               onClick={() => onMobileOpenChange?.(false)}
-              className={`flex min-h-[42px] items-center justify-between rounded-sm px-3.5 py-2.5 text-xs font-medium uppercase tracking-[0.14em] transition-all duration-200 active:scale-[0.99] ${
+              className={`flex min-h-12 items-center justify-between rounded-sm px-3.5 py-2.5 text-xs font-medium uppercase tracking-[0.14em] transition-all duration-200 active:scale-[0.99] ${
                 active
                   ? "bg-primary-foreground/15 text-gold shadow-xs border-l-[3px] border-gold pl-3"
                   : "text-primary-foreground/75 hover:bg-primary-foreground/10 hover:text-primary-foreground"
@@ -239,7 +253,7 @@ export function AdminSidebar({
             onMobileOpenChange?.(false);
             signOut();
           }}
-          className="flex min-h-[40px] w-full items-center justify-center gap-2 rounded-sm border border-destructive/30 bg-destructive/10 px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground active:scale-95"
+          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-sm border border-destructive/30 bg-destructive/10 px-3.5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground active:scale-95"
         >
           <LogOut className="size-3.5" />
           <span>Déconnexion</span>
@@ -258,14 +272,14 @@ export function AdminSidebar({
             onClick={() => onMobileOpenChange?.(false)}
             aria-hidden="true"
           />
-          <div className="relative z-10 w-72 max-w-[85vw] shadow-2xl h-full animate-in slide-in-from-left duration-200">
+          <div className="relative z-10 h-dvh w-72 max-w-[85vw] shadow-2xl animate-in slide-in-from-left duration-200">
             {navContent}
           </div>
         </div>
       )}
 
       {/* Desktop Persistent Sidebar */}
-      <aside className="hidden h-screen w-64 shrink-0 border-r border-border lg:sticky lg:top-0 lg:block">
+      <aside className="hidden h-dvh w-64 shrink-0 border-r border-border lg:sticky lg:top-0 lg:block">
         {navContent}
       </aside>
     </>
