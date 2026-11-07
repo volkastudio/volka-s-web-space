@@ -25,13 +25,13 @@ export function SiteFooter() {
             <h2 className="max-w-4xl font-display text-4xl sm:text-6xl md:text-7xl font-light leading-[1.05] tracking-tight text-balance">
               {locale === "fr" ? (
                 <>
-                  Commençons par{" "}
-                  <span className="italic text-mint font-light">le comprendre</span>.
+                  Faisons travailler vos leviers{" "}
+                  <span className="italic text-mint font-light">dans la même direction</span>.
                 </>
               ) : (
                 <>
-                  Let's start by{" "}
-                  <span className="italic text-mint font-light">understanding it</span>.
+                  Let's make the parts of your business{" "}
+                  <span className="italic text-mint font-light">work as one</span>.
                 </>
               )}
             </h2>

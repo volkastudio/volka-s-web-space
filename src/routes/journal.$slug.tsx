@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, ArrowUpRight, Clock, Calendar, Share2, Check } from "lucide-react";
+import { motion, useScroll, useSpring } from "motion/react";
+import { ArrowLeft, ArrowUpRight, Clock, Calendar, Share2, Check, ArrowRight } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -12,7 +13,7 @@ import { useI18n } from "@/i18n/context";
 import { useReadTracking } from "@/lib/analytics/use-read-tracking";
 import { track } from "@/lib/analytics/tracker";
 import { getPostDetail } from "@/lib/posts.functions";
-import { getStaticPost } from "@/data/posts";
+import { getStaticPost, getStaticPosts } from "@/data/posts";
 
 export const Route = createFileRoute("/journal/$slug")({
   loader: async ({ params }) => {
@@ -40,7 +41,7 @@ export const Route = createFileRoute("/journal/$slug")({
 });
 
 function ArticleNotFound() {
-  const { locale, t } = useI18n();
+  const { locale } = useI18n();
   const isFr = locale === "fr";
 
   return (
@@ -73,18 +74,32 @@ function ArticleNotFound() {
 
 function JournalArticlePage() {
   const { post: initialPost, next: initialNext } = Route.useLoaderData();
-  const { locale } = useI18n();
+  const { locale, t } = useI18n();
   const isFr = locale === "fr";
 
   // Reactive localization that switches instantly on locale toggle
   const post = getStaticPost(initialPost.slug, locale) || initialPost;
   const next = (initialNext?.slug ? getStaticPost(initialNext.slug, locale) : null) || initialNext;
 
+  // Related articles (other articles from the journal)
+  const relatedArticles = React.useMemo(() => {
+    const all = getStaticPosts(locale);
+    return all.filter((p) => p.slug !== post.slug).slice(0, 3);
+  }, [locale, post.slug]);
+
   // Track engaged reading time and scroll completion per D17
   useReadTracking({
     slug: initialPost.slug,
     readingMinutes: post.reading_time_minutes || 4,
     entityType: "post",
+  });
+
+  // Smooth Reading Progress Bar
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
   });
 
   const [copied, setCopied] = React.useState(false);
@@ -113,40 +128,52 @@ function JournalArticlePage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <SiteHeader />
+      {/* ─── Thin Fixed Reading-Progress Bar ─── */}
+      <motion.div
+        className="fixed top-0 inset-x-0 z-50 h-[3px] bg-gold origin-left"
+        style={{ scaleX }}
+      />
 
-      {/* Article Header */}
-      <article className="px-5 pt-36 pb-24 md:px-10 md:pt-44 md:pb-32 lg:px-14">
-        <div className="mx-auto max-w-4xl">
+      {/* ─── Dark Hero Header (consistent with site aesthetic) ─── */}
+      <section className="relative isolate overflow-hidden bg-forest-black text-primary-foreground pt-36 pb-20 md:pt-44 md:pb-28 px-5 md:px-10 lg:px-14">
+        <SiteHeader variant="overlay" />
+
+        {/* Ambient liquid glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-gold/10 blur-3xl animate-liquid-glow"
+        />
+
+        <div className="relative mx-auto max-w-4xl">
           {/* Back link */}
           <Link
             to="/journal"
-            className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.16em] text-primary-foreground/60 transition-colors hover:text-primary-foreground"
           >
             <ArrowLeft className="size-3.5" />
             <span>{isFr ? "Retour au Journal" : "Back to Journal"}</span>
           </Link>
 
           {/* Tags & Meta */}
-          <div className="mt-8 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+          <div className="mt-8 flex flex-wrap items-center gap-3 text-xs font-mono text-primary-foreground/70">
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-gold/10 px-3 py-1 font-medium text-gold"
+                className="rounded-full border border-gold/30 bg-gold/10 px-3 py-1 font-medium text-gold"
               >
                 {tag}
               </span>
             ))}
             <span>•</span>
             <span className="flex items-center gap-1.5">
-              <Clock className="size-3.5" />
+              <Clock className="size-3.5 text-mint" />
               {post.reading_time_minutes} min {isFr ? "de lecture" : "read"}
             </span>
             {post.published_at && (
               <>
                 <span>•</span>
                 <span className="flex items-center gap-1.5">
-                  <Calendar className="size-3.5" />
+                  <Calendar className="size-3.5 text-mint" />
                   {formatDate(post.published_at)}
                 </span>
               </>
@@ -154,30 +181,30 @@ function JournalArticlePage() {
           </div>
 
           {/* Title */}
-          <h1 className="mt-6 font-display text-4xl font-light leading-tight tracking-tight md:text-5xl lg:text-6xl">
+          <h1 className="mt-6 font-display text-4xl sm:text-5xl md:text-6xl font-light leading-[1.08] tracking-tight text-primary-foreground">
             {post.title}
           </h1>
 
           {/* Excerpt / Subheading */}
-          <p className="mt-6 text-lg font-light leading-relaxed text-muted-foreground md:text-xl">
+          <p className="mt-6 text-lg sm:text-xl font-light leading-relaxed text-primary-foreground/80 max-w-3xl">
             {post.excerpt}
           </p>
 
           {/* Share & Actions Toolbar */}
-          <div className="mt-8 flex items-center justify-between border-y border-border/60 py-4">
-            <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
-              Volka Studio
+          <div className="mt-10 flex items-center justify-between border-t border-white/15 pt-5">
+            <span className="text-xs font-mono uppercase tracking-[0.16em] text-primary-foreground/60">
+              {t.journal.studioLine}
             </span>
 
             <button
               type="button"
               onClick={handleShare}
-              className="inline-flex items-center gap-2 rounded-sm border border-border px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-gold hover:text-foreground"
+              className="inline-flex items-center gap-2 rounded-sm border border-white/20 px-3.5 py-1.5 text-xs font-medium text-primary-foreground/80 transition-colors hover:border-gold hover:text-gold"
             >
               {copied ? (
                 <>
-                  <Check className="size-3.5 text-green-500" />
-                  <span className="text-green-500">{isFr ? "Lien copié" : "Link copied"}</span>
+                  <Check className="size-3.5 text-emerald-400" />
+                  <span className="text-emerald-400">{isFr ? "Lien copié" : "Link copied"}</span>
                 </>
               ) : (
                 <>
@@ -187,10 +214,16 @@ function JournalArticlePage() {
               )}
             </button>
           </div>
+        </div>
+      </section>
 
-          {/* Featured Image */}
+      {/* ─── Light Reading Body (Narrower reading column + Larger text) ─── */}
+      <article className="bg-background text-foreground px-5 py-16 md:px-10 md:py-24 lg:px-14">
+        {/* Centered narrower column for optimal reading comfort */}
+        <div className="mx-auto max-w-2xl lg:max-w-[720px]">
+          {/* Featured Cover Image */}
           {post.cover_image && (
-            <div className="mt-10 overflow-hidden rounded-xl bg-muted">
+            <div className="mb-14 overflow-hidden rounded-2xl bg-muted border border-border shadow-md">
               <img
                 src={post.cover_image}
                 alt={post.cover_alt || post.title}
@@ -199,34 +232,34 @@ function JournalArticlePage() {
             </div>
           )}
 
-          {/* Markdown Content */}
-          <div className="mt-12">
+          {/* Markdown Content with larger comfortable text */}
+          <div className="prose prose-lg md:prose-xl max-w-none text-foreground/90 font-light leading-relaxed">
             <MarkdownContent content={post.body_md} />
           </div>
 
           {/* Cross-channel links: YouTube, LinkedIn, TikTok */}
           {post.social_links && (
-            <div className="mt-14 border-t border-border/60 pt-8">
+            <div className="mt-16 border-t border-border/70 pt-8">
               <SocialContentLinks socialLinks={post.social_links} />
             </div>
           )}
 
           {/* Next Article link */}
           {next && (
-            <div className="mt-16 border-t border-border/60 pt-10">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+            <div className="mt-16 border-t border-border/70 pt-10">
+              <p className="text-xs font-mono uppercase tracking-[0.2em] text-gold font-semibold">
                 {isFr ? "Article suivant" : "Next article"}
               </p>
               <Link
                 to="/journal/$slug"
                 params={{ slug: next.slug }}
-                className="group mt-4 flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/30 p-6 transition-all duration-300 hover:border-gold/50"
+                className="group mt-4 flex items-center justify-between gap-4 rounded-xl border border-border bg-muted/20 p-6 sm:p-7 transition-all hover:border-gold/50"
               >
                 <div>
-                  <h4 className="font-display text-2xl font-light transition-colors group-hover:text-gold">
+                  <h4 className="font-display text-2xl font-light transition-colors group-hover:text-gold leading-snug">
                     {next.title}
                   </h4>
-                  <p className="mt-2 line-clamp-1 text-sm text-muted-foreground">
+                  <p className="mt-2 line-clamp-1 text-sm text-muted-foreground font-light">
                     {next.excerpt}
                   </p>
                 </div>
@@ -234,41 +267,122 @@ function JournalArticlePage() {
               </Link>
             </div>
           )}
-
-          {/* CTA Box */}
-          <div className="mt-16 rounded-xl border border-gold/30 bg-primary p-8 text-primary-foreground md:p-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-mint">
-              {isFr ? "Démarrer une collaboration" : "Start a project"}
-            </p>
-            <h3 className="mt-3 font-display text-3xl font-light md:text-4xl">
-              {isFr
-                ? "L'ambition mérite d'être visible."
-                : "Ambition deserves to be visible."}
-            </h3>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-primary-foreground/80 md:text-base">
-              {isFr
-                ? "Vous préparez le lancement d'une marque d'autorité ou la mise en place d'un système de croissance ? Parlons de vos objectifs."
-                : "Preparing to launch an authoritative brand or build a business growth system? Let's discuss your objectives."}
-            </p>
-            <div className="mt-8">
-              <Link
-                to="/start"
-                onClick={() => {
-                  track("post_cta_click", {
-                    entityType: "post",
-                    entityId: initialPost.slug,
-                    metadata: { target: "/start" },
-                  });
-                }}
-                className="inline-flex items-center gap-2 rounded-sm bg-gold px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-primary transition-opacity hover:opacity-90"
-              >
-                <span>{isFr ? "Initier un brief" : "Start a project brief"}</span>
-                <ArrowUpRight className="size-4" />
-              </Link>
-            </div>
-          </div>
         </div>
       </article>
+
+      {/* ─── Related Articles Section ─── */}
+      {relatedArticles.length > 0 && (
+        <section className="border-t border-border bg-muted/20 px-5 py-20 md:px-10 md:py-24 lg:px-14">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10 flex items-center justify-between">
+              <h3 className="font-display text-2xl sm:text-3xl font-medium tracking-tight">
+                {t.journal.relatedArticles}
+              </h3>
+              <Link
+                to="/journal"
+                className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-gold hover:text-foreground transition-colors"
+              >
+                <span>{t.journal.allArticles}</span>
+                <ArrowRight className="size-3.5" />
+              </Link>
+            </div>
+
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {relatedArticles.map((rel) => (
+                <article
+                  key={rel.slug}
+                  className="group flex flex-col justify-between rounded-xl border border-border bg-background p-6 transition-all hover:border-gold/50 hover:shadow-md"
+                >
+                  <div>
+                    {rel.cover_image && (
+                      <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-muted mb-5">
+                        <img
+                          src={rel.cover_image}
+                          alt={rel.cover_alt || rel.title}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-3 text-xs font-mono text-muted-foreground">
+                      {rel.tags[0] && <span className="text-gold font-semibold">{rel.tags[0]}</span>}
+                      <span>·</span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="size-3" />
+                        {rel.reading_time_minutes} {t.journal.minRead}
+                      </span>
+                    </div>
+
+                    <h4 className="mt-3 font-display text-xl sm:text-2xl font-light leading-snug transition-colors group-hover:text-gold">
+                      <Link to="/journal/$slug" params={{ slug: rel.slug }}>
+                        {rel.title}
+                      </Link>
+                    </h4>
+
+                    <p className="mt-3 line-clamp-2 text-sm text-muted-foreground font-light leading-relaxed">
+                      {rel.excerpt}
+                    </p>
+                  </div>
+
+                  <div className="mt-6 border-t border-border/50 pt-4 flex items-center justify-between">
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {formatDate(rel.published_at)}
+                    </span>
+                    <Link
+                      to="/journal/$slug"
+                      params={{ slug: rel.slug }}
+                      className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-gold group-hover:text-foreground transition-colors"
+                    >
+                      <span>{t.journal.read}</span>
+                      <ArrowUpRight className="size-3.5" />
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─── End of Article CTA: Points directly to Free Audit (Dark Closing Block) ─── */}
+      <section className="relative isolate overflow-hidden bg-forest-black px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14 border-t border-white/10">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-gold/10 blur-3xl animate-liquid-glow"
+        />
+
+        <div className="relative mx-auto max-w-3xl text-center">
+          <Reveal>
+            <p className="text-xs font-mono uppercase tracking-[0.2em] text-mint">
+              {t.journal.auditCtaEyebrow}
+            </p>
+            <h2 className="mt-4 font-display text-3xl sm:text-4xl md:text-5xl font-light tracking-tight text-balance">
+              {t.journal.auditCtaHeadline}
+            </h2>
+            <p className="mt-5 text-base sm:text-lg font-light leading-relaxed text-primary-foreground/80 max-w-2xl mx-auto">
+              {t.journal.auditCtaBody}
+            </p>
+            <div className="mt-9">
+              <Button asChild variant="volka" size="volka" className="rounded-sm">
+                <Link
+                  to="/audit"
+                  onClick={() => {
+                    track("post_cta_click", {
+                      entityType: "post",
+                      entityId: initialPost.slug,
+                      metadata: { target: "/audit" },
+                    });
+                  }}
+                >
+                  <span>{t.journal.auditCtaButton}</span>
+                  <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       <SiteFooter />
     </main>

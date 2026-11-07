@@ -12,11 +12,11 @@ export const fr: Translations = {
     switchLang: "English",
   },
   hero: {
-    eyebrow: "Systèmes de croissance d'entreprise",
-    titleLine1: "Les systèmes qui soutiennent",
-    titleLine2: "la croissance.",
+    eyebrow: "VOLKA STUDIO · SOLUTIONS DIGITALES INTÉGRÉES",
+    titleLine1: "Les bons leviers ne suffisent pas.",
+    titleLine2: "Encore faut-il qu'ils travaillent ensemble.",
     subtitle:
-      "De la façon dont votre entreprise est perçue à la manière dont elle attire, convertit et suit ses clients — Volka identifie les points de friction et met en place les systèmes qui font avancer votre activité.",
+      "Volka réunit stratégie, marque, technologie, marketing, vente et automatisation pour résoudre les points de friction de votre activité et faire fonctionner les bonnes solutions dans la même direction.",
     cta: "Démarrer un projet",
     seeApproach: "Découvrir notre approche",
   },
@@ -54,8 +54,8 @@ export const fr: Translations = {
   studio: {
     eyebrow: "Le studio",
     title: "Les entreprises méritent d'être perçues à leur vrai niveau.",
-    p1: "C'est l'idée de départ de Volka. Elle reste la nôtre, mais nous allons plus loin : une entreprise bien perçue doit aussi être découverte par les bonnes personnes, transformer l'intérêt en demandes et suivre ses opportunités jusqu'à la vente.",
-    p2: "Nous travaillons avec des entreprises qui veulent un système plus clair, plus régulier et plus facile à piloter. Nous cherchons d'abord ce qui freine votre croissance, puis nous construisons ce qui est nécessaire, pas davantage.",
+    p1: "Une campagne peut attirer du monde sans générer de demandes. Un site peut présenter une belle image sans rendre l'offre convaincante. Des prospects peuvent montrer de l'intérêt, puis disparaître faute de suivi. Dans chaque cas, le problème ne se résout pas nécessairement en ajoutant une prestation. Il faut comprendre ce qui bloque, voir ce qui dépend de quoi, puis intervenir au bon endroit.",
+    p2: "C'est ainsi que travaille Volka : nous prenons du recul sur votre activité, identifions les leviers qui méritent d'être renforcés et réunissons les compétences nécessaires pour les faire fonctionner ensemble.",
   },
   work: {
     eyebrow: "Projets concepts",
@@ -65,56 +65,56 @@ export const fr: Translations = {
     conceptLabel: "Projet concept",
   },
   services: {
-    eyebrow: "Le système de croissance",
+    eyebrow: "Solutions digitales intégrées",
     subtitle:
-      "Nous ne vendons pas une liste de services isolés. Nous améliorons les mécanismes qui permettent à une entreprise de croître.",
+      "Des expertises complémentaires réunies pour résoudre vos points de friction et faire fonctionner vos systèmes dans la même direction.",
     items: [
       {
         number: "01",
         title: "Perception",
         keywords: ["Positionnement", "Identité de marque", "Message", "Cohérence"],
         description:
-          "Être compris et perçu à la hauteur de votre entreprise. Positionnement, identité visuelle, message et cohérence sur les points de contact clés.",
+          "Faire comprendre la valeur de votre entreprise et la présenter avec justesse.",
       },
       {
         number: "02",
         title: "Acquisition",
-        keywords: ["Contenu", "Réseaux sociaux", "Campagnes Meta & TikTok", "Mesure"],
+        keywords: ["Stratégie de contenu", "Réseaux sociaux", "Campagnes ciblées", "Mesure"],
         description:
-          "Attirer les bonnes personnes, pas seulement générer de la visibilité. Stratégie de contenu, réseaux sociaux, publicité payante et mesure de l'attention qualifiée.",
+          "Attirer l'attention des personnes qui ont une vraie raison de devenir vos clients.",
       },
       {
         number: "03",
         title: "Conversion",
-        keywords: ["Sites web", "Pages de vente", "Parcours client", "Prise de contact"],
+        keywords: ["Sites d'autorité", "Pages de conversion", "Parcours client", "Capture de demandes"],
         description:
-          "Transformer l'attention en demandes et en opportunités concrètes. Sites d'autorité, pages de vente, parcours clairs et capture de prospects.",
+          "Transformer l'intérêt en une prochaine étape claire : une demande, un rendez-vous ou une opportunité.",
       },
       {
         number: "04",
         title: "Ventes",
-        keywords: ["CRM", "Pipeline commercial", "Relances", "Processus de vente"],
+        keywords: ["CRM", "Pipeline commercial", "Processus de suivi", "Organisation commerciale"],
         description:
-          "Mieux organiser et suivre les opportunités pour les transformer en clients. CRM, pipeline commercial, relances systématiques et visibilité d'équipe.",
+          "Donner à chaque opportunité un suivi clair, structuré et cohérent.",
       },
       {
         number: "05",
         title: "Automatisation",
-        keywords: ["Workflows", "Intégrations API", "Notifications", "Assistants IA"],
+        keywords: ["Workflows connectés", "Intégrations d'outils", "Notifications", "Assistants IA"],
         description:
-          "Faire fonctionner le système avec plus de fluidité et moins d'efforts manuels. Connexion des outils, flux automatisés et traitement intelligent des données.",
+          "Connecter les outils et automatiser les tâches répétitives pour fiabiliser le fonctionnement de votre activité.",
       },
     ],
   },
   offers: {
     eyebrow: "Façons de collaborer",
-    title: "Trois points de départ.",
-    subtitle: "Des prix de départ indicatifs, pas des forfaits rigides",
+    title: "Trois manières de travailler ensemble.",
+    subtitle: "Des points d'entrée adaptés à votre situation, pas des forfaits rigides",
     currencyNote: "Tarifs indiqués en euros hors taxes. Règlements internationaux acceptés (EUR, USD, FCFA).",
-    selectOffer: "Choisir cette offre",
+    selectOffer: "Choisir cette formule",
     learnMore: "Voir le détail",
     pricingNote:
-      "Les tarifs affichés sont des prix de départ. Le budget final dépend du périmètre, de la complexité et des livrables nécessaires. Les budgets publicitaires, abonnements logiciels, outils payants et autres frais externes sont précisés séparément lorsqu'ils s'appliquent.",
+      "Les tarifs indiqués sont des prix de départ, et non des forfaits tout compris. Le budget final dépend du périmètre, de la complexité et des livrables nécessaires. Les dépenses publicitaires, abonnements logiciels, licences et autres frais externes sont précisés séparément lorsqu'ils s'appliquent.",
   },
   form: {
     eyebrow: "Démarrer un projet",
@@ -161,12 +161,12 @@ export const fr: Translations = {
     catContent: "Acquisition",
   },
   footer: {
-    statement: "Partenaire de croissance pour les entreprises ambitieuses.",
+    statement: "Solutions digitales intégrées · Nous réunissons les bonnes expertises pour faire avancer votre entreprise.",
     location: "Équipe distribuée · Rayonnement international",
     rights: "Tous droits réservés.",
     quickLinks: "Navigation",
-    ctaEyebrow: "Quelque chose freine votre croissance ?",
-    ctaHeadline: "Commençons par le comprendre.",
+    ctaEyebrow: "Votre projet commence ici",
+    ctaHeadline: "Faisons travailler vos leviers dans la même direction.",
     legalNotice: "Mentions légales",
   },
   caseStudy: {
@@ -203,9 +203,9 @@ export const fr: Translations = {
       "Le calendrier est flexible",
     ],
     budgets: [
-      "Moins de 1 500 €",
-      "1 500 à 3 000 €",
-      "3 000 à 5 000 €",
+      "Moins de 1 000 €",
+      "1 000 à 2 500 €",
+      "2 500 à 5 000 €",
       "5 000 à 10 000 €",
       "10 000 à 20 000 €",
       "Plus de 20 000 €",
@@ -219,7 +219,7 @@ export const fr: Translations = {
     lastUpdated: "Dernière mise à jour : Octobre 2026",
     publisherTitle: "1. Éditeur de la plateforme",
     publisherBody: [
-      "Le présent site internet est édité et exploité par Volka Studio, partenaire de croissance pour les entreprises.",
+      "Le présent site internet est édité et exploité par Volka Studio, solutions digitales intégrées pour les entreprises.",
       "Siège social : Cotonou, République du Bénin. Équipe distribuée avec présence en Europe.",
       "Courriel de contact : hello@volkastudio.com",
       "Direction de la publication : Direction Générale de Volka Studio.",
@@ -264,7 +264,7 @@ export const fr: Translations = {
     ],
   },
   journal: {
-    eyebrow: "Journal & Réflexions",
+    eyebrow: "Journal & Analyses",
     title: "Analyses et retours d'expérience.",
     subtitle:
       "Des idées concrètes sur la perception, l'acquisition, la conversion, les ventes et l'automatisation.",
@@ -280,16 +280,22 @@ export const fr: Translations = {
     nextArticle: "Article suivant",
     share: "Partager",
     copied: "Lien copié",
-    ctaEyebrow: "Passer à l'action",
+    ctaEyebrow: "Diagnostic de croissance",
     ctaHeadline: "Un sujet qui concerne votre entreprise ?",
     ctaBody:
-      "Si cet article met en lumière un point de friction dans votre activité, parlons-en pour déterminer le système adapté.",
+      "Si cet article met en lumière un point de friction dans votre activité, demandez un diagnostic pour déterminer les actions prioritaires.",
     ctaButton: "Démarrer un projet",
-    studioLine: "Volka · Partenaire de croissance",
+    studioLine: "Volka · Solutions digitales intégrées",
     mediaTitle: "Contenus & analyses",
     mediaHeading: "Suivez nos réflexions en vidéo et sur les réseaux.",
     mediaSubheading:
       "Des explications simples pour construire de meilleurs systèmes de croissance.",
+    relatedArticles: "Articles similaires",
+    auditCtaEyebrow: "Diagnostic gratuit",
+    auditCtaHeadline: "Vous voulez savoir où votre croissance bloque ?",
+    auditCtaBody:
+      "Demandez un diagnostic gratuit et sans engagement de votre site web, de votre acquisition ou de votre suivi commercial. Nous analysons vos points de friction et vous indiquons quoi corriger en priorité.",
+    auditCtaButton: "Demander mon audit gratuit",
   },
   errors: {
     notFoundTitle: "Page introuvable.",
@@ -318,36 +324,49 @@ export const fr: Translations = {
     backToOffers: "Retour aux offres",
     formula: "Offre",
     startProject: "Parler de mon projet",
-    whatsIncluded: "Ce que cela peut couvrir",
+    whatsIncluded: "Ce que cette intervention peut couvrir",
     whatsIncludedSubtitle:
       "Des exemples concrets, pas un forfait rigide. Le périmètre exact dépend de votre problème, de sa complexité et des livrables nécessaires.",
-    howItWorks: "Comment cela se passe",
+    howItWorks: "Processus d'intervention",
     howItWorksTitle: "De votre demande à la proposition.",
     steps: [
       {
         n: "01",
         title: "Votre demande",
-        desc: "Vous répondez à quelques questions sur votre entreprise et ce que vous cherchez à améliorer.",
+        desc: "Vous décrivez votre situation, vos priorités et ce que vous cherchez à résoudre ou construire.",
       },
       {
         n: "02",
-        title: "Échange",
-        desc: "Nous étudions votre demande. Si nécessaire, nous vous posons quelques questions ciblées ou nous échangeons ensemble.",
+        title: "Diagnostic & cadrage",
+        desc: "Nous analysons votre demande, posons les questions ciblées et étudions vos points de friction réels.",
       },
       {
         n: "03",
         title: "Recommandation",
-        desc: "Nous vous indiquons l'accompagnement le plus adapté, même s'il diffère de l'option choisie au départ.",
+        desc: "Nous vous indiquons l'intervention la plus pertinente, même si elle diffère de l'option envisagée au départ.",
       },
       {
         n: "04",
-        title: "Proposition",
-        desc: "Vous recevez une proposition structurée avec le problème, le périmètre, les exclusions, le calendrier et le prix.",
+        title: "Proposition claire",
+        desc: "Vous recevez une proposition structurée définissant le problème, le périmètre, les exclusions, le calendrier et le prix.",
       },
     ],
     readyTitle: "Prêt à en parler ?",
     readyHeadline: "Décrivez-nous votre situation.",
+    readyBody:
+      "Partagez votre situation, vos priorités et vos objectifs. Nous étudions votre demande avec attention avant de vous proposer la suite la plus pertinente.",
     startWith: "Démarrer avec",
-    nextFormula: "Offre suivante",
+    nextFormula: "Autre formule",
+    forYouIfTitle: "Cette offre est faite pour vous si…",
+    notForYouIfTitle: "Cette offre n'est probablement pas la plus adaptée si…",
+    fitGuideTitle: "Guide d'adéquation",
+    fitGuideSubtitle:
+      "Un repère pour vous aider à choisir la forme d'intervention la plus proche de votre besoin réel.",
+    orientationTitle: "Pour vous orienter",
+    compareTitle: "Quelle formule vous correspond ?",
+    compareSubtitle:
+      "Comparez nos trois modes d'intervention pour choisir le point de départ le plus pertinent.",
+    currentOffer: "Offre actuelle",
+    viewOffer: "Voir cette offre",
   },
 };

@@ -27,17 +27,17 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Volka — Les systèmes derrière la croissance des entreprises" },
+      { title: "Volka Studio — Solutions digitales intégrées" },
       {
         name: "description",
         content:
-          "Volka construit les systèmes qui soutiennent la croissance des entreprises : Perception, Acquisition, Conversion, Ventes et Automatisation.",
+          "Volka réunit stratégie, marque, technologie, marketing, vente et automatisation pour résoudre vos points de friction et faire fonctionner vos systèmes de croissance.",
       },
-      { property: "og:title", content: "Volka — Les systèmes derrière la croissance" },
+      { property: "og:title", content: "Volka Studio — Solutions digitales intégrées" },
       {
         property: "og:description",
         content:
-          "De la façon dont votre entreprise est perçue à la manière dont elle attire, convertit et suit ses clients — avec l'automatisation pour relier le tout.",
+          "Les bons leviers ne suffisent pas. Encore faut-il qu'ils travaillent ensemble. Découvrez l'approche intégrée de Volka Studio.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
@@ -140,11 +140,14 @@ function Index() {
                 transition={{ duration: 0.95, delay: 0.65, ease: easeOut }}
               >
                 {locale === "fr" ? (
-                  <span className="italic text-mint font-light">la croissance.</span>
+                  <>
+                    Encore faut-il qu'ils{" "}
+                    <span className="italic text-mint font-light">travaillent ensemble.</span>
+                  </>
                 ) : (
                   <>
-                    behind business{" "}
-                    <span className="italic text-mint font-light">growth.</span>
+                    when they{" "}
+                    <span className="italic text-mint font-light">work together.</span>
                   </>
                 )}
               </motion.span>
@@ -165,9 +168,19 @@ function Index() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 1.0, ease: easeOut }}
           >
-            <p className="max-w-md text-base font-light leading-relaxed text-primary-foreground/70 md:text-lg">
-              {t.hero.subtitle}
-            </p>
+            <div className="flex flex-col gap-5 max-w-xl">
+              <p className="text-base font-light leading-relaxed text-primary-foreground/80 md:text-lg">
+                {t.hero.subtitle}
+              </p>
+              <div>
+                <Button asChild variant="volka" size="volka" className="rounded-sm">
+                  <Link to="/start">
+                    <span>{t.hero.cta}</span>
+                    <ArrowUpRight className="size-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
             <ScrollArrow label={t.hero.seeApproach} />
           </motion.div>
         </div>

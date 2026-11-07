@@ -196,6 +196,11 @@ export interface Translations {
     mediaTitle: string;
     mediaHeading: string;
     mediaSubheading: string;
+    relatedArticles: string;
+    auditCtaEyebrow: string;
+    auditCtaHeadline: string;
+    auditCtaBody: string;
+    auditCtaButton: string;
   };
   /** Error / 404 page translations */
   errors: {
@@ -233,7 +238,17 @@ export interface Translations {
     steps: { n: string; title: string; desc: string }[];
     readyTitle: string;
     readyHeadline: string;
+    readyBody: string;
     startWith: string;
     nextFormula: string;
+    forYouIfTitle: string;
+    notForYouIfTitle: string;
+    fitGuideTitle: string;
+    fitGuideSubtitle: string;
+    orientationTitle: string;
+    compareTitle: string;
+    compareSubtitle: string;
+    currentOffer: string;
+    viewOffer: string;
   };
 }

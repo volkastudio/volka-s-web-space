@@ -35,17 +35,17 @@ export const Route = createFileRoute("/start")({
   component: StartProject,
   head: () => ({
     meta: [
-      { title: "Démarrer un projet — Volka" },
+      { title: "Démarrer un projet — Cadrage & Brief stratégique | Volka Studio" },
       {
         name: "description",
         content:
-          "Parlons de votre projet. Répondez à quelques questions pour nous aider à comprendre votre activité et ce que vous cherchez à améliorer. Aucun engagement à ce stade.",
+          "Présentez votre entreprise et vos priorités en quelques questions. Nous étudions votre demande avec attention pour vous recommander la formule d'intervention la plus pertinente.",
       },
-      { property: "og:title", content: "Démarrer un projet — Volka" },
+      { property: "og:title", content: "Démarrer un projet — Volka Studio" },
       {
         property: "og:description",
         content:
-          "Quelques questions pour comprendre votre entreprise et le type d'accompagnement qui pourrait vous convenir.",
+          "Quelques questions pour comprendre votre activité, vos objectifs et concevoir l'accompagnement adapté.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

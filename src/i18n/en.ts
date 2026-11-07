@@ -12,13 +12,13 @@ export const en: Translations = {
     switchLang: "Français",
   },
   hero: {
-    eyebrow: "Business growth systems",
-    titleLine1: "We build the systems",
-    titleLine2: "behind business growth.",
+    eyebrow: "VOLKA STUDIO · INTEGRATED DIGITAL SOLUTIONS",
+    titleLine1: "The right capabilities only matter",
+    titleLine2: "when they work together.",
     subtitle:
-      "From how your business is perceived to how it attracts, converts and follows up with customers — Volka identifies the friction points and builds the systems that move your business forward.",
+      "Volka brings strategy, brand, technology, marketing, sales and automation together to solve business challenges and make the systems behind your growth work as one.",
     cta: "Start a project",
-    seeApproach: "See our approach",
+    seeApproach: "Explore our approach",
   },
   marquee: [
     "Perception",
@@ -54,8 +54,8 @@ export const en: Translations = {
   studio: {
     eyebrow: "The studio",
     title: "Businesses deserve to be perceived at their true level.",
-    p1: "That was Volka's starting idea, and it still is. But we go further: a business that is well perceived also has to be found by the right people, turn interest into inquiries, and follow its opportunities through to the sale.",
-    p2: "We work with businesses that want a clearer, more consistent system that is easier to run. We first look for what holds your growth back, then build what is needed — no more.",
+    p1: "A campaign can attract attention without generating enquiries. A website can look polished without making the offer compelling. Prospects can show interest and still slip away because no one follows up. In each case, adding another service may not solve the problem. The first step is to understand where the friction sits, how the different parts affect one another, and what needs to change.",
+    p2: "That is how Volka works: we look at the bigger picture, identify the areas that need attention and bring in the expertise required to make the right solutions work together.",
   },
   work: {
     eyebrow: "Concept projects",
@@ -65,56 +65,56 @@ export const en: Translations = {
     conceptLabel: "Concept project",
   },
   services: {
-    eyebrow: "The growth system",
+    eyebrow: "Integrated digital solutions",
     subtitle:
-      "We don't sell a disconnected list of services. We improve the mechanisms that allow a business to grow.",
+      "Connected capabilities brought together to solve business friction and make your growth systems work as one.",
     items: [
       {
         number: "01",
         title: "Perception",
         keywords: ["Positioning", "Brand Identity", "Messaging", "Consistency"],
         description:
-          "Be understood and perceived at your true level. Brand positioning, visual identity, messaging, and consistency across key touchpoints.",
+          "Make your value clear — and make sure the way you present your business reflects it.",
       },
       {
         number: "02",
         title: "Acquisition",
-        keywords: ["Content", "Social Media", "Paid Campaigns", "Measurement"],
+        keywords: ["Content Strategy", "Social Distribution", "Paid Campaigns", "Performance"],
         description:
-          "Attract the right people, not just volume or views. Content strategy, social distribution, paid campaigns, and qualified traffic measurement.",
+          "Reach the people most likely to have a reason to become your customers.",
       },
       {
         number: "03",
         title: "Conversion",
         keywords: ["Websites", "Landing Pages", "User Journeys", "Lead Capture"],
         description:
-          "Turn attention into qualified inquiries and opportunities. Conversion websites, landing pages, clear user journeys, and lead capture.",
+          "Turn interest into a clear next step — an enquiry, a booking or a qualified opportunity.",
       },
       {
         number: "04",
         title: "Sales",
-        keywords: ["CRM", "Sales Pipeline", "Follow-up", "Sales Workflows"],
+        keywords: ["CRM Architecture", "Sales Pipeline", "Follow-up Process", "Deal Workflows"],
         description:
-          "Manage and follow up opportunities to turn more into customers. CRM architecture, sales pipelines, systematic follow-up, and team visibility.",
+          "Give every opportunity a clear, consistent path from first contact to decision.",
       },
       {
         number: "05",
         title: "Automation",
-        keywords: ["Workflows", "API Integrations", "Notifications", "AI Integrations"],
+        keywords: ["Connected Workflows", "Tool Integrations", "Notifications", "AI Automation"],
         description:
-          "Make the system faster, more reliable, and less manual. Connecting tools, automated workflows, notifications, and intelligent data routing.",
+          "Connect the tools and automate repeatable work so the business runs more reliably.",
       },
     ],
   },
   offers: {
-    eyebrow: "Ways to work together",
-    title: "Three starting points.",
-    subtitle: "Indicative starting prices, not all-inclusive packages",
+    eyebrow: "Ways to engage Volka",
+    title: "Three ways to work with Volka.",
+    subtitle: "Starting points suited to your situation, not fixed packages",
     currencyNote: "Prices shown in euros excluding VAT. International payments accepted (EUR, USD, FCFA).",
-    selectOffer: "Select offer",
+    selectOffer: "Select this option",
     learnMore: "See details",
     pricingNote:
-      "Displayed prices are starting points. The final budget depends on scope, complexity, and required deliverables. Advertising budgets, software subscriptions, paid tools, and other external costs are specified separately when applicable.",
+      "Prices shown are starting points, not all-inclusive packages. The final investment depends on the scope, complexity and deliverables involved. Advertising spend, software subscriptions, licences and other third-party costs are quoted separately where applicable.",
   },
   form: {
     eyebrow: "Start a project",
@@ -161,12 +161,12 @@ export const en: Translations = {
     catContent: "Acquisition",
   },
   footer: {
-    statement: "Growth systems partner for ambitious businesses.",
+    statement: "Integrated digital solutions · Bringing the right expertise together to move your business forward.",
     location: "Distributed team · International reach",
     rights: "All rights reserved.",
     quickLinks: "Navigation",
-    ctaEyebrow: "Is something holding your growth back?",
-    ctaHeadline: "Let's start by understanding it.",
+    ctaEyebrow: "Your project starts here",
+    ctaHeadline: "Let's make the parts of your business work as one.",
     legalNotice: "Legal notice",
   },
   caseStudy: {
@@ -203,9 +203,9 @@ export const en: Translations = {
       "Timeline is flexible",
     ],
     budgets: [
-      "Under €1,500",
-      "€1,500 to €3,000",
-      "€3,000 to €5,000",
+      "Under €1,000",
+      "€1,000 to €2,500",
+      "€2,500 to €5,000",
       "€5,000 to €10,000",
       "€10,000 to €20,000",
       "Above €20,000",
@@ -219,7 +219,7 @@ export const en: Translations = {
     lastUpdated: "Last updated: October 2026",
     publisherTitle: "1. Site Publisher",
     publisherBody: [
-      "This website is published and operated by Volka Studio, a growth systems partner for businesses.",
+      "This website is published and operated by Volka Studio, integrated digital solutions company for businesses.",
       "Headquarters: Cotonou, Republic of Benin. Distributed team with presence in Europe.",
       "Contact email: hello@volkastudio.com",
       "Publication Director: Executive Management, Volka Studio.",
@@ -265,7 +265,7 @@ export const en: Translations = {
   },
   journal: {
     eyebrow: "Journal & Insights",
-    title: "Analysis and lessons learned.",
+    title: "Analysis and practical lessons.",
     subtitle:
       "Practical ideas on perception, acquisition, conversion, sales, and automation.",
     allArticles: "All articles",
@@ -280,16 +280,22 @@ export const en: Translations = {
     nextArticle: "Next article",
     share: "Share",
     copied: "Copied",
-    ctaEyebrow: "Take the next step",
+    ctaEyebrow: "Growth diagnostic",
     ctaHeadline: "Does this sound like your business?",
     ctaBody:
-      "If this article highlighted a bottleneck in your business, let's talk about building the right system.",
+      "If this article highlights a bottleneck in your business, request a diagnostic to establish the right next steps.",
     ctaButton: "Start a project",
-    studioLine: "Volka · Growth systems partner",
+    studioLine: "Volka · Integrated digital solutions",
     mediaTitle: "Content & Insights",
     mediaHeading: "Follow our thinking in video and on social platforms.",
     mediaSubheading:
       "Clear, practical explanations for building better business growth systems.",
+    relatedArticles: "Related articles",
+    auditCtaEyebrow: "Free diagnostic",
+    auditCtaHeadline: "Want to know where your growth is stalled?",
+    auditCtaBody:
+      "Request a free diagnostic of your website, customer acquisition, or sales follow-up. We analyze where opportunities slip away and recommend what to fix first.",
+    auditCtaButton: "Request your free audit",
   },
   errors: {
     notFoundTitle: "Page not found.",
@@ -317,37 +323,50 @@ export const en: Translations = {
   offerDetail: {
     backToOffers: "Back to offers",
     formula: "Offer",
-    startProject: "Talk about my project",
-    whatsIncluded: "What this can cover",
+    startProject: "Discuss my project",
+    whatsIncluded: "What this engagement can cover",
     whatsIncludedSubtitle:
       "Concrete examples, not a rigid package. The exact scope depends on your challenge, complexity, and required deliverables.",
-    howItWorks: "How it works",
-    howItWorksTitle: "From your inquiry to a clear proposal.",
+    howItWorks: "How we work",
+    howItWorksTitle: "From your request to a clear proposal.",
     steps: [
       {
         n: "01",
         title: "Your request",
-        desc: "You answer a few questions about your business and what you want to improve.",
+        desc: "You describe your current situation, priorities, and what you need to solve or build.",
       },
       {
         n: "02",
-        title: "Conversation",
-        desc: "We review your request. When helpful, we ask targeted questions or talk it through.",
+        title: "Diagnosis & scoping",
+        desc: "We review your request, ask targeted questions, and diagnose the real friction points.",
       },
       {
         n: "03",
         title: "Recommendation",
-        desc: "We recommend the most appropriate engagement, even if it differs from what you originally selected.",
+        desc: "We recommend the most appropriate engagement, even if it differs from what you originally had in mind.",
       },
       {
         n: "04",
-        title: "Proposal",
-        desc: "You receive a structured proposal defining the problem, scope, exclusions, timeline, and price.",
+        title: "Clear proposal",
+        desc: "You receive a structured proposal detailing the objective, scope, exclusions, timeline, and pricing.",
       },
     ],
     readyTitle: "Ready to talk?",
     readyHeadline: "Tell us about your situation.",
+    readyBody:
+      "Tell us about your business, priorities, and objectives. We review your request carefully before suggesting the most relevant next step.",
     startWith: "Start with",
-    nextFormula: "Next offer",
+    nextFormula: "Alternative offer",
+    forYouIfTitle: "This is for you if…",
+    notForYouIfTitle: "This may not be the right fit if…",
+    fitGuideTitle: "Decision guide",
+    fitGuideSubtitle:
+      "A practical guide to help you choose the engagement closest to your actual need.",
+    orientationTitle: "A better place to start",
+    compareTitle: "Which option fits you?",
+    compareSubtitle:
+      "Compare our three ways of working to choose the right starting point for your business.",
+    currentOffer: "Current offer",
+    viewOffer: "View this offer",
   },
 };

@@ -22,16 +22,17 @@ export const Route = createFileRoute("/cases/")({
   component: CasesIndex,
   head: () => ({
     meta: [
-      { title: "Case studies — Volka Studio" },
+      { title: "Projets concepts — Perception, Acquisition & Conversion | Volka Studio" },
       {
         name: "description",
         content:
-          "Concept projects from Volka: brand identities, digital platforms and growth systems designed for ambitious businesses in Europe and internationally.",
+          "Projets concepts Volka : identités de marque, plateformes digitales et systèmes de croissance pensés pour des entreprises ambitieuses. Chaque projet illustre notre approche intégrée.",
       },
-      { property: "og:title", content: "Case studies — Volka Studio" },
+      { property: "og:title", content: "Projets concepts — Volka Studio" },
       {
         property: "og:description",
-        content: "Concept projects showing how Volka designs brands, digital platforms and growth systems.",
+        content:
+          "Découvrez comment Volka conçoit des marques cohérentes, des plateformes performantes et des systèmes qui font avancer l'activité.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

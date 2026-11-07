@@ -19,16 +19,16 @@ export const Route = createFileRoute("/audit/")({
   },
   head: () => ({
     meta: [
-      { title: "Audit Croissance Gratuit — Volka Studio" },
+      { title: "Audit de Croissance Gratuit — Diagnostic Site, Marketing ou Ventes | Volka Studio" },
       {
         name: "description",
         content:
-          "Un diagnostic écrit de votre site, de votre marketing ou de votre suivi commercial : ce qui fonctionne, ce qui bloque, quoi corriger en premier.",
+          "Recevez un diagnostic écrit et personnalisé sur votre site, votre acquisition ou votre suivi commercial : ce qui fonctionne, ce qui bloque, et quoi corriger en priorité. Gratuit, en 48 h.",
       },
-      { property: "og:title", content: "Audit Croissance Gratuit — Volka Studio" },
+      { property: "og:title", content: "Audit de Croissance Gratuit — Volka Studio" },
       {
         property: "og:description",
-        content: "Voyez où votre activité perd des clients et quoi corriger en premier.",
+        content: "Un diagnostic écrit pour identifier précisément où votre activité perd des clients et quoi corriger en premier.",
       },
       { property: "og:image", content: "/images/audit-showcase.jpg" },
     ],

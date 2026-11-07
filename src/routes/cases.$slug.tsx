@@ -18,11 +18,11 @@ export const Route = createFileRoute("/cases/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Case study not found — Volka Studio" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Projet introuvable — Volka Studio" }, { name: "robots", content: "noindex" }] };
     }
     const { study } = loaderData;
-    const label = study.kind === "concept" ? "concept project" : "case study";
-    const title = `${study.client} — ${study.discipline} ${label} | Volka`;
+    // discipline is already localized from the loader (FR master copy)
+    const title = `${study.client} — ${study.discipline} | Volka Studio`;
     return {
       meta: [
         { title },
