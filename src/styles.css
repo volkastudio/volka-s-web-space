@@ -72,6 +72,10 @@
   --color-mint: var(--mint);
   --color-paper: var(--paper);
   --color-ivory: var(--ivory);
+  /* Used by the audit, sales and media back-office pages. They were never defined, so panels,
+     drawers and modals rendered with no background (dark text on the dark overlay). */
+  --color-warm-ivory: var(--ivory);
+  --color-soft-paper: var(--muted);
   --color-terracotta: var(--terracotta);
   --color-ochre: var(--gold);
   --color-gold: var(--gold);
