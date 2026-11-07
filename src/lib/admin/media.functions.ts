@@ -115,11 +115,18 @@ export const listMediaFiles = createServerFn({ method: "GET" })
       if (casesRes.data) {
         for (const row of casesRes.data) {
           addDbPath(row.cover_path);
-          if (Array.isArray(row.gallery)) {
-            for (const item of row.gallery) {
+          if (row.gallery) {
+            const galleryList = Array.isArray(row.gallery)
+              ? row.gallery
+              : typeof row.gallery === "object" && "images" in (row.gallery as Record<string, unknown>) && Array.isArray((row.gallery as Record<string, unknown>)["images"])
+                ? ((row.gallery as Record<string, unknown>)["images"] as unknown[])
+                : [];
+            for (const item of galleryList) {
               if (typeof item === "string") addDbPath(item);
-              else if (item && typeof item === "object" && "path" in item) {
-                addDbPath((item as { path?: string }).path);
+              else if (item && typeof item === "object") {
+                const rec = item as Record<string, unknown>;
+                if (typeof rec["url"] === "string") addDbPath(rec["url"]);
+                else if (typeof rec["path"] === "string") addDbPath(rec["path"]);
               }
             }
           }

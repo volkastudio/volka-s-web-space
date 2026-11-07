@@ -46,7 +46,7 @@ function AdminCasesIndexPage() {
     try {
       setLoading(true);
       const data = await listAdminCases();
-      setCases(data);
+      setCases(data as CaseStudyRecord[]);
       setError(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Erreur lors du chargement des études de cas");

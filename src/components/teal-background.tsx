@@ -26,6 +26,7 @@ const CSS = `
 .tb{position:absolute;inset:0;overflow:hidden;pointer-events:none;contain:paint;background:var(--tb-base)}
 .tb-lines{--tb-base:#00130f;--pitch:16px}
 .tb-glow{--tb-base:#000807}
+.tb-quiet{--tb-base:#070a09}
 @media (min-width:768px){.tb-lines{--pitch:22px}}
 @media (min-width:1280px){.tb-lines{--pitch:28px}}
 @media (min-width:1920px){.tb-lines{--pitch:34px}}
@@ -68,6 +69,16 @@ const CSS = `
   radial-gradient(ellipse 78% 66% at 50% 50%,rgba(0,8,7,.7) 0%,rgba(0,8,7,.5) 55%,rgba(0,8,7,0) 100%),
   linear-gradient(to bottom,rgba(0,8,7,.5) 0%,rgba(0,8,7,0) 18%)}
 
+/* quiet variant: near-black with two very faint teal lights (forms). Nothing bright behind text. */
+.tb-quiet .tb-a{right:-35%;top:-40%;width:120%;height:95%;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,170,142,.17) 0%,rgba(0,120,100,.07) 45%,rgba(0,120,100,0) 72%);
+  animation:tb-q1 32s ease-in-out infinite alternate}
+.tb-quiet .tb-b{left:-40%;bottom:-45%;width:110%;height:80%;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(0,150,125,.10) 0%,rgba(0,110,94,.04) 50%,rgba(0,110,94,0) 75%);
+  animation:tb-q2 40s ease-in-out infinite alternate}
+@keyframes tb-q1{from{transform:translate3d(-6%,-2%,0) scale(.96)}to{transform:translate3d(5%,6%,0) scale(1.06)}}
+@keyframes tb-q2{from{transform:translate3d(-4%,3%,0) scale(1)}to{transform:translate3d(16%,-4%,0) scale(1.08)}}
+
 .tb-grain{inset:0;opacity:.07;background-size:200px 200px}
 .tb-drift{position:absolute;inset:0;pointer-events:none}
 @media (pointer:fine) and (prefers-reduced-motion:no-preference){
@@ -83,9 +94,12 @@ const CSS = `
 
 export function TealBackground({
   variant = "lines",
+  fixed = false,
   className = "",
 }: {
-  variant?: "lines" | "glow";
+  variant?: "lines" | "glow" | "quiet";
+  /** Pin to the screen instead of the parent (long pages and forms). The page root must be `isolate`. */
+  fixed?: boolean;
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -157,7 +171,12 @@ export function TealBackground({
   }, []);
 
   return (
-    <div ref={ref} aria-hidden="true" className={`tb tb-${variant} ${className}`}>
+    <div
+      ref={ref}
+      aria-hidden="true"
+      className={`tb tb-${variant} ${className}`}
+      style={fixed ? { position: "fixed", zIndex: -1 } : undefined}
+    >
       <style>{CSS}</style>
       <div className="tb-drift">
         <div className="tb-light tb-a" />

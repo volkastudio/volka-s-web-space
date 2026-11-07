@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
+import { CaseStudyGallery } from "@/components/case-study-gallery";
 import { getStaticCaseStudy, getNextStaticCaseStudy } from "@/data/case-studies";
 import { getCaseStudyDetail } from "@/lib/cases.functions";
 import { useI18n } from "@/i18n/context";
@@ -70,7 +71,15 @@ function CaseStudyPage() {
   const { locale, t } = useI18n();
 
   // Localized resolution: reacts instantly to locale changes
-  const study = getStaticCaseStudy(initialStudy.slug, locale) || initialStudy;
+  const staticStudy = getStaticCaseStudy(initialStudy.slug, locale);
+  const study = staticStudy
+    ? {
+        ...staticStudy,
+        gallery: initialStudy.gallery?.enabled
+          ? initialStudy.gallery
+          : staticStudy.gallery ?? initialStudy.gallery,
+      }
+    : initialStudy;
   const next = (initialNext?.slug ? getStaticCaseStudy(initialNext.slug, locale) : null) || initialNext;
 
   // Track case study reading engagement per D17
@@ -181,6 +190,9 @@ function CaseStudyPage() {
           </div>
         </div>
       </section>
+
+      {/* Optional Configurable 3D Image Gallery (Coverflow / Perspective) */}
+      <CaseStudyGallery gallery={study.gallery} clientName={study.client} />
 
       <section className="bg-mint px-5 py-20 md:px-10 md:py-28 lg:px-14">
         <div className="mx-auto max-w-7xl">

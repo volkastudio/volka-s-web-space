@@ -10,10 +10,22 @@ import {
   CheckCircle,
   AlertCircle,
   ExternalLink,
+  GripVertical,
+  ChevronUp,
+  ChevronDown,
+  Layers,
+  Sparkles,
 } from "lucide-react";
 import { offers } from "@/data/offers";
 import { getAdminCase, saveCase, signUpload } from "@/lib/admin/cases.functions";
-import { getMediaUrl, type CaseStudyInput, type CaseStudyRecord } from "@/lib/case-study-schema";
+import {
+  getMediaUrl,
+  caseStudyGallerySchema,
+  type CaseStudyInput,
+  type CaseStudyRecord,
+  type CaseStudyGalleryConfig,
+  type CaseStudyGalleryImage,
+} from "@/lib/case-study-schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,7 +53,11 @@ function createEmptyCase(): CaseStudyInput {
     location: "Cotonou, Bénin",
     offer: "Perception",
     cover_path: "",
-    gallery: [],
+    gallery: {
+      enabled: false,
+      style: "coverflow",
+      images: [],
+    },
     translations: {
       fr: {
         tagline: "",
@@ -85,6 +101,21 @@ function AdminCaseEditorPage() {
   const [uploading, setUploading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
+  const [draggedGalleryIdx, setDraggedGalleryIdx] = React.useState<number | null>(null);
+  const [dragOverGalleryIdx, setDragOverGalleryIdx] = React.useState<number | null>(null);
+
+  const moveGalleryImage = (from: number, to: number) => {
+    if (to < 0 || to >= form.gallery.images.length) return;
+    const next = [...form.gallery.images];
+    const [moved] = next.splice(from, 1);
+    if (moved) {
+      next.splice(to, 0, moved);
+      setForm((prev) => ({
+        ...prev,
+        gallery: { ...prev.gallery, images: next },
+      }));
+    }
+  };
 
   React.useEffect(() => {
     if (isNew) return;
@@ -110,7 +141,7 @@ function AdminCaseEditorPage() {
             location: data.location,
             offer: data.offer ?? "Autorité",
             cover_path: data.cover_path ?? "",
-            gallery: data.gallery || [],
+            gallery: caseStudyGallerySchema.parse(data.gallery),
             translations: {
               fr: {
                 tagline: transFr.tagline ?? "",
@@ -989,109 +1020,367 @@ function AdminCaseEditorPage() {
             </div>
           </div>
 
-          {/* Gallery Card */}
-          <div className="rounded-sm border border-border bg-card p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h2 className="font-display text-lg font-medium">Gallery</h2>
-              <span className="text-[10px] text-muted-foreground">{form.gallery.length} image{form.gallery.length !== 1 ? "s" : ""}</span>
+          {/* Image Gallery Card */}
+          <div className="rounded-sm border border-border bg-card p-6 shadow-sm space-y-6">
+            <div className="flex items-center justify-between border-b border-border pb-4">
+              <div>
+                <h2 className="font-display text-lg font-medium flex items-center gap-2">
+                  <Layers className="size-4 text-gold" />
+                  Image Gallery
+                </h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Optional 3D visual portfolio showcasing this project.
+                </p>
+              </div>
+
+              {/* Enable / Disable Switch */}
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  {form.gallery.enabled ? (
+                    <span className="text-mint font-medium">Enabled</span>
+                  ) : (
+                    "Disabled"
+                  )}
+                </span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={form.gallery.enabled}
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      gallery: {
+                        ...prev.gallery,
+                        enabled: !prev.gallery.enabled,
+                      },
+                    }))
+                  }
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                    form.gallery.enabled ? "bg-mint" : "bg-muted-foreground/30"
+                  }`}
+                  aria-label="Toggle Image Gallery"
+                >
+                  <span
+                    className={`pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      form.gallery.enabled ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
             </div>
 
-            {/* Existing gallery items */}
-            {form.gallery.length > 0 && (
-              <div className="space-y-2">
-                {form.gallery.map((item, gIdx) => (
-                  <div key={gIdx} className="flex items-center gap-2 rounded border border-border bg-muted/30 p-2">
-                    {getMediaUrl(item.path) && (
-                      <img
-                        src={getMediaUrl(item.path)}
-                        alt={item.alt || `Gallery ${gIdx + 1}`}
-                        className="size-10 shrink-0 rounded object-cover"
-                      />
-                    )}
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <Input
-                        value={item.path}
-                        onChange={(e) => {
-                          const copy = [...form.gallery];
-                          copy[gIdx] = { ...copy[gIdx]!, path: e.target.value };
-                          setForm((prev) => ({ ...prev, gallery: copy }));
-                        }}
-                        placeholder="cases/gallery-01.webp"
-                        className="text-[11px] font-mono h-7"
-                      />
-                      <Input
-                        value={item.alt || ""}
-                        onChange={(e) => {
-                          const copy = [...form.gallery];
-                          copy[gIdx] = { ...copy[gIdx]!, alt: e.target.value };
-                          setForm((prev) => ({ ...prev, gallery: copy }));
-                        }}
-                        placeholder="Alt text..."
-                        className="text-[11px] h-7"
-                      />
+            {!form.gallery.enabled ? (
+              <div className="rounded-sm border border-dashed border-border/80 bg-muted/20 p-5 text-center">
+                <p className="text-xs text-muted-foreground">
+                  The image gallery is currently <strong className="text-foreground">disabled</strong>. Nothing related to the gallery will appear on the public case study page. Toggle the switch above to enable and configure 3D gallery styles.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Style Selector */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                      Gallery Style
+                    </Label>
+                    <span className="text-[11px] text-muted-foreground">
+                      Active: {form.gallery.style === "coverflow" ? "Style 1 (Coverflow)" : "Style 2 (Perspective)"}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Style 1: Centered Coverflow */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setForm((prev) => ({
+                          ...prev,
+                          gallery: { ...prev.gallery, style: "coverflow" },
+                        }))
+                      }
+                      className={`relative flex flex-col items-start p-4 rounded-md border text-left transition-all ${
+                        form.gallery.style === "coverflow"
+                          ? "border-mint bg-mint/5 ring-1 ring-mint shadow-sm"
+                          : "border-border bg-card hover:border-foreground/30 hover:bg-muted/20"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="font-medium text-sm text-foreground flex items-center gap-1.5">
+                          Centered Coverflow
+                        </span>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider ${
+                          form.gallery.style === "coverflow" ? "bg-mint/20 text-mint font-semibold" : "bg-muted text-muted-foreground"
+                        }`}>
+                          Style 1
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                        Horizontal 3D carousel with prominent active center image, layered perspective depth, and rounded cards.
+                      </p>
+                    </button>
+
+                    {/* Style 2: Perspective Gallery */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setForm((prev) => ({
+                          ...prev,
+                          gallery: { ...prev.gallery, style: "perspective" },
+                        }))
+                      }
+                      className={`relative flex flex-col items-start p-4 rounded-md border text-left transition-all ${
+                        form.gallery.style === "perspective"
+                          ? "border-mint bg-mint/5 ring-1 ring-mint shadow-sm"
+                          : "border-border bg-card hover:border-foreground/30 hover:bg-muted/20"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="font-medium text-sm text-foreground flex items-center gap-1.5">
+                          Perspective Gallery
+                        </span>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider ${
+                          form.gallery.style === "perspective" ? "bg-mint/20 text-mint font-semibold" : "bg-muted text-muted-foreground"
+                        }`}>
+                          Style 2
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                        Curved 3D perspective wall with progressive spatial angling and immersive panoramic depth.
+                      </p>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Images List & Manager */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                        Images
+                      </Label>
+                      <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                        {form.gallery.images.length} {form.gallery.images.length === 1 ? "image" : "images"}
+                      </span>
                     </div>
+
+                    {form.gallery.images.length < 3 && (
+                      <span className="text-[11px] text-gold font-medium">
+                        (3+ images recommended for infinite loop)
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Drag-and-drop Image Items */}
+                  {form.gallery.images.length > 0 && (
+                    <div className="space-y-2.5">
+                      {form.gallery.images.map((item, gIdx) => {
+                        const previewUrl = getMediaUrl(item.url);
+                        const isDragging = draggedGalleryIdx === gIdx;
+                        const isDragOver = dragOverGalleryIdx === gIdx;
+
+                        return (
+                          <div
+                            key={item.id || gIdx}
+                            draggable
+                            onDragStart={() => setDraggedGalleryIdx(gIdx)}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              if (dragOverGalleryIdx !== gIdx) setDragOverGalleryIdx(gIdx);
+                            }}
+                            onDragEnd={() => {
+                              if (
+                                draggedGalleryIdx !== null &&
+                                dragOverGalleryIdx !== null &&
+                                draggedGalleryIdx !== dragOverGalleryIdx
+                              ) {
+                                moveGalleryImage(draggedGalleryIdx, dragOverGalleryIdx);
+                              }
+                              setDraggedGalleryIdx(null);
+                              setDragOverGalleryIdx(null);
+                            }}
+                            className={`flex items-center gap-2.5 rounded-md border p-2.5 transition-all ${
+                              isDragging
+                                ? "opacity-40 border-dashed border-mint bg-mint/5"
+                                : isDragOver
+                                  ? "border-mint bg-mint/10 shadow-sm"
+                                  : "border-border bg-muted/20 hover:bg-muted/40"
+                            }`}
+                          >
+                            {/* Drag handle */}
+                            <div
+                              className="cursor-grab active:cursor-grabbing text-muted-foreground/60 hover:text-foreground p-1 shrink-0"
+                              title="Drag to reorder"
+                            >
+                              <GripVertical className="size-4" />
+                            </div>
+
+                            {/* Up / Down reorder buttons */}
+                            <div className="flex flex-col gap-0.5 shrink-0">
+                              <button
+                                type="button"
+                                disabled={gIdx === 0}
+                                onClick={() => moveGalleryImage(gIdx, gIdx - 1)}
+                                className="p-0.5 rounded text-muted-foreground hover:text-foreground disabled:opacity-20 disabled:pointer-events-none"
+                                title="Move up"
+                              >
+                                <ChevronUp className="size-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={gIdx === form.gallery.images.length - 1}
+                                onClick={() => moveGalleryImage(gIdx, gIdx + 1)}
+                                className="p-0.5 rounded text-muted-foreground hover:text-foreground disabled:opacity-20 disabled:pointer-events-none"
+                                title="Move down"
+                              >
+                                <ChevronDown className="size-3.5" />
+                              </button>
+                            </div>
+
+                            {/* Thumbnail preview */}
+                            <div className="size-12 shrink-0 rounded overflow-hidden bg-muted border border-border">
+                              {previewUrl ? (
+                                <img
+                                  src={previewUrl}
+                                  alt={item.alt || `Gallery item ${gIdx + 1}`}
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : (
+                                <div className="h-full w-full flex items-center justify-center text-[10px] text-muted-foreground">
+                                  No url
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Inputs: URL and Alt */}
+                            <div className="min-w-0 flex-1 space-y-1.5">
+                              <Input
+                                value={item.url}
+                                onChange={(e) => {
+                                  const copy = [...form.gallery.images];
+                                  copy[gIdx] = { ...copy[gIdx]!, url: e.target.value };
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    gallery: { ...prev.gallery, images: copy },
+                                  }));
+                                }}
+                                placeholder="cases/project-01.webp or https://..."
+                                className="text-[11px] font-mono h-7"
+                              />
+                              <Input
+                                value={item.alt || ""}
+                                onChange={(e) => {
+                                  const copy = [...form.gallery.images];
+                                  copy[gIdx] = { ...copy[gIdx]!, alt: e.target.value };
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    gallery: { ...prev.gallery, images: copy },
+                                  }));
+                                }}
+                                placeholder="Alt text description for accessibility..."
+                                className="text-[11px] h-7"
+                              />
+                            </div>
+
+                            {/* Delete button */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setForm((prev) => ({
+                                  ...prev,
+                                  gallery: {
+                                    ...prev.gallery,
+                                    images: prev.gallery.images.filter((_, i) => i !== gIdx),
+                                  },
+                                }));
+                              }}
+                              className="shrink-0 p-1.5 text-muted-foreground hover:text-destructive rounded transition-colors"
+                              title="Remove image"
+                            >
+                              <Trash2 className="size-4" />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Actions: Upload multiple files or add path */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <label className="flex items-center justify-center gap-2 rounded-md border border-dashed border-border p-3.5 text-center cursor-pointer hover:border-gold hover:bg-muted/20 transition-all">
+                      <Upload className="size-4 text-muted-foreground" />
+                      <span className="text-xs font-medium">
+                        {uploading ? "Uploading..." : "Upload images"}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        (Multiple files supported)
+                      </span>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/png, image/jpeg, image/webp"
+                        disabled={uploading}
+                        onChange={async (e) => {
+                          const files = Array.from(e.target.files || []);
+                          if (!files.length) return;
+                          try {
+                            setUploading(true);
+                            setError(null);
+                            const uploadedItems: CaseStudyGalleryImage[] = [];
+                            for (const file of files) {
+                              const { signedUrl, path } = await signUpload({
+                                data: { filename: file.name },
+                              });
+                              const uploadRes = await fetch(signedUrl, {
+                                method: "PUT",
+                                headers: { "Content-Type": file.type },
+                                body: file,
+                              });
+                              if (!uploadRes.ok) throw new Error(`Upload failed for ${file.name}`);
+                              const id = typeof crypto !== "undefined" && crypto.randomUUID
+                                ? crypto.randomUUID()
+                                : `img-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+                              uploadedItems.push({ id, url: path, alt: "" });
+                            }
+                            setForm((prev) => ({
+                              ...prev,
+                              gallery: {
+                                ...prev.gallery,
+                                images: [...prev.gallery.images, ...uploadedItems],
+                              },
+                            }));
+                            e.target.value = "";
+                          } catch (err: unknown) {
+                            setError(err instanceof Error ? err.message : "Gallery upload failed");
+                          } finally {
+                            setUploading(false);
+                          }
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+
                     <button
                       type="button"
                       onClick={() => {
+                        const id = typeof crypto !== "undefined" && crypto.randomUUID
+                          ? crypto.randomUUID()
+                          : `img-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
                         setForm((prev) => ({
                           ...prev,
-                          gallery: prev.gallery.filter((_, i) => i !== gIdx),
+                          gallery: {
+                            ...prev.gallery,
+                            images: [...prev.gallery.images, { id, url: "", alt: "" }],
+                          },
                         }));
                       }}
-                      className="shrink-0 p-1 text-muted-foreground hover:text-destructive"
-                      title="Remove"
+                      className="flex items-center justify-center gap-2 rounded-md border border-dashed border-border p-3.5 text-center text-xs font-medium hover:border-mint hover:bg-muted/20 transition-all"
                     >
-                      <Trash2 className="size-3.5" />
+                      <Plus className="size-4 text-muted-foreground" />
+                      <span>Add image by URL / Path</span>
                     </button>
                   </div>
-                ))}
+                </div>
               </div>
-            )}
-
-            {/* Upload to gallery */}
-            <label className="flex flex-col items-center justify-center rounded-sm border border-dashed border-border p-4 text-center cursor-pointer hover:border-gold transition-colors">
-              <Upload className="size-5 text-muted-foreground" />
-              <span className="mt-2 text-xs font-medium">
-                {uploading ? "Uploading..." : "Add gallery image"}
-              </span>
-              <span className="text-[10px] text-muted-foreground">Uploaded to media bucket</span>
-              <input
-                type="file"
-                accept="image/png, image/jpeg, image/webp"
-                disabled={uploading}
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  try {
-                    setUploading(true);
-                    setError(null);
-                    const { signedUrl, path } = await signUpload({ data: { filename: file.name } });
-                    const uploadRes = await fetch(signedUrl, {
-                      method: "PUT",
-                      headers: { "Content-Type": file.type },
-                      body: file,
-                    });
-                    if (!uploadRes.ok) throw new Error(`Upload failed: ${uploadRes.status}`);
-                    setForm((prev) => ({
-                      ...prev,
-                      gallery: [...prev.gallery, { path, alt: "" }],
-                    }));
-                    // Reset input
-                    e.target.value = "";
-                  } catch (err: unknown) {
-                    setError(err instanceof Error ? err.message : "Gallery upload failed");
-                  } finally {
-                    setUploading(false);
-                  }
-                }}
-                className="hidden"
-              />
-            </label>
-
-            {form.gallery.length === 0 && (
-              <p className="text-center text-[11px] text-muted-foreground/60">
-                No gallery images yet. Upload images above to build a project gallery.
-              </p>
             )}
           </div>
         </div>

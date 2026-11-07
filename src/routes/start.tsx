@@ -1,32 +1,23 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { motion, AnimatePresence, useReducedMotion } from "motion/react";
-import {
-  ArrowUpRight,
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Mail,
-  MessageCircle,
-  Phone,
-  Sparkles,
-  ShieldCheck,
-  Building2,
-  Target,
-  Workflow,
-  Compass,
-  FileText,
-} from "lucide-react";
-import { useRef, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { Mail, MessageCircle, Phone, ShieldCheck, Sparkles } from "lucide-react";
+import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { z } from "zod";
 
+import {
+  CheckRow,
+  ChoiceList,
+  FlowInput,
+  FlowTextarea,
+  MultiChoiceList,
+  QuestionFlow,
+  type ChoiceOption,
+  type FlowQuestion,
+} from "@/components/question-flow";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { TealBackground } from "@/components/teal-background";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { submitInquiry } from "@/lib/inquiries.functions";
 import { inquirySchema, type InquiryInput } from "@/lib/inquiry-schema";
 import { offers } from "@/data/offers";
@@ -62,9 +53,6 @@ export const Route = createFileRoute("/start")({
   }),
 });
 
-const easeOut = [0.22, 1, 0.36, 1] as [number, number, number, number];
-const TOTAL_STEPS = 5;
-
 /** Animated SVG check drawn on form success. */
 function AnimatedCheck() {
   const shouldReduce = useReducedMotion();
@@ -92,233 +80,6 @@ function AnimatedCheck() {
         />
       </svg>
     </motion.div>
-  );
-}
-
-/** Step indicator dots */
-function StepDots({ current, total }: { current: number; total: number }) {
-  return (
-    <div className="flex items-center gap-1.5" aria-hidden="true">
-      {Array.from({ length: total }).map((_, i) => (
-        <motion.div
-          key={i}
-          animate={{
-            width: i === current ? 24 : 6,
-            backgroundColor:
-              i < current
-                ? "rgba(0, 196, 164, 0.45)"
-                : i === current
-                  ? "#00C4A4"
-                  : "rgba(250, 247, 242, 0.15)",
-          }}
-          transition={{ duration: 0.35, ease: easeOut }}
-          className="h-1.5 rounded-full"
-        />
-      ))}
-    </div>
-  );
-}
-
-/** Animated field wrapper */
-function Field({
-  label,
-  id,
-  error,
-  required = false,
-  helperText,
-  children,
-}: {
-  label: string;
-  id: string;
-  error?: string | undefined;
-  required?: boolean;
-  helperText?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <div className="flex items-baseline justify-between gap-2">
-        <Label htmlFor={id} className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-          {label} {required && <span className="text-terracotta">*</span>}
-        </Label>
-      </div>
-      {children}
-      {helperText && !error && (
-        <p className="text-[11px] text-mint/70 leading-normal">{helperText}</p>
-      )}
-      {error && (
-        <motion.p
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-xs text-terracotta font-medium"
-        >
-          {error}
-        </motion.p>
-      )}
-    </div>
-  );
-}
-
-/** Selectable card button (single-select) */
-function SelectCard({
-  selected,
-  onClick,
-  title,
-  subtitle,
-  badge,
-  icon,
-}: {
-  selected: boolean;
-  onClick: () => void;
-  title: string;
-  subtitle?: string;
-  badge?: string;
-  icon?: React.ReactNode;
-}) {
-  return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      whileTap={{ scale: 0.99 }}
-      className={[
-        "group relative flex w-full items-start gap-3.5 rounded-xl border p-4 text-left transition-all duration-200",
-        selected
-          ? "border-mint bg-pine/70 text-paper shadow-md ring-1 ring-mint"
-          : "border-paper/15 bg-paper/[0.03] text-paper hover:border-mint/40 hover:bg-paper/[0.06]",
-      ].join(" ")}
-    >
-      {icon && (
-        <span
-          className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border transition-colors ${
-            selected
-              ? "border-mint/40 bg-mint/20 text-mint"
-              : "border-paper/20 bg-paper/5 text-paper/60 group-hover:text-paper"
-          }`}
-        >
-          {icon}
-        </span>
-      )}
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center justify-between gap-2">
-          <span className="block font-display text-base sm:text-lg font-medium leading-snug text-paper">
-            {title}
-          </span>
-          {badge && (
-            <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider font-semibold ${
-                selected
-                  ? "bg-mint text-forest-black"
-                  : "bg-ochre/20 text-ochre border border-ochre/30"
-              }`}
-            >
-              {badge}
-            </span>
-          )}
-        </div>
-        {subtitle && (
-          <span
-            className={`mt-1 block text-xs leading-relaxed ${
-              selected ? "text-paper/85" : "text-paper/60"
-            }`}
-          >
-            {subtitle}
-          </span>
-        )}
-      </div>
-      <div className="shrink-0 pt-0.5">
-        <span
-          className={`flex size-4 items-center justify-center rounded-full border transition-colors ${
-            selected
-              ? "border-mint bg-mint text-forest-black"
-              : "border-paper/30 bg-paper/5"
-          }`}
-        >
-          {selected && <Check className="size-2.5 stroke-[3]" />}
-        </span>
-      </div>
-    </motion.button>
-  );
-}
-
-/** Multi-select pill toggle */
-function MultiPill({
-  selected,
-  onClick,
-  title,
-  subtitle,
-}: {
-  selected: boolean;
-  onClick: () => void;
-  title: string;
-  subtitle?: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition-all duration-200 ${
-        selected
-          ? "border-mint bg-pine/70 ring-1 ring-mint text-paper"
-          : "border-paper/15 bg-paper/[0.03] hover:border-mint/40 hover:bg-paper/[0.06] text-paper/80"
-      }`}
-    >
-      <div
-        className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border transition-colors ${
-          selected
-            ? "border-mint bg-mint text-forest-black"
-            : "border-paper/30 bg-paper/5"
-        }`}
-      >
-        {selected && <Check className="size-2.5 stroke-[3]" />}
-      </div>
-      <div className="min-w-0">
-        <span className="block text-sm font-medium leading-snug text-paper">{title}</span>
-        {subtitle && (
-          <span className="mt-0.5 block text-xs text-paper/60 leading-normal">
-            {subtitle}
-          </span>
-        )}
-      </div>
-    </button>
-  );
-}
-
-/** Channel selector card */
-function ChannelCard({
-  selected,
-  onClick,
-  title,
-  icon,
-}: {
-  selected: boolean;
-  onClick: () => void;
-  title: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      whileTap={{ scale: 0.98 }}
-      className={[
-        "flex w-full items-center gap-3.5 rounded-xl border p-3.5 text-left transition-all duration-200",
-        selected
-          ? "border-mint bg-pine/70 text-paper shadow-sm ring-1 ring-mint"
-          : "border-paper/15 bg-paper/[0.03] hover:border-mint/50 hover:bg-paper/[0.06] text-paper/80",
-      ].join(" ")}
-    >
-      <span
-        className={[
-          "flex size-9 shrink-0 items-center justify-center rounded-full border transition-colors duration-200",
-          selected
-            ? "border-ochre bg-ochre text-forest-black"
-            : "border-paper/20 bg-paper/5 text-paper/60",
-        ].join(" ")}
-      >
-        {icon}
-      </span>
-      <span className="font-display text-base font-medium text-paper">{title}</span>
-    </motion.button>
   );
 }
 
@@ -404,141 +165,562 @@ const SALES_TRACKING = [
   "Pas de méthode définie",
 ] as const;
 
+const toOptions = (values: readonly string[]): ChoiceOption[] =>
+  values.map((value) => ({ value, label: value }));
+
+type WebsiteStatus = "" | "yes" | "revamp" | "no";
+type PreferredChannel = "email" | "whatsapp" | "phone";
+
 function StartProject() {
   const { t, locale, formatOfferPrice } = useI18n();
   const search = useSearch({ from: "/start" });
   const send = useServerFn(submitInquiry);
   const mountedAt = useRef(Date.now());
+  const lastGroup = useRef(-1);
   const isFr = locale === "fr";
+  const tr = (fr: string, en: string) => (isFr ? fr : en);
 
   const { timelines, budgets } = t.startForm;
 
-  // Resolve default offer from search param
-  const defaultOffer =
-    search.offer && offers.find((o) => o.id === search.offer)
-      ? search.offer
-      : (offers[0]?.id ?? "Résoudre un problème précis");
+  // A plan chosen on the offers page arrives as ?offer=...; otherwise the visitor picks one.
+  const presetOffer =
+    search.offer && offers.find((o) => o.id === search.offer) ? search.offer : "";
 
-  const [step, setStep] = useState(0);
-  const [direction, setDirection] = useState(1);
-
-  // Extended state matching Section 13 & 14
+  // Answers. Choice questions start empty so nothing is sent that the visitor never picked.
   const [company, setCompany] = useState("");
-  const [sector, setSector] = useState<string>(SECTORS[0]!);
+  const [sector, setSector] = useState("");
   const [location, setLocation] = useState("");
-  const [websiteStatus, setWebsiteStatus] = useState<"yes" | "no" | "revamp">("yes");
+  const [websiteStatus, setWebsiteStatus] = useState<WebsiteStatus>("");
   const [websiteUrl, setWebsiteUrl] = useState("");
-  const [role, setRole] = useState<string>(ROLES[0]!);
+  const [role, setRole] = useState("");
 
-  const [primaryGoal, setPrimaryGoal] = useState<string>(PRIMARY_GOALS[0]!);
-  const [selectedPillars, setSelectedPillars] = useState<string[]>(["perception"]);
+  const [primaryGoal, setPrimaryGoal] = useState("");
+  const [selectedPillars, setSelectedPillars] = useState<string[]>([]);
   const [problemDescription, setProblemDescription] = useState("");
 
-  const [actionChannels, setActionChannels] = useState<string[]>([ACTION_CHANNELS[0]!]);
-  const [salesTracking, setSalesTracking] = useState<string>(SALES_TRACKING[0]!);
+  const [actionChannels, setActionChannels] = useState<string[]>([]);
+  const [salesTracking, setSalesTracking] = useState("");
   const [automationNeeds, setAutomationNeeds] = useState("");
 
   const [vision, setVision] = useState("");
-  const [selectedOffer, setSelectedOffer] = useState<string>(defaultOffer);
-  const [budgetRange, setBudgetRange] = useState<string>(budgets[1] ?? budgets[0]!);
-  const [timeline, setTimeline] = useState<string>(timelines[0]!);
+  const [selectedOffer, setSelectedOffer] = useState<string>(presetOffer);
+  const [budgetRange, setBudgetRange] = useState("");
+  const [timeline, setTimeline] = useState("");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [preferredChannel, setPreferredChannel] = useState<"email" | "whatsapp" | "phone">("email");
+  const [preferredChannel, setPreferredChannel] = useState<PreferredChannel>("email");
   const [consent, setConsent] = useState(false);
   const [honeypot, setHoneypot] = useState("");
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [submissionRef, setSubmissionRef] = useState<string>("");
 
-  const togglePillar = (id: string) => {
-    setSelectedPillars((prev) =>
-      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
-    );
-  };
+  const toggleIn = (setter: Dispatch<SetStateAction<string[]>>, value: string) =>
+    setter((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
 
-  const toggleActionChannel = (ch: string) => {
-    setActionChannels((prev) =>
-      prev.includes(ch) ? prev.filter((c) => c !== ch) : [...prev, ch]
-    );
-  };
+  const required = (value: string, fr: string, en: string) => (value.trim() ? null : tr(fr, en));
+  const pickOne = (value: string) =>
+    value ? null : tr("Choisissez une réponse pour continuer.", "Pick an answer to continue.");
 
-  const stepLabels = isFr
-    ? ["Entreprise", "Objectifs", "Fonctionnement", "Projet & Budget", "Coordonnées"]
-    : ["Business", "Goals", "Operations", "Project & Budget", "Contact"];
+  const websiteOptions: ChoiceOption[] = [
+    { value: "yes", label: tr("Oui", "Yes") },
+    { value: "revamp", label: tr("Existe, mais à revoir", "Needs a revamp") },
+    { value: "no", label: tr("Non", "No") },
+  ];
 
-  const validateStep = (s: number): boolean => {
-    const next: Record<string, string> = {};
+  const offerOptions: ChoiceOption[] = [
+    ...offers.map((o) => {
+      const loc = o.translations[locale] || o.translations.fr;
+      return {
+        value: o.id,
+        label: loc.name,
+        description: loc.tagline,
+        badge: formatOfferPrice(o),
+        icon: <Sparkles className="size-4" />,
+      };
+    }),
+    {
+      value: "Not sure yet",
+      label: tr("Je ne sais pas encore", "Not sure yet"),
+      description: tr(
+        "J'aimerais être orienté(e) en fonction de ma situation et des priorités.",
+        "I'd like guidance on the best starting point.",
+      ),
+    },
+  ];
 
-    if (s === 0) {
-      if (!company.trim()) next["company"] = isFr ? "Le nom de votre entreprise est requis." : "Company name is required.";
-      if (!location.trim()) next["location"] = isFr ? "La ville et le pays sont requis." : "Location is required.";
-      if ((websiteStatus === "yes" || websiteStatus === "revamp") && websiteUrl.trim()) {
-        try {
-          new URL(websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`);
-        } catch {
-          next["websiteUrl"] = isFr ? "Veuillez entrer une adresse URL valide." : "Please enter a valid URL.";
-        }
-      }
-    } else if (s === 1) {
-      if (!problemDescription.trim()) {
-        next["problemDescription"] = isFr
-          ? "Décrivez en quelques mots ce qui ne fonctionne pas comme vous le souhaiteriez."
-          : "Please describe what is not working as expected.";
-      }
-    } else if (s === 3) {
-      if (!vision.trim() || vision.trim().length < 10) {
-        next["vision"] = isFr
-          ? "Précisez en quelques phrases le résultat souhaité (au moins 10 caractères)."
-          : "Please specify the desired outcome (at least 10 characters).";
-      }
-    } else if (s === 4) {
-      if (!name.trim()) next["name"] = isFr ? "Votre nom complet est requis." : "Your name is required.";
-      if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        next["email"] = isFr ? "Une adresse email valide est requise." : "A valid email is required.";
-      }
-      if (!phone.trim()) {
-        next["phone"] = isFr ? "Un numéro de téléphone avec indicatif est requis." : "Phone number with country code is required.";
-      }
-      if (!consent) {
-        next["consent"] = isFr
-          ? "Veuillez accepter l'utilisation des données pour l'examen de votre demande."
-          : "Please consent to the processing of your inquiry.";
-      }
-    }
+  const channelOptions: ChoiceOption[] = [
+    { value: "email", label: "Email", icon: <Mail className="size-5" /> },
+    { value: "whatsapp", label: "WhatsApp", icon: <MessageCircle className="size-5" /> },
+    { value: "phone", label: tr("Téléphone", "Phone"), icon: <Phone className="size-5" /> },
+  ];
 
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
+  const questions: FlowQuestion[] = [
+    // ── Group 0: the business ──
+    {
+      id: "company",
+      group: 0,
+      title: tr("Comment s'appelle votre entreprise ?", "What's your company called?"),
+      validate: () =>
+        required(company, "Le nom de votre entreprise est requis.", "Company name is required."),
+      children: (
+        <FlowInput
+          type="text"
+          autoComplete="organization"
+          maxLength={120}
+          placeholder="Acme Corp"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+        />
+      ),
+    },
+    {
+      id: "sector",
+      group: 0,
+      title: tr("Dans quel secteur travaillez-vous ?", "What industry are you in?"),
+      autoAdvance: true,
+      validate: () => pickOne(sector),
+      children: (
+        <ChoiceList
+          label={tr("Secteur d'activité", "Industry")}
+          options={toOptions(SECTORS)}
+          value={sector}
+          onChange={setSector}
+        />
+      ),
+    },
+    {
+      id: "location",
+      group: 0,
+      title: tr("Où votre entreprise est-elle basée ?", "Where is your company based?"),
+      validate: () =>
+        required(location, "La ville et le pays sont requis.", "Location is required."),
+      children: (
+        <FlowInput
+          type="text"
+          maxLength={100}
+          placeholder={tr(
+            "Paris, Bruxelles, Genève ou international",
+            "Paris, London, New York or international",
+          )}
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+        />
+      ),
+    },
+    {
+      id: "websiteStatus",
+      group: 0,
+      title: tr("Avez-vous déjà un site web ?", "Do you already have a website?"),
+      autoAdvance: true,
+      validate: () => pickOne(websiteStatus),
+      children: (
+        <ChoiceList
+          label={tr("Site web", "Website")}
+          options={websiteOptions}
+          value={websiteStatus}
+          onChange={(value) => setWebsiteStatus(value as WebsiteStatus)}
+        />
+      ),
+    },
+    ...(websiteStatus === "yes" || websiteStatus === "revamp"
+      ? [
+          {
+            id: "websiteUrl",
+            group: 0,
+            title: tr("Quelle est l'adresse de votre site ?", "What's your website address?"),
+            hint: tr("Optionnel si le site n'est pas public.", "Optional if private."),
+            optional: true,
+            validate: () => {
+              if (!websiteUrl.trim()) return null;
+              try {
+                new URL(websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`);
+                return null;
+              } catch {
+                return tr("Veuillez entrer une adresse URL valide.", "Please enter a valid URL.");
+              }
+            },
+            children: (
+              <FlowInput
+                type="url"
+                inputMode="url"
+                autoCapitalize="none"
+                autoCorrect="off"
+                placeholder="https://acmecorp.com"
+                value={websiteUrl}
+                onChange={(e) => setWebsiteUrl(e.target.value)}
+              />
+            ),
+          } satisfies FlowQuestion,
+        ]
+      : []),
+    {
+      id: "role",
+      group: 0,
+      title: tr("Quel est votre rôle dans l'entreprise ?", "What's your role in the business?"),
+      autoAdvance: true,
+      validate: () => pickOne(role),
+      children: (
+        <ChoiceList
+          label={tr("Rôle", "Role")}
+          options={toOptions(ROLES)}
+          value={role}
+          onChange={setRole}
+        />
+      ),
+    },
 
-  const goNext = () => {
-    setDirection(1);
-    setStep((s) => {
-      const nextStep = Math.min(s + 1, TOTAL_STEPS - 1);
-      track("start_step_view", {
-        path: "/start",
-        metadata: { step: nextStep },
-      });
-      return nextStep;
-    });
-  };
+    // ── Group 1: what to improve ──
+    {
+      id: "primaryGoal",
+      group: 1,
+      title: tr("Quel est votre principal objectif aujourd'hui ?", "What's your main goal today?"),
+      autoAdvance: true,
+      validate: () => pickOne(primaryGoal),
+      children: (
+        <ChoiceList
+          label={tr("Objectif principal", "Primary goal")}
+          options={toOptions(PRIMARY_GOALS)}
+          value={primaryGoal}
+          onChange={setPrimaryGoal}
+        />
+      ),
+    },
+    {
+      id: "pillars",
+      group: 1,
+      title: tr("Quels domaines souhaitez-vous améliorer ?", "Which areas do you want to improve?"),
+      hint: tr(
+        "Choisissez tout ce qui vous semble pertinent. Pas besoin de connaître le jargon technique.",
+        "Select all that apply. No need to know technical agency terms.",
+      ),
+      validate: () =>
+        selectedPillars.length > 0
+          ? null
+          : tr("Choisissez au moins un domaine.", "Pick at least one area."),
+      children: (
+        <MultiChoiceList
+          label={tr("Domaines à améliorer", "Areas to improve")}
+          options={PILLARS_LIST.map((p) => ({ value: p.id, label: p.name, description: p.desc }))}
+          values={selectedPillars}
+          onToggle={(value) => toggleIn(setSelectedPillars, value)}
+        />
+      ),
+    },
+    {
+      id: "problem",
+      group: 1,
+      title: tr(
+        "Décrivez le problème principal que vous rencontrez",
+        "Describe the main problem you face",
+      ),
+      hint: tr(
+        "Quelques phrases suffisent pour exposer la situation.",
+        "A few sentences are enough.",
+      ),
+      validate: () =>
+        required(
+          problemDescription,
+          "Décrivez en quelques mots ce qui ne fonctionne pas comme vous le souhaiteriez.",
+          "Please describe what is not working as expected.",
+        ),
+      children: (
+        <FlowTextarea
+          maxLength={600}
+          placeholder={tr(
+            "Ex. : nos prospects trouvent notre offre peu claire et nous relançons à la main...",
+            "E.g. prospects find our offer unclear and we follow up by hand...",
+          )}
+          value={problemDescription}
+          onChange={(e) => setProblemDescription(e.target.value)}
+        />
+      ),
+    },
 
-  const goPrev = () => {
-    setDirection(-1);
-    setStep((s) => Math.max(s - 1, 0));
-  };
+    // ── Group 2: how things work today (all optional) ──
+    {
+      id: "actionChannels",
+      group: 2,
+      title: tr(
+        "Où vos prospects peuvent-ils passer à l'action aujourd'hui ?",
+        "Where can prospects take action today?",
+      ),
+      hint: tr("Plusieurs choix possibles.", "Select all that apply."),
+      optional: true,
+      children: (
+        <MultiChoiceList
+          label={tr("Canaux actuels", "Current channels")}
+          options={toOptions(ACTION_CHANNELS)}
+          values={actionChannels}
+          onToggle={(value) => toggleIn(setActionChannels, value)}
+        />
+      ),
+    },
+    {
+      id: "salesTracking",
+      group: 2,
+      title: tr(
+        "Comment suivez-vous les prospects et opportunités aujourd'hui ?",
+        "How do you track opportunities today?",
+      ),
+      optional: true,
+      autoAdvance: true,
+      children: (
+        <ChoiceList
+          label={tr("Suivi commercial", "Sales tracking")}
+          options={toOptions(SALES_TRACKING)}
+          value={salesTracking}
+          onChange={setSalesTracking}
+        />
+      ),
+    },
+    {
+      id: "automationNeeds",
+      group: 2,
+      title: tr(
+        "Quelles tâches aimeriez-vous simplifier ou automatiser ?",
+        "Which tasks would you like to streamline or automate?",
+      ),
+      hint: tr(
+        "Optionnel. Ex. : relancer automatiquement les devis, synchroniser les contacts, envoyer un email de confirmation...",
+        "Optional. E.g. send automated follow-ups, sync leads into CRM...",
+      ),
+      optional: true,
+      children: (
+        <FlowTextarea
+          maxLength={500}
+          placeholder={tr(
+            "Décrivez les tâches manuelles récurrentes...",
+            "Describe recurring manual tasks...",
+          )}
+          value={automationNeeds}
+          onChange={(e) => setAutomationNeeds(e.target.value)}
+        />
+      ),
+    },
 
-  const handleNext = () => {
-    if (validateStep(step)) goNext();
-  };
+    // ── Group 3: outcome, framework, budget ──
+    {
+      id: "vision",
+      group: 3,
+      title: tr(
+        "À quoi reconnaîtriez-vous que ce projet est une réussite ?",
+        "What does success look like?",
+      ),
+      hint: tr(
+        "Quel changement concret aimeriez-vous observer dans votre entreprise ?",
+        "What concrete change do you expect to see?",
+      ),
+      validate: () =>
+        vision.trim().length >= 20
+          ? null
+          : tr(
+              "Précisez en quelques mots le résultat souhaité (au moins 20 caractères).",
+              "Please describe the desired outcome (at least 20 characters).",
+            ),
+      children: (
+        <FlowTextarea
+          maxLength={2000}
+          placeholder={tr(
+            "Ex. : un site clair qui convertit 5 à 10 demandes qualifiées par mois...",
+            "E.g. a clear site that yields 5-10 qualified leads per month...",
+          )}
+          value={vision}
+          onChange={(e) => setVision(e.target.value)}
+        />
+      ),
+    },
+    {
+      id: "offer",
+      group: 3,
+      title: tr(
+        "Quel type d'accompagnement vous semble le plus adapté ?",
+        "Which kind of support fits best?",
+      ),
+      autoAdvance: true,
+      validate: () => pickOne(selectedOffer),
+      children: (
+        <ChoiceList
+          label={tr("Accompagnement", "Engagement type")}
+          options={offerOptions}
+          value={selectedOffer}
+          onChange={setSelectedOffer}
+        />
+      ),
+    },
+    {
+      id: "budget",
+      group: 3,
+      title: tr("Quel budget avez-vous envisagé ?", "What budget did you have in mind?"),
+      hint: tr(
+        "Repère indicatif HT, pour cadrer le projet. Ce n'est pas un devis final.",
+        "Excl. VAT. A planning benchmark, not a final quote.",
+      ),
+      autoAdvance: true,
+      validate: () => pickOne(budgetRange),
+      children: (
+        <ChoiceList
+          label={tr("Budget", "Budget")}
+          options={toOptions(budgets)}
+          value={budgetRange}
+          onChange={setBudgetRange}
+        />
+      ),
+    },
+    {
+      id: "timeline",
+      group: 3,
+      title: tr("Quand aimeriez-vous démarrer ?", "When would you like to start?"),
+      autoAdvance: true,
+      validate: () => pickOne(timeline),
+      children: (
+        <ChoiceList
+          label={tr("Calendrier", "Timeline")}
+          options={toOptions(timelines)}
+          value={timeline}
+          onChange={setTimeline}
+        />
+      ),
+    },
+
+    // ── Group 4: contact ──
+    {
+      id: "name",
+      group: 4,
+      title: tr("Comment vous appelez-vous ?", "What's your name?"),
+      hint: tr("Prénom et nom.", "First and last name."),
+      validate: () =>
+        name.trim().length >= 2
+          ? null
+          : tr("Votre nom complet est requis.", "Your name is required."),
+      children: (
+        <FlowInput
+          type="text"
+          autoComplete="name"
+          maxLength={100}
+          placeholder={tr("Alexandre Martin", "Alex Martin")}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      ),
+    },
+    {
+      id: "email",
+      group: 4,
+      title: tr("Quelle est votre adresse e-mail professionnelle ?", "What's your work email?"),
+      validate: () =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+          ? null
+          : tr("Une adresse email valide est requise.", "A valid email is required."),
+      children: (
+        <FlowInput
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          autoCapitalize="none"
+          maxLength={255}
+          placeholder="alex@acmecorp.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      ),
+    },
+    {
+      id: "phone",
+      group: 4,
+      title: tr("Quel est votre numéro de téléphone ?", "What's your phone number?"),
+      hint: tr(
+        "Indicatif pays recommandé (ex. : +33 6 12 34 56 78).",
+        "Country code recommended.",
+      ),
+      validate: () =>
+        required(
+          phone,
+          "Un numéro de téléphone avec indicatif est requis.",
+          "Phone number with country code is required.",
+        ),
+      children: (
+        <FlowInput
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          maxLength={40}
+          placeholder="+33 6 12 34 56 78"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+      ),
+    },
+    {
+      id: "channel",
+      group: 4,
+      title: tr(
+        "Quel est le meilleur moyen de vous contacter ?",
+        "What's the best way to reach you?",
+      ),
+      autoAdvance: true,
+      children: (
+        <ChoiceList
+          label={tr("Canal préféré", "Preferred channel")}
+          options={channelOptions}
+          value={preferredChannel}
+          onChange={(value) => setPreferredChannel(value as PreferredChannel)}
+        />
+      ),
+    },
+    {
+      id: "consent",
+      group: 4,
+      title: tr("Dernière étape : une confirmation.", "Last step: one confirmation."),
+      hint: tr(
+        "Nous reviendrons vers vous avec une analyse préliminaire.",
+        "We will get back to you with a preliminary review.",
+      ),
+      validate: () =>
+        consent
+          ? null
+          : tr(
+              "Veuillez accepter l'utilisation des données pour l'examen de votre demande.",
+              "Please consent to the processing of your inquiry.",
+            ),
+      children: (
+        <div className="space-y-5">
+          <CheckRow checked={consent} onChange={setConsent}>
+            {isFr ? (
+              <>
+                J'accepte que Volka utilise les informations transmises pour examiner ma demande et me
+                recontacter à ce sujet. Consultez nos{" "}
+                <Link to="/legal" target="_blank" rel="noopener" className="text-mint underline underline-offset-2">
+                  mentions légales et politique de confidentialité
+                </Link>
+                .
+              </>
+            ) : (
+              <>
+                I agree that Volka may process this information to review my project and contact me. View
+                our{" "}
+                <Link to="/legal" target="_blank" rel="noopener" className="text-mint underline underline-offset-2">
+                  privacy policy
+                </Link>
+                .
+              </>
+            )}
+          </CheckRow>
+          <p className="text-xs leading-relaxed text-paper/50">
+            {tr(
+              "L'envoi de ce formulaire ne vaut pas acceptation du projet ni validation d'un devis. Nous étudierons votre demande avant de vous proposer la suite la plus pertinente.",
+              "Submitting this form does not mean the project is accepted or that a quote has been issued. We will review your request before proposing the most relevant next step.",
+            )}
+          </p>
+        </div>
+      ),
+    },
+  ];
 
   const handleSubmit = async () => {
-    if (!validateStep(step)) return;
-
     // Compile rich structured brief for the backend
     const structuredChallenge = [
       `[Secteur] ${sector}`,
@@ -548,8 +730,8 @@ function StartProject() {
       `[Objectif prioritaire] ${primaryGoal}`,
       `[Piliers ciblés] ${selectedPillars.join(", ")}`,
       `[Point de friction principal] ${problemDescription}`,
-      `[Parcours actuel des prospects] ${actionChannels.join(", ")}`,
-      `[Organisation commerciale] ${salesTracking}`,
+      actionChannels.length > 0 ? `[Parcours actuel des prospects] ${actionChannels.join(", ")}` : null,
+      salesTracking ? `[Organisation commerciale] ${salesTracking}` : null,
       automationNeeds ? `[Besoins d'automatisation] ${automationNeeds}` : null,
     ]
       .filter(Boolean)
@@ -574,16 +756,14 @@ function StartProject() {
 
     const parsed = inquirySchema.safeParse(payload);
     if (!parsed.success) {
-      const next: Record<string, string> = {};
-      for (const issue of parsed.error.issues) {
-        const key = String(issue.path[0]);
-        if (!next[key]) next[key] = issue.message;
-      }
-      setErrors(next);
+      setErrorMessage(
+        parsed.error.issues[0]?.message ??
+          tr("Certaines réponses sont incomplètes. Revenez en arrière pour les vérifier.", "Some answers are incomplete. Go back to check them."),
+      );
+      setStatus("error");
       return;
     }
 
-    setErrors({});
     setStatus("sending");
 
     try {
@@ -607,15 +787,14 @@ function StartProject() {
     } catch (error) {
       setStatus("error");
       setErrorMessage(
-        error instanceof Error ? error.message : "Une erreur est survenue lors de l'envoi. Veuillez réessayer."
+        error instanceof Error
+          ? error.message
+          : tr(
+              "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
+              "Something went wrong while sending. Please try again.",
+            ),
       );
     }
-  };
-
-  const variants = {
-    enter: (dir: number) => ({ x: dir > 0 ? 30 : -30, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (dir: number) => ({ x: dir > 0 ? -30 : 30, opacity: 0 }),
   };
 
   // ─── Executive Confirmation / Thank You Screen ───
@@ -715,7 +894,8 @@ function StartProject() {
                     {isFr ? "Accompagnement envisagé" : "Target engagement"}
                   </span>
                   <span className="font-medium text-paper text-base mt-0.5 block">
-                    {selectedOffer}
+                    {offers.find((o) => o.id === selectedOffer)?.translations[locale].name ??
+                      selectedOffer}
                   </span>
                   <span className="text-xs text-mint/80">{budgetRange}</span>
                 </div>
@@ -798,25 +978,13 @@ function StartProject() {
               transition={{ duration: 0.7, delay: 0.55, ease: easeVolkaOut }}
             >
               <Button asChild variant="volka" size="volka" className="w-full sm:w-auto">
-                <Link to="/">
-                  {isFr ? "Retour à l'accueil" : "Back to home"}
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="volka"
-                className="w-full sm:w-auto border-paper/20 text-paper hover:bg-paper/10 hover:text-paper"
-              >
-                <Link to="/cases">
-                  {isFr ? "Découvrir nos concepts" : "Explore concept work"} <ArrowUpRight className="size-4" />
-                </Link>
+                <Link to="/">{isFr ? "Retour à l'accueil" : "Back to home"}</Link>
               </Button>
               <Link
-                to="/journal"
-                className="text-xs font-mono uppercase tracking-[0.14em] text-paper/50 hover:text-paper transition-colors py-2 px-3"
+                to="/audit"
+                className="text-xs font-mono uppercase tracking-[0.14em] text-paper/60 transition-colors hover:text-mint"
               >
-                {isFr ? "Lire le Journal" : "Read the Journal"}
+                {isFr ? "Découvrir l'audit gratuit" : "See the free audit"}
               </Link>
             </motion.div>
           </div>
@@ -828,742 +996,42 @@ function StartProject() {
   }
 
   return (
-    <main className="relative isolate min-h-screen bg-forest-black text-paper font-sans overflow-hidden">
-      <TealBackground variant="glow" />
-      <SiteHeader />
-
-      {/* ─── Page header ─── */}
-      <section className="relative z-10 border-b border-paper/10 px-5 py-12 md:px-10 md:py-16 lg:px-14">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div>
-              <motion.p
-                className="text-xs font-mono uppercase tracking-[0.2em] text-ochre font-medium"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: easeOut }}
-              >
-                {t.form.eyebrow}
-              </motion.p>
-              <motion.h1
-                className="mt-3 font-display text-4xl sm:text-5xl md:text-6xl font-light leading-tight tracking-[-0.03em] text-paper"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.1, ease: easeOut }}
-              >
-                {isFr ? (
-                  <>
-                    Démarrons{" "}
-                    <span className="italic text-mint font-light">votre projet</span>.
-                  </>
-                ) : (
-                  <>
-                    Let's start{" "}
-                    <span className="italic text-mint font-light">your project</span>.
-                  </>
-                )}
-              </motion.h1>
-              <motion.p
-                className="mt-4 max-w-2xl text-sm md:text-base font-light text-paper/75 leading-relaxed"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.15, ease: easeOut }}
-              >
-                {t.form.subtitle}
-              </motion.p>
-            </div>
-            <motion.div
-              className="flex flex-col gap-2 md:items-end shrink-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-            >
-              <StepDots current={step} total={TOTAL_STEPS} />
-              <p className="text-xs font-mono uppercase tracking-[0.14em] text-paper/60">
-                {isFr
-                  ? `Étape ${step + 1}/${TOTAL_STEPS} — ${stepLabels[step]}`
-                  : `Step ${step + 1} of ${TOTAL_STEPS} — ${stepLabels[step]}`}
-              </p>
-            </motion.div>
-          </div>
+    <QuestionFlow
+      questions={questions}
+      exitHref="/"
+      onSubmit={handleSubmit}
+      submitting={status === "sending"}
+      error={status === "error" ? errorMessage : null}
+      onStep={(question) => {
+        // Same signal as before: one event each time the visitor reaches a new block of questions.
+        const group = question.group ?? 0;
+        if (group !== lastGroup.current) {
+          lastGroup.current = group;
+          track("start_step_view", { path: "/start", metadata: { step: group } });
+        }
+      }}
+      labels={{
+        next: tr("Continuer", "Continue"),
+        back: tr("Question précédente", "Previous question"),
+        skip: tr("Passer", "Skip"),
+        submit: tr("Envoyer ma demande", "Submit my inquiry"),
+        submitting: tr("Envoi de votre demande...", "Submitting..."),
+        exit: tr("Quitter le formulaire", "Leave the form"),
+      }}
+      honeypot={
+        <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+          <label htmlFor="website">Leave this field empty</label>
+          <input
+            id="website"
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
         </div>
-      </section>
-
-      {/* ─── Onboarding wizard ─── */}
-      <section className="relative z-10 min-h-[60vh] px-5 py-12 md:px-10 md:py-16 lg:px-14">
-        <div className="mx-auto max-w-2xl rounded-2xl border border-paper/15 bg-paper/[0.04] p-6 sm:p-10 backdrop-blur-md shadow-2xl">
-          {/* Honeypot */}
-          <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-            <label htmlFor="website">Leave this field empty</label>
-            <input
-              id="website"
-              name="website"
-              type="text"
-              tabIndex={-1}
-              autoComplete="off"
-              value={honeypot}
-              onChange={(e) => setHoneypot(e.target.value)}
-            />
-          </div>
-
-          <AnimatePresence custom={direction} mode="wait">
-            <motion.div
-              key={step}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.35, ease: easeOut }}
-            >
-              {/* ── Step 0 (1/5): Votre entreprise ── */}
-              {step === 0 && (
-                <div className="space-y-7">
-                  <div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-mint font-medium">
-                      <Building2 className="size-3.5" />
-                      {isFr ? "Étape 01 — Votre entreprise" : "Step 01 — Your business"}
-                    </span>
-                    <h2 className="mt-2 font-display text-2xl sm:text-3xl font-light text-paper">
-                      {isFr ? "Commençons par comprendre votre activité." : "Let's start by understanding your business."}
-                    </h2>
-                    <p className="mt-2 text-sm text-paper/70 font-light">
-                      {isFr
-                        ? "Quelques détails pour contextualiser votre environnement de marché."
-                        : "A few details to understand your market and context."}
-                    </p>
-                  </div>
-
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div className="sm:col-span-2">
-                      <Field
-                        label={isFr ? "Nom de votre entreprise" : "Company name"}
-                        id="company"
-                        required
-                        error={errors["company"]}
-                      >
-                        <Input
-                          id="company"
-                          className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
-                          value={company}
-                          onChange={(e) => setCompany(e.target.value)}
-                          maxLength={120}
-                          placeholder="Acme Corp"
-                          autoFocus
-                        />
-                      </Field>
-                    </div>
-
-                    <div>
-                      <Field
-                        label={isFr ? "Secteur d'activité" : "Industry"}
-                        id="sector"
-                        required
-                      >
-                        <select
-                          id="sector"
-                          value={sector}
-                          onChange={(e) => setSector(e.target.value)}
-                          className="h-12 w-full rounded-lg border border-paper/20 bg-paper/5 text-paper px-3 text-sm focus:border-mint focus:outline-none"
-                        >
-                          {SECTORS.map((s) => (
-                            <option key={s} value={s} className="bg-forest-black text-paper">
-                              {s}
-                            </option>
-                          ))}
-                        </select>
-                      </Field>
-                    </div>
-
-                    <div>
-                      <Field
-                        label={isFr ? "Où votre entreprise est-elle basée ?" : "Company location"}
-                        id="location"
-                        required
-                        error={errors["location"]}
-                      >
-                        <Input
-                          id="location"
-                          className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
-                          value={location}
-                          onChange={(e) => setLocation(e.target.value)}
-                          maxLength={100}
-                          placeholder={isFr ? "Paris, Bruxelles, Genève ou international" : "Paris, London, New York or international"}
-                        />
-                      </Field>
-                    </div>
-
-                    <div className="sm:col-span-2 space-y-3">
-                      <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-                        {isFr ? "Avez-vous déjà un site web ?" : "Do you already have a website?"} *
-                      </Label>
-                      <div className="grid gap-2 sm:grid-cols-3">
-                        {[
-                          { id: "yes", label: isFr ? "Oui" : "Yes" },
-                          { id: "revamp", label: isFr ? "Existe, mais à revoir" : "Needs a revamp" },
-                          { id: "no", label: isFr ? "Non" : "No" },
-                        ].map((opt) => (
-                          <button
-                            key={opt.id}
-                            type="button"
-                            onClick={() => setWebsiteStatus(opt.id as any)}
-                            className={`rounded-lg border p-3 text-center text-xs font-medium transition-all ${
-                              websiteStatus === opt.id
-                                ? "border-mint bg-pine/70 text-paper font-semibold ring-1 ring-mint"
-                                : "border-paper/15 bg-paper/[0.03] hover:border-mint/50 text-paper/80"
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-
-                      {(websiteStatus === "yes" || websiteStatus === "revamp") && (
-                        <div className="pt-2">
-                          <Field
-                            label={isFr ? "Adresse de votre site web" : "Website URL"}
-                            id="websiteUrl"
-                            error={errors["websiteUrl"]}
-                            helperText={isFr ? "Optionnel si le site n'est pas public." : "Optional if private."}
-                          >
-                            <Input
-                              id="websiteUrl"
-                              type="url"
-                              className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
-                              value={websiteUrl}
-                              onChange={(e) => setWebsiteUrl(e.target.value)}
-                              placeholder="https://acmecorp.com"
-                            />
-                          </Field>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="sm:col-span-2 space-y-2">
-                      <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-                        {isFr ? "Quel est votre rôle dans l'entreprise ?" : "Your role in the business"} *
-                      </Label>
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {ROLES.map((r) => (
-                          <button
-                            key={r}
-                            type="button"
-                            onClick={() => setRole(r)}
-                            className={`rounded-lg border p-3 text-left text-xs font-medium transition-all ${
-                              role === r
-                                ? "border-mint bg-pine/70 text-paper font-semibold ring-1 ring-mint"
-                                : "border-paper/15 bg-paper/[0.03] hover:border-mint/50 text-paper/80"
-                            }`}
-                          >
-                            {r}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ── Step 1 (2/5): Ce que vous voulez améliorer ── */}
-              {step === 1 && (
-                <div className="space-y-7">
-                  <div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-mint font-medium">
-                      <Target className="size-3.5" />
-                      {isFr ? "Étape 02 — Ce que vous voulez améliorer" : "Step 02 — What you want to improve"}
-                    </span>
-                    <h2 className="mt-2 font-display text-2xl sm:text-3xl font-light text-paper">
-                      {isFr ? "Qu'est-ce qui vous amène chez Volka aujourd'hui ?" : "What brings you to Volka today?"}
-                    </h2>
-                    <p className="mt-2 text-sm text-paper/70 font-light">
-                      {isFr
-                        ? "Identifions le blocage qui freine votre dynamique commerciale."
-                        : "Let's identify the bottleneck slowing down your growth."}
-                    </p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-                      {isFr ? "Quel est votre principal objectif aujourd'hui ?" : "Primary goal today"} *
-                    </Label>
-                    <div className="grid gap-2">
-                      {PRIMARY_GOALS.map((goal) => (
-                        <SelectCard
-                          key={goal}
-                          selected={primaryGoal === goal}
-                          onClick={() => setPrimaryGoal(goal)}
-                          title={goal}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-                      {isFr ? "Quels domaines souhaitez-vous améliorer ?" : "Pillars to improve"} *
-                    </Label>
-                    <p className="text-xs text-paper/60">
-                      {isFr
-                        ? "Choisissez tout ce qui vous semble pertinent. Pas besoin de connaître le jargon technique."
-                        : "Select all that apply. No need to know technical agency terms."}
-                    </p>
-                    <div className="grid gap-2.5 sm:grid-cols-2">
-                      {PILLARS_LIST.map((pillar) => (
-                        <MultiPill
-                          key={pillar.id}
-                          selected={selectedPillars.includes(pillar.id)}
-                          onClick={() => togglePillar(pillar.id)}
-                          title={pillar.name}
-                          subtitle={pillar.desc}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Field
-                      label={isFr ? "Décrivez le problème principal que vous rencontrez" : "Describe the main problem you face"}
-                      id="problemDescription"
-                      required
-                      error={errors["problemDescription"]}
-                      helperText={isFr ? "Quelques phrases suffisent pour exposer la situation." : "A few sentences are enough."}
-                    >
-                      <Textarea
-                        id="problemDescription"
-                        rows={4}
-                        className="rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
-                        value={problemDescription}
-                        onChange={(e) => setProblemDescription(e.target.value)}
-                        maxLength={1000}
-                        placeholder={
-                          isFr
-                            ? "Ex. : Que se passe-t-il aujourd'hui ? Nos prospects trouvent notre offre peu claire et nous passons trop de temps à relancer manuellement sans savoir où les opportunités se perdent..."
-                            : "What is happening today? Prospects struggle to understand our difference and we lose track of leads..."
-                        }
-                      />
-                    </Field>
-                  </div>
-                </div>
-              )}
-
-              {/* ── Step 2 (3/5): Votre fonctionnement actuel ── */}
-              {step === 2 && (
-                <div className="space-y-7">
-                  <div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-mint font-medium">
-                      <Workflow className="size-3.5" />
-                      {isFr ? "Étape 03 — Votre fonctionnement actuel" : "Step 03 — Current operations"}
-                    </span>
-                    <h2 className="mt-2 font-display text-2xl sm:text-3xl font-light text-paper">
-                      {isFr ? "Quelques détails sur votre point de départ." : "A few details on where you stand."}
-                    </h2>
-                    <p className="mt-2 text-sm text-paper/70 font-light">
-                      {isFr
-                        ? "Comprendre vos flux existants permet de concevoir une intervention réaliste."
-                        : "Understanding your current setup allows us to scope a realistic intervention."}
-                    </p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-                      {isFr ? "Où vos prospects peuvent-ils passer à l'action aujourd'hui ?" : "Where can prospects take action today?"}
-                    </Label>
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {ACTION_CHANNELS.map((ch) => (
-                        <MultiPill
-                          key={ch}
-                          selected={actionChannels.includes(ch)}
-                          onClick={() => toggleActionChannel(ch)}
-                          title={ch}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-                      {isFr ? "Comment suivez-vous les prospects et opportunités aujourd'hui ?" : "How do you track opportunities today?"}
-                    </Label>
-                    <div className="grid gap-2">
-                      {SALES_TRACKING.map((st) => (
-                        <SelectCard
-                          key={st}
-                          selected={salesTracking === st}
-                          onClick={() => setSalesTracking(st)}
-                          title={st}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Field
-                      label={isFr ? "Quelles tâches aimeriez-vous simplifier ou automatiser ? (Optionnel)" : "Tasks to automate or streamline (Optional)"}
-                      id="automationNeeds"
-                      helperText={isFr ? "Ex. : relancer automatiquement les devis, synchroniser les contacts, envoyer un email de confirmation..." : "E.g. send automated follow-ups, sync leads into CRM..."}
-                    >
-                      <Textarea
-                        id="automationNeeds"
-                        rows={3}
-                        className="rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
-                        value={automationNeeds}
-                        onChange={(e) => setAutomationNeeds(e.target.value)}
-                        maxLength={1000}
-                        placeholder={isFr ? "Décrivez les tâches manuelles récurrentes..." : "Describe recurring manual tasks..."}
-                      />
-                    </Field>
-                  </div>
-                </div>
-              )}
-
-              {/* ── Step 3 (4/5): Résultat souhaité, calendrier et budget ── */}
-              {step === 3 && (
-                <div className="space-y-7">
-                  <div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-mint font-medium">
-                      <Compass className="size-3.5" />
-                      {isFr ? "Étape 04 — Résultat souhaité & Cadre" : "Step 04 — Target outcome & Framework"}
-                    </span>
-                    <h2 className="mt-2 font-display text-2xl sm:text-3xl font-light text-paper">
-                      {isFr ? "Définissons le cadre de votre projet." : "Let's define your project framework."}
-                    </h2>
-                    <p className="mt-2 text-sm text-paper/70 font-light">
-                      {isFr
-                        ? "Précisez votre niveau d'ambition et les repères budgétaires envisagés."
-                        : "Outline your desired outcome and initial budget expectations."}
-                    </p>
-                  </div>
-
-                  <div>
-                    <Field
-                      label={isFr ? "À quoi reconnaîtriez-vous que ce projet est une réussite ?" : "What does success look like?"}
-                      id="vision"
-                      required
-                      error={errors["vision"]}
-                      helperText={isFr ? "Quel changement concret aimeriez-vous observer dans votre entreprise ?" : "What concrete change do you expect to see?"}
-                    >
-                      <Textarea
-                        id="vision"
-                        rows={4}
-                        className="rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
-                        value={vision}
-                        onChange={(e) => setVision(e.target.value)}
-                        maxLength={2000}
-                        placeholder={
-                          isFr
-                            ? "Ex. : Nous aimerions disposer d'un site clair qui convertit 5 à 10 demandes qualifiées par mois, avec un suivi CRM fluide sans perte de prospects..."
-                            : "E.g. We want a clear value proposition and a system that yields 5-10 qualified leads per month..."
-                        }
-                      />
-                    </Field>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-                      {isFr ? "Quel type d'accompagnement vous semble le plus adapté ?" : "Preferred engagement type"} *
-                    </Label>
-                    <div className="grid gap-2.5">
-                      {offers.map((o) => {
-                        const loc = o.translations[locale] || o.translations.fr;
-                        return (
-                          <SelectCard
-                            key={o.id}
-                            selected={selectedOffer === o.id}
-                            onClick={() => setSelectedOffer(o.id)}
-                            title={loc.name}
-                            subtitle={loc.tagline}
-                            badge={formatOfferPrice(o)}
-                            icon={<Sparkles className="size-3.5 text-mint" />}
-                          />
-                        );
-                      })}
-                      <SelectCard
-                        selected={selectedOffer === "Not sure yet"}
-                        onClick={() => setSelectedOffer("Not sure yet")}
-                        title={isFr ? "Je ne sais pas encore" : "Not sure yet"}
-                        subtitle={
-                          isFr
-                            ? "J'aimerais être orienté(e) en fonction de ma situation et des priorités."
-                            : "I'd like guidance on the best starting point."
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-                      {isFr ? "Quel budget avez-vous envisagé ? (repère indicatif HT)" : "Budget range (excl. VAT)"} *
-                    </Label>
-                    <p className="text-xs text-paper/60">
-                      {isFr
-                        ? "Les montants indiqués sont des repères pour cadrer le projet, pas un devis final."
-                        : "These amounts are planning benchmarks, not a final quote."}
-                    </p>
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {budgets.map((b) => (
-                        <button
-                          key={b}
-                          type="button"
-                          onClick={() => setBudgetRange(b)}
-                          className={`rounded-xl border p-3.5 text-left text-xs font-medium transition-all ${
-                            budgetRange === b
-                              ? "border-mint bg-pine/70 text-paper font-semibold shadow-sm ring-1 ring-mint"
-                              : "border-paper/15 bg-paper/[0.03] hover:border-mint/50 text-paper/85"
-                          }`}
-                        >
-                          {b}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-                      {isFr ? "Quand aimeriez-vous démarrer ?" : "When would you like to start?"} *
-                    </Label>
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {timelines.map((tl) => (
-                        <button
-                          key={tl}
-                          type="button"
-                          onClick={() => setTimeline(tl)}
-                          className={`rounded-xl border p-3.5 text-left text-xs font-medium transition-all ${
-                            timeline === tl
-                              ? "border-mint bg-pine/70 text-paper font-semibold shadow-sm ring-1 ring-mint"
-                              : "border-paper/15 bg-paper/[0.03] hover:border-mint/50 text-paper/85"
-                          }`}
-                        >
-                          {tl}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ── Step 4 (5/5): Vos coordonnées ── */}
-              {step === 4 && (
-                <div className="space-y-7">
-                  <div>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-mint font-medium">
-                      <FileText className="size-3.5" />
-                      {isFr ? "Étape 05 — Vos coordonnées" : "Step 05 — Your contact details"}
-                    </span>
-                    <h2 className="mt-2 font-display text-2xl sm:text-3xl font-light text-paper">
-                      {isFr ? "Où pouvons-nous vous recontacter ?" : "Where can we get back to you?"}
-                    </h2>
-                    <p className="mt-2 text-sm text-paper/70 font-light">
-                      {isFr
-                        ? "Dernière étape. Nous reviendrons vers vous avec une analyse préliminaire."
-                        : "Final step. We will get back to you with a preliminary review."}
-                    </p>
-                  </div>
-
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div className="sm:col-span-2">
-                      <Field
-                        label={isFr ? "Votre prénom et nom" : "Your full name"}
-                        id="name"
-                        required
-                        error={errors["name"]}
-                      >
-                        <Input
-                          id="name"
-                          className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          maxLength={100}
-                          placeholder={isFr ? "Alexandre Martin" : "Alex Martin"}
-                          autoFocus
-                        />
-                      </Field>
-                    </div>
-
-                    <div>
-                      <Field
-                        label={isFr ? "Votre adresse e-mail professionnelle" : "Work email address"}
-                        id="email"
-                        required
-                        error={errors["email"]}
-                      >
-                        <Input
-                          id="email"
-                          type="email"
-                          className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          maxLength={255}
-                          placeholder="alex@acmecorp.com"
-                        />
-                      </Field>
-                    </div>
-
-                    <div>
-                      <Field
-                        label={isFr ? "Votre numéro de téléphone" : "Phone number"}
-                        id="phone"
-                        required
-                        error={errors["phone"]}
-                        helperText={isFr ? "Indicatif pays recommandé (ex. : +33 6 12 34 56 78)." : "Country code recommended."}
-                      >
-                        <Input
-                          id="phone"
-                          className="h-12 rounded-lg border border-paper/20 bg-paper/5 text-paper placeholder:text-paper/35 focus:border-mint focus:ring-1 focus:ring-mint text-base"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          maxLength={40}
-                          placeholder="+33 6 12 34 56 78"
-                        />
-                      </Field>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label className="text-xs font-mono uppercase tracking-[0.16em] text-paper/80">
-                      {isFr ? "Quel est le meilleur moyen de vous contacter ?" : "Best way to reach you"} *
-                    </Label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <ChannelCard
-                        selected={preferredChannel === "email"}
-                        onClick={() => setPreferredChannel("email")}
-                        title="Email"
-                        icon={<Mail className="size-4" />}
-                      />
-                      <ChannelCard
-                        selected={preferredChannel === "whatsapp"}
-                        onClick={() => setPreferredChannel("whatsapp")}
-                        title="WhatsApp"
-                        icon={<MessageCircle className="size-4" />}
-                      />
-                      <ChannelCard
-                        selected={preferredChannel === "phone"}
-                        onClick={() => setPreferredChannel("phone")}
-                        title={isFr ? "Téléphone" : "Phone"}
-                        icon={<Phone className="size-4" />}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Consent Checkbox */}
-                  <div className="pt-2">
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={consent}
-                        onChange={(e) => setConsent(e.target.checked)}
-                        className="mt-1 size-4 rounded border-paper/20 bg-paper/10 text-ochre focus:ring-mint"
-                      />
-                      <span className="text-xs text-paper/70 leading-relaxed group-hover:text-paper">
-                        {isFr ? (
-                          <>
-                            J'accepte que Volka utilise les informations transmises pour examiner ma demande et me recontacter à ce sujet. Consultez nos{" "}
-                            <Link to="/legal" className="text-mint underline underline-offset-2">
-                              mentions légales et politique de confidentialité
-                            </Link>
-                            .
-                          </>
-                        ) : (
-                          <>
-                            I agree that Volka may process this information to review my project and contact me. View our{" "}
-                            <Link to="/legal" className="text-mint underline underline-offset-2">
-                              privacy policy
-                            </Link>
-                            .
-                          </>
-                        )}
-                      </span>
-                    </label>
-                    {errors["consent"] && (
-                      <p className="mt-1.5 text-xs text-terracotta font-medium">
-                        {errors["consent"]}
-                      </p>
-                    )}
-                  </div>
-
-                  {status === "error" && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="rounded-lg border border-terracotta/40 bg-terracotta/10 p-4 text-xs text-terracotta"
-                    >
-                      {errorMessage}
-                    </motion.div>
-                  )}
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-
-          {/* ─── Navigation buttons ─── */}
-          <div className="mt-10 flex items-center justify-between gap-4 border-t border-paper/15 pt-6">
-            {step > 0 ? (
-              <button
-                type="button"
-                onClick={goPrev}
-                className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.14em] text-paper/60 transition-colors hover:text-paper"
-              >
-                <ArrowLeft className="size-4" /> {isFr ? "Précédent" : "Previous"}
-              </button>
-            ) : (
-              <Link
-                to="/"
-                className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.14em] text-paper/60 hover:text-paper"
-              >
-                {isFr ? "Annuler" : "Cancel"}
-              </Link>
-            )}
-
-            {step < TOTAL_STEPS - 1 ? (
-              <Button onClick={handleNext} className="rounded-full bg-ochre hover:bg-ochre/90 text-forest-black font-semibold min-h-12 px-7 shadow-xl">
-                {isFr ? "Continuer" : "Continue"} <ArrowRight className="size-4 ml-2" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleSubmit}
-                className="rounded-full bg-ochre hover:bg-ochre/90 text-forest-black font-semibold min-h-12 px-8 shadow-xl"
-                disabled={status === "sending"}
-              >
-                {status === "sending" ? (
-                  <span className="flex items-center gap-2">
-                    <span className="size-3.5 rounded-full border-2 border-forest-black border-t-transparent animate-spin" />
-                    {isFr ? "Envoi de votre demande..." : "Submitting..."}
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    {isFr ? "Envoyer ma demande" : "Submit my inquiry"} <ArrowUpRight className="size-4 ml-1" />
-                  </span>
-                )}
-              </Button>
-            )}
-          </div>
-
-          {/* Legal disclaimer under button matching Section 13 */}
-          <p className="mt-4 text-center text-[11px] leading-relaxed text-paper/50 max-w-xl mx-auto">
-            {isFr
-              ? "L'envoi de ce formulaire ne vaut pas acceptation du projet ni validation d'un devis. Nous étudierons votre demande avant de vous proposer la suite la plus pertinente."
-              : "Submitting this form does not mean the project is accepted or that a quote has been issued. We will review your request before proposing the most relevant next step."}
-          </p>
-
-          {/* Progress bar */}
-          <div className="mt-8 h-1.5 w-full overflow-hidden rounded-full bg-paper/10">
-            <motion.div
-              className="h-full bg-mint"
-              animate={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }}
-              transition={{ duration: 0.4, ease: easeOut }}
-            />
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] font-mono text-paper/50">
-            <span>
-              {isFr ? `Étape ${step + 1} sur ${TOTAL_STEPS}` : `Step ${step + 1} of ${TOTAL_STEPS}`}
-            </span>
-            <span>
-              {Math.round(((step + 1) / TOTAL_STEPS) * 100)}% {isFr ? "complété" : "completed"}
-            </span>
-          </div>
-        </div>
-      </section>
-
-      <SiteFooter />
-    </main>
+      }
+    />
   );
 }

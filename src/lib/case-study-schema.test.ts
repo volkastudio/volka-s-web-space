@@ -179,3 +179,92 @@ describe("getMediaUrl", () => {
     expect(getMediaUrl(null)).toBe("");
   });
 });
+
+describe("caseStudyGallerySchema", () => {
+  it("defaults to disabled coverflow when given empty array or undefined", () => {
+    const fromArray = caseStudySchema.shape.gallery.parse([]);
+    expect(fromArray).toEqual({ enabled: false, style: "coverflow", images: [] });
+
+    const fromNull = caseStudySchema.shape.gallery.parse(null);
+    expect(fromNull).toEqual({ enabled: false, style: "coverflow", images: [] });
+  });
+
+  it("parses valid gallery config with style coverflow or perspective", () => {
+    const config = {
+      enabled: true,
+      style: "perspective" as const,
+      images: [
+        { id: "1", url: "cases/img1.webp", alt: "First" },
+        { id: "2", url: "cases/img2.webp", alt: "Second" },
+        { id: "3", url: "cases/img3.webp", alt: "Third" },
+      ],
+    };
+    const parsed = caseStudySchema.shape.gallery.parse(config);
+    expect(parsed.enabled).toBe(true);
+    expect(parsed.style).toBe("perspective");
+    expect(parsed.images).toHaveLength(3);
+    expect(parsed.images[0]?.alt).toBe("First");
+  });
+
+  it("normalizes legacy gallery array with path property", () => {
+    const legacy = [
+      { path: "cases/item1.jpg", alt: "Alt 1" },
+      { path: "cases/item2.jpg", alt: "Alt 2" },
+    ];
+    const parsed = caseStudySchema.shape.gallery.parse(legacy);
+    expect(parsed.enabled).toBe(false);
+    expect(parsed.images).toHaveLength(2);
+    expect(parsed.images[0]?.url).toBe("cases/item1.jpg");
+    expect(parsed.images[0]?.alt).toBe("Alt 1");
+  });
+
+  it("resolves gallery image URLs in resolveCaseStudy", () => {
+    const mockRecordWithGallery: CaseStudyRecord = {
+      id: "123e4567-e89b-12d3-a456-426614174000",
+      slug: "gallery-case",
+      kind: "concept",
+      status: "published",
+      sort_order: 1,
+      featured: true,
+      client: "Gallery Client",
+      year: "2025",
+      location: "Paris",
+      offer: null,
+      cover_path: "/assets/cover.jpg",
+      gallery: {
+        enabled: true,
+        style: "coverflow",
+        images: [
+          { id: "g1", url: "/assets/g1.jpg", alt: "G1" },
+          { id: "g2", url: "https://example.com/g2.jpg", alt: "G2" },
+          { id: "g3", url: "cases/g3.webp", alt: "G3" },
+        ],
+      },
+      translations: {
+        fr: {
+          tagline: "Tag",
+          discipline: "Discipline",
+          sector: "Sector",
+          imageAlt: "Alt",
+          summary: "Summary",
+          context: "Context",
+          challenge: "Challenge",
+          execution: "Execution",
+          services: ["S1"],
+          deliverables: ["D1"],
+          results: [{ value: "1", label: "R1" }],
+        },
+      },
+      published_at: null,
+      created_at: "2026-01-01T00:00:00Z",
+      updated_at: "2026-01-01T00:00:00Z",
+    };
+
+    const resolved = resolveCaseStudy(mockRecordWithGallery, "fr");
+    expect(resolved.gallery?.enabled).toBe(true);
+    expect(resolved.gallery?.style).toBe("coverflow");
+    expect(resolved.gallery?.images).toHaveLength(3);
+    expect(resolved.gallery?.images[0]?.url).toBe("/assets/g1.jpg");
+    expect(resolved.gallery?.images[1]?.url).toBe("https://example.com/g2.jpg");
+  });
+});

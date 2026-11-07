@@ -29,12 +29,70 @@ export const caseStudyTranslationSchema = z.object({
 
 export type CaseStudyTranslation = z.infer<typeof caseStudyTranslationSchema>;
 
+export const galleryStyleSchema = z.enum(["coverflow", "perspective"]);
+export type GalleryStyle = z.infer<typeof galleryStyleSchema>;
+
+export const caseStudyGalleryImageSchema = z.object({
+  id: z.string(),
+  url: z.string().min(1, "Image URL or path is required"),
+  alt: z.string().default(""),
+});
+
+export type CaseStudyGalleryImage = z.infer<typeof caseStudyGalleryImageSchema>;
+
+export const caseStudyGalleryConfigSchema = z.object({
+  enabled: z.boolean().default(false),
+  style: galleryStyleSchema.default("coverflow"),
+  images: z.array(caseStudyGalleryImageSchema).default([]),
+});
+
+export type CaseStudyGalleryConfig = z.infer<typeof caseStudyGalleryConfigSchema>;
+
+// Preprocess to handle backwards-compatibility with:
+// 1. undefined / null -> default disabled
+// 2. legacy array `[]` or `[{ path, alt, caption }]`
+// 3. new config object `{ enabled, style, images }`
+export const caseStudyGallerySchema = z.preprocess((val) => {
+  if (!val) {
+    return { enabled: false, style: "coverflow", images: [] };
+  }
+  if (Array.isArray(val)) {
+    return {
+      enabled: false,
+      style: "coverflow",
+      images: val
+        .map((item, idx) => ({
+          id: typeof item?.id === "string" && item.id ? item.id : `legacy-${idx}`,
+          url: item?.url || item?.path || "",
+          alt: item?.alt || "",
+        }))
+        .filter((img) => Boolean(img.url)),
+    };
+  }
+  if (typeof val === "object") {
+    const raw = val as Record<string, unknown>;
+    const rawImages = Array.isArray(raw["images"]) ? raw["images"] : [];
+    return {
+      enabled: Boolean(raw["enabled"]),
+      style: raw["style"] === "perspective" ? "perspective" : "coverflow",
+      images: rawImages
+        .map((img: any, idx: number) => ({
+          id: typeof img?.id === "string" && img.id ? img.id : `img-${idx}`,
+          url: typeof img?.url === "string" ? img.url : typeof img?.path === "string" ? img.path : "",
+          alt: typeof img?.alt === "string" ? img.alt : "",
+        }))
+        .filter((img: any) => Boolean(img.url)),
+    };
+  }
+  return { enabled: false, style: "coverflow", images: [] };
+}, caseStudyGalleryConfigSchema);
+
+// Backwards-compatible alias for legacy references
 export const galleryItemSchema = z.object({
   path: z.string().min(1),
   alt: z.string().optional(),
   caption: z.string().optional(),
 });
-
 export type GalleryItem = z.infer<typeof galleryItemSchema>;
 
 export const caseStudySchema = z.object({
@@ -53,7 +111,7 @@ export const caseStudySchema = z.object({
   offer: z.string().nullable().optional(),
   pillars: z.array(z.string()).default([]).optional(),
   cover_path: z.string().nullable().optional(),
-  gallery: z.array(galleryItemSchema).default([]),
+  gallery: caseStudyGallerySchema.default({ enabled: false, style: "coverflow", images: [] }),
   translations: z.object({
     fr: caseStudyTranslationSchema,
     en: caseStudyTranslationSchema.partial().optional(),
@@ -76,7 +134,7 @@ export interface CaseStudyRecord {
   offer: string | null;
   pillars?: string[];
   cover_path: string | null;
-  gallery: GalleryItem[];
+  gallery: CaseStudyGalleryConfig | GalleryItem[];
   translations: {
     fr: CaseStudyTranslation;
     en?: Partial<CaseStudyTranslation> | undefined;
@@ -111,7 +169,7 @@ export interface ResolvedCaseStudy {
   deliverables: string[];
   results: { value: string; label: string }[];
   quote?: { text: string; author: string; role: string } | undefined;
-  gallery?: GalleryItem[] | undefined;
+  gallery?: CaseStudyGalleryConfig | undefined;
 }
 
 /**
@@ -164,6 +222,17 @@ export function resolveCaseStudy(
       ? rawOffer.split(/[,·]/).map((p) => p.trim()).filter(Boolean)
       : [];
 
+  const parsedGallery = caseStudyGallerySchema.safeParse(record.gallery);
+  const galleryConfig: CaseStudyGalleryConfig = parsedGallery.success
+    ? {
+        ...parsedGallery.data,
+        images: parsedGallery.data.images.map((img) => ({
+          ...img,
+          url: getMediaUrl(img.url),
+        })),
+      }
+    : { enabled: false, style: "coverflow", images: [] };
+
   const result: ResolvedCaseStudy = {
     id: record.id,
     slug: record.slug,
@@ -188,7 +257,7 @@ export function resolveCaseStudy(
     services,
     deliverables,
     results,
-    gallery: record.gallery,
+    gallery: galleryConfig,
   };
 
   if (quote) {

@@ -121,7 +121,7 @@ function Index() {
 
           <div className="mt-6 max-w-5xl">
             <h1
-              className="font-display text-5xl font-light leading-[0.94] tracking-[-0.03em] sm:text-6xl md:text-8xl lg:text-9xl text-balance"
+              className="font-display text-[3.6rem] font-light leading-[0.96] tracking-[-0.03em] sm:text-7xl md:text-8xl lg:text-9xl text-balance"
             >
               {/* Line 1 */}
               <motion.span
@@ -165,7 +165,7 @@ function Index() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 1.0, ease: easeOut }}
           >
-            <p className="max-w-xl text-lg font-light leading-relaxed text-primary-foreground/85 md:text-xl">
+            <p className="max-w-md text-base font-light leading-relaxed text-primary-foreground/70 md:text-lg">
               {t.hero.subtitle}
             </p>
             <ScrollArrow label={t.hero.seeApproach} />
@@ -248,11 +248,8 @@ function Index() {
       </section>
 
       {/* ─── Selected Work (Concepts sélectionnés: up to 4 concepts) ─── */}
-      <section id="work" className="relative isolate overflow-hidden border-b border-border bg-forest-black px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14">
-        {/* Code-made architectural teal slats band */}
-        <TealBackground variant="lines" />
-
-        <div className="relative z-10 mx-auto max-w-7xl">
+      <section id="work" className="border-b border-border bg-forest px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14">
+        <div className="mx-auto max-w-7xl">
           <Reveal>
             <div className="mb-14 flex items-end justify-between">
               <div>
