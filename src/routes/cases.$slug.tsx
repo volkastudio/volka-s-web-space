@@ -74,11 +74,11 @@ function CaseStudyPage() {
   const staticStudy = getStaticCaseStudy(initialStudy.slug, locale);
   const study = staticStudy
     ? {
-        ...staticStudy,
-        gallery: initialStudy.gallery?.enabled
-          ? initialStudy.gallery
-          : staticStudy.gallery ?? initialStudy.gallery,
-      }
+      ...staticStudy,
+      gallery: initialStudy.gallery?.enabled
+        ? initialStudy.gallery
+        : staticStudy.gallery ?? initialStudy.gallery,
+    }
     : initialStudy;
   const next = (initialNext?.slug ? getStaticCaseStudy(initialNext.slug, locale) : null) || initialNext;
 

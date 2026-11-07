@@ -1,10 +1,11 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useMotionValue } from "motion/react";
 import { ArrowUpRight, Clock, Calendar, Youtube, Linkedin, PlayCircle, ArrowRight } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { TealBackground } from "@/components/teal-background";
 import { Reveal } from "@/components/reveal";
 import { SplitHeading } from "@/components/split-heading";
 import { Button } from "@/components/ui/button";
@@ -66,7 +67,9 @@ function JournalIndexPage() {
 
   const [selectedTag, setSelectedTag] = React.useState<string>("all");
   const [hoveredPost, setHoveredPost] = React.useState<ResolvedPost | null>(null);
-  const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
+  // Motion values follow the pointer without re-rendering the list on every mouse move.
+  const previewX = useMotionValue(0);
+  const previewY = useMotionValue(0);
 
   const filteredPosts = React.useMemo(() => {
     if (selectedTag === "all") return posts;
@@ -91,7 +94,8 @@ function JournalIndexPage() {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    setMousePos({ x: e.clientX, y: e.clientY });
+    previewX.set(e.clientX + 28);
+    previewY.set(e.clientY - 96);
   };
 
   return (
@@ -100,11 +104,7 @@ function JournalIndexPage() {
       <section className="relative isolate overflow-hidden bg-forest-black text-primary-foreground pt-36 pb-20 md:pt-48 md:pb-28 px-5 md:px-10 lg:px-14">
         <SiteHeader variant="overlay" />
 
-        {/* Ambient liquid glow */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-32 left-1/3 h-96 w-96 rounded-full bg-gold/10 blur-3xl animate-liquid-glow"
-        />
+        <TealBackground variant="quiet" />
 
         <div className="relative mx-auto max-w-7xl">
           <Reveal>
@@ -179,7 +179,7 @@ function JournalIndexPage() {
                       />
                     )}
                     {featuredPost.social_links?.youtube && (
-                      <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/80 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
+                      <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-sm bg-black/80 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
                         <PlayCircle className="size-3 text-red-500" />
                         <span>{t.journal.videoIncluded}</span>
                       </span>
@@ -266,7 +266,7 @@ function JournalIndexPage() {
 
                         <div className="flex items-center gap-4 text-xs font-mono uppercase tracking-wider text-muted-foreground shrink-0 self-end sm:self-auto">
                           {post.tags[0] && (
-                            <span className="rounded-full border border-border/80 bg-background px-3 py-1 text-[11px] text-muted-foreground group-hover:border-gold/40">
+                            <span className="rounded-sm border border-border/80 bg-background px-3 py-1 text-[11px] text-muted-foreground group-hover:border-gold/40">
                               {post.tags[0]}
                             </span>
                           )}
@@ -290,11 +290,8 @@ function JournalIndexPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.18, ease: "easeOut" }}
-                    className="pointer-events-none fixed z-50 hidden lg:block overflow-hidden rounded-xl shadow-2xl border border-white/20 bg-forest-black w-80 h-48"
-                    style={{
-                      left: mousePos.x + 28,
-                      top: mousePos.y - 96,
-                    }}
+                    className="pointer-events-none fixed left-0 top-0 z-50 hidden lg:block overflow-hidden rounded-md shadow-2xl border border-white/20 bg-forest-black w-80 h-48"
+                    style={{ x: previewX, y: previewY }}
                   >
                     <img
                       src={hoveredPost.cover_image}
@@ -315,10 +312,7 @@ function JournalIndexPage() {
 
       {/* ─── Dark Closing Block (Points to Free Audit + Media Channels) ─── */}
       <section className="relative isolate overflow-hidden bg-forest-black px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14 border-t border-white/10">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-mint/10 blur-3xl animate-liquid-glow"
-        />
+        <TealBackground variant="quiet" />
 
         <div className="relative mx-auto max-w-4xl text-center">
           <Reveal>

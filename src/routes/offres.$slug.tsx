@@ -1,8 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowUpRight, Check, Clock, ArrowLeft, HelpCircle, AlertCircle, ArrowRight } from "lucide-react";
+import { ArrowUpRight, Check, ArrowLeft, AlertCircle, ArrowRight } from "lucide-react";
 
 import { CurrencySwitcher } from "@/components/currency-switcher";
+import { TealBackground } from "@/components/teal-background";
 import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -97,32 +99,24 @@ function OfferNotFound() {
 
 const easeOut = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-// Distinct ambient glow per offer
+// Distinct accent per offer
 const offerVisualThemes: Record<
   string,
   {
     accentText: string;
-    orbPrimary: string;
-    orbSecondary: string;
     badgeBg: string;
   }
 > = {
   "01": {
     accentText: "text-gold",
-    orbPrimary: "bg-gold/15",
-    orbSecondary: "bg-amber-500/10",
     badgeBg: "border-gold/30 bg-gold/10 text-gold",
   },
   "02": {
     accentText: "text-mint",
-    orbPrimary: "bg-mint/15",
-    orbSecondary: "bg-emerald-500/10",
     badgeBg: "border-mint/30 bg-mint/10 text-mint",
   },
   "03": {
     accentText: "text-gold",
-    orbPrimary: "bg-gold/12",
-    orbSecondary: "bg-mint/15",
     badgeBg: "border-gold/30 bg-gold/10 text-gold",
   },
 };
@@ -135,6 +129,19 @@ function OfferPage() {
   const theme = offerVisualThemes[offer.index] ?? offerVisualThemes["01"]!;
   const priceStructured = formatOfferPriceStructured(offer);
 
+  // The mobile price bar only appears once the hero (which already shows the price) is scrolled past.
+  const heroRef = useRef<HTMLElement>(null);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setShowStickyBar(!!entry && !entry.isIntersecting);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   // Alternative offer recommendation from fitGuide
   const recommendedAlternative = offer.fitGuide.recommendedAlternativeSlug
     ? getOffer(offer.fitGuide.recommendedAlternativeSlug)
@@ -144,30 +151,13 @@ function OfferPage() {
     : null;
 
   return (
-    <main className="bg-background text-foreground pb-24 md:pb-0">
+    <main className="bg-background text-foreground">
       {/* ─── Full-screen Hero ─── */}
-      <section className="relative isolate min-h-svh flex flex-col justify-between overflow-hidden bg-forest-black text-primary-foreground">
-        {/* Subtle code-made background lines */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px)",
-            backgroundSize: "80px 100%",
-          }}
-        />
-
-        {/* Ambient liquid glow tailored per offer */}
-        <div
-          aria-hidden="true"
-          className={`pointer-events-none absolute -top-40 left-1/4 h-96 w-96 rounded-full ${theme.orbPrimary} blur-3xl animate-liquid-glow`}
-        />
-        <div
-          aria-hidden="true"
-          className={`pointer-events-none absolute -bottom-40 right-1/4 h-96 w-96 rounded-full ${theme.orbSecondary} blur-3xl animate-liquid-glow`}
-          style={{ animationDelay: "3.5s" }}
-        />
+      <section
+        ref={heroRef}
+        className="relative isolate min-h-svh flex flex-col justify-between overflow-hidden bg-forest-black text-primary-foreground"
+      >
+        <TealBackground variant="glow" />
 
         {/* Floating frosted SiteHeader */}
         <SiteHeader variant="overlay" />
@@ -204,7 +194,7 @@ function OfferPage() {
                   {offer.index}
                 </span>
                 <span
-                  className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-mono uppercase tracking-[0.18em] ${theme.badgeBg}`}
+                  className={`inline-flex items-center rounded-sm border px-3 py-1 text-xs font-mono uppercase tracking-[0.18em] ${theme.badgeBg}`}
                 >
                   {isFr ? `Offre ${offer.index}` : `Offer ${offer.index}`} · {offer.duration}
                 </span>
@@ -277,8 +267,13 @@ function OfferPage() {
         </div>
       </section>
 
-      {/* ─── Mobile Sticky Bar (price + button pinned at bottom) ─── */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-forest-black/95 backdrop-blur-md border-t border-white/15 px-5 py-3.5 flex items-center justify-between md:hidden shadow-2xl">
+      {/* ─── Mobile Sticky Bar (appears after the hero) ─── */}
+      <div
+        aria-hidden={!showStickyBar}
+        className={`fixed bottom-0 inset-x-0 z-40 bg-forest-black/95 backdrop-blur-md border-t border-white/15 px-5 py-3.5 flex items-center justify-between md:hidden transition-transform duration-300 ${
+          showStickyBar ? "translate-y-0" : "translate-y-full pointer-events-none"
+        }`}
+      >
         <div className="flex flex-col">
           <span className="text-[10px] font-mono uppercase tracking-wider text-primary-foreground/60">
             {priceStructured.prefix}
@@ -306,12 +301,48 @@ function OfferPage() {
         </Button>
       </div>
 
+      {/* ─── Pitch: who this is for, how it works, what the price means ─── */}
+      <section className="bg-background px-5 py-16 md:px-10 md:py-24 lg:px-14">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
+          <Reveal>
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              {isFr ? "L'approche" : "The approach"}
+            </p>
+            <p className="mt-5 font-display text-2xl font-light leading-snug text-foreground md:text-3xl">
+              {offer.pitch}
+            </p>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <div className="space-y-8">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                  {isFr ? "Comment ça se passe" : "How it works"}
+                </p>
+                <p className="mt-3 text-base font-light leading-relaxed text-foreground/85">
+                  {offer.howItWorks}
+                </p>
+              </div>
+
+              <div className="rounded-sm border border-gold/40 bg-gold/5 p-5 md:p-6">
+                <p className="font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-gold">
+                  {isFr ? "Ce que signifie le tarif de départ" : "What the starting price means"}
+                </p>
+                <p className="mt-2 text-sm font-light leading-relaxed text-foreground/85">
+                  {offer.priceMeaning}
+                </p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ─── Inclusions: Numbered list with thin dividing lines ─── */}
-      <section className="bg-background px-5 py-20 md:px-10 md:py-28 lg:px-14">
+      <section className="border-t border-border bg-background px-5 py-20 md:px-10 md:py-28 lg:px-14">
         <div className="mx-auto max-w-7xl">
           <Reveal>
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              {t.offerDetail.whatsIncluded}
+              {isFr ? "Contenu" : "Scope"}
             </p>
             <h2 className="mt-4 font-display text-4xl font-medium tracking-tight md:text-5xl">
               {t.offerDetail.whatsIncluded}
@@ -364,7 +395,7 @@ function OfferPage() {
             <Reveal delay={100}>
               <div className="h-full rounded-2xl border border-border bg-muted/20 p-7 sm:p-9">
                 <div className="flex items-center gap-3 border-b border-border/80 pb-5">
-                  <span className="flex size-7 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
+                  <span className="flex size-7 items-center justify-center rounded-sm bg-primary/10 text-primary">
                     <Check className="size-4" />
                   </span>
                   <h3 className="font-display text-2xl font-medium">
@@ -375,7 +406,7 @@ function OfferPage() {
                 <ul className="mt-6 space-y-5">
                   {offer.fitGuide.forYouIf.map((q, i) => (
                     <li key={i} className="flex items-start gap-4 text-sm font-light leading-relaxed text-foreground/90">
-                      <span className="mt-1 size-1.5 shrink-0 rounded-full bg-emerald-500" />
+                      <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" />
                       <span>{q}</span>
                     </li>
                   ))}
@@ -387,7 +418,7 @@ function OfferPage() {
             <Reveal delay={200}>
               <div className="h-full rounded-2xl border border-border bg-muted/20 p-7 sm:p-9">
                 <div className="flex items-center gap-3 border-b border-border/80 pb-5">
-                  <span className="flex size-7 items-center justify-center rounded-full bg-amber-500/15 text-amber-600">
+                  <span className="flex size-7 items-center justify-center rounded-sm bg-terracotta/10 text-terracotta">
                     <AlertCircle className="size-4" />
                   </span>
                   <h3 className="font-display text-2xl font-medium">
@@ -398,7 +429,7 @@ function OfferPage() {
                 <ul className="mt-6 space-y-5">
                   {offer.fitGuide.notForYouIf.map((q, i) => (
                     <li key={i} className="flex items-start gap-4 text-sm font-light leading-relaxed text-muted-foreground">
-                      <span className="mt-1 size-1.5 shrink-0 rounded-full bg-amber-500/60" />
+                      <span className="mt-2 size-1.5 shrink-0 rounded-full bg-terracotta/60" />
                       <span>{q}</span>
                     </li>
                   ))}
@@ -488,7 +519,7 @@ function OfferPage() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-                  {t.offerDetail.compareTitle}
+                  {isFr ? "Les trois offres" : "The three offers"}
                 </p>
                 <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">
                   {t.offerDetail.compareTitle}
@@ -583,10 +614,7 @@ function OfferPage() {
 
       {/* ─── Single Dark Closing CTA Block ─── */}
       <section className="relative isolate overflow-hidden bg-forest-black px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14 border-t border-white/10">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-gold/10 blur-3xl animate-liquid-glow"
-        />
+        <TealBackground variant="quiet" />
 
         <div className="relative mx-auto max-w-7xl">
           <Reveal>

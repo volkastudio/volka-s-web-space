@@ -22,6 +22,12 @@ export type LocalizedOfferContent = {
   duration: string;
   cta: string;
   includes: string[];
+  /** Opening paragraph on the offer page: the situation this engagement is for. */
+  pitch: string;
+  /** How the engagement works for this offer. */
+  howItWorks: string;
+  /** What the starting price does and does not represent. */
+  priceMeaning: string;
 };
 
 export type OfferFitGuide = {
@@ -99,6 +105,12 @@ export const offers: Offer[] = [
           "Une intervention ciblée pour traiter un problème clairement identifié, avec un périmètre défini autour de votre besoin.",
         duration: "Intervention ciblée",
         cta: "Parler de mon projet",
+        pitch:
+          "Votre activité n'a pas toujours besoin d'une refonte complète. Parfois, un point précis freine le reste : une offre difficile à comprendre, un site qui transforme peu les visites en demandes, des prospects qui ne sont pas suivis ou un processus encore trop manuel. Volka se concentre sur ce point et mobilise les compétences qu'il exige, dans un périmètre défini ensemble.",
+        howItWorks:
+          "Nous clarifions le résultat recherché, déterminons ce qui doit réellement être fait, puis réunissons les compétences adaptées pour réaliser le périmètre convenu. Vous savez ce que l'intervention couvre, ce qui en est exclu et comment elle s'intègre à votre activité. L'objectif n'est pas d'ajouter des prestations : c'est de résoudre le problème qui justifie le projet.",
+        priceMeaning:
+          "Ce tarif correspond au point d'entrée d'une intervention au périmètre limité, avec un objectif clairement défini. Il ne correspond pas à un forfait universel. Le budget final dépend du travail nécessaire, de sa complexité et des livrables convenus.",
         includes: [
           "Diagnostic et cadrage précis du point de friction",
           "Intervention ciblée sur un pilier défini (Perception, Conversion, Ventes ou Automatisation)",
@@ -113,6 +125,12 @@ export const offers: Offer[] = [
           "A focused engagement built around a clearly identified business problem and a defined scope.",
         duration: "Focused engagement",
         cta: "Discuss my project",
+        pitch:
+          "Not every business problem calls for a full rebuild. Sometimes one specific issue is holding other things back: an offer that is hard to understand, a website that is not turning visits into enquiries, leads that are slipping through the cracks, or a process still handled manually. Volka focuses on that issue and brings in the expertise it actually requires, within a clearly agreed scope.",
+        howItWorks:
+          "We clarify what needs to change, establish the work required and bring in the expertise needed to deliver the agreed scope. You know what is covered, what is not and how the work fits into your business. The point is not to add more services. It is to address the issue that made the project necessary.",
+        priceMeaning:
+          "This is the entry point for a contained engagement with a clearly defined objective. It is not a universal package. The final price depends on the work required, its complexity and the agreed deliverables.",
         includes: [
           "Diagnosis and clear scoping of the primary friction point",
           "Targeted intervention on a defined pillar (Perception, Conversion, Sales, or Automation)",
@@ -184,6 +202,12 @@ export const offers: Offer[] = [
           "Des expertises coordonnées pour relier les éléments qui doivent fonctionner ensemble autour de votre objectif.",
         duration: "Système intégré",
         cta: "Construire mon système",
+        pitch:
+          "Votre entreprise peut disposer des bons éléments sans qu'ils forment un ensemble efficace. Une identité peut inspirer confiance sans guider clairement vers l'achat. Une campagne peut générer des demandes sans que leur suivi soit organisé. Un site, un CRM et plusieurs outils peuvent coexister sans former un véritable parcours commercial. Volka examine les liens entre les éléments qui comptent pour votre objectif, repère les points de friction et réunit les expertises nécessaires pour construire une réponse cohérente.",
+        howItWorks:
+          "Nous partons de votre objectif commercial, pas d'une liste de services à vendre. Nous examinons les éléments concernés, hiérarchisons les problèmes à résoudre, puis définissons ce qui doit être clarifié, conçu, connecté ou mis en place. Le périmètre est construit autour des priorités réelles de votre activité ; il ne suppose pas que les cinq piliers soient tous nécessaires.",
+        priceMeaning:
+          "Ce tarif constitue le point d'entrée d'un projet qui nécessite de coordonner plusieurs éléments autour d'un objectif défini. Il ne signifie pas que toutes les expertises de Volka, les cinq piliers ou une transformation complète sont inclus. La proposition précise les éléments étudiés, conçus, mis en œuvre et remis à votre équipe.",
         includes: [
           "Diagnostic stratégique et cartographie complète du parcours client",
           "Connexion Perception + Conversion (positionnement, identité et plateforme web)",
@@ -198,6 +222,12 @@ export const offers: Offer[] = [
           "A coordinated combination of expertise, bringing the parts that need to work together around one business objective.",
         duration: "Integrated system",
         cta: "Build my growth system",
+        pitch:
+          "A business can have the right pieces and still lack a system that works. A strong brand does not automatically create a clear path to purchase. A campaign can generate enquiries without a reliable follow-up process. A website, a CRM and a collection of tools can all exist without supporting one coherent customer journey. Volka looks at how the relevant parts connect, identifies where things are breaking down and brings the right expertise together to build around a defined business objective.",
+        howItWorks:
+          "We start with the business objective, not a predetermined list of services. We look at the relevant parts of the business, prioritise the issues that need attention and define what must be clarified, designed, connected or implemented. The scope is built around the priorities that matter, not around an assumption that every capability is required.",
+        priceMeaning:
+          "This is the entry point for a project that needs several elements coordinated around a defined objective. It does not include every Volka capability, all five pillars or a complete business transformation by default. The proposal specifies what will be reviewed, designed, implemented and handed over.",
         includes: [
           "Strategic diagnosis and complete customer journey mapping",
           "Connecting Perception + Conversion (positioning, identity, and web platform)",
@@ -269,6 +299,12 @@ export const offers: Offer[] = [
           "Un accompagnement récurrent pour piloter et améliorer un périmètre précis de votre système.",
         duration: "Accompagnement mensuel",
         cta: "Discuter d'un accompagnement continu",
+        pitch:
+          "La mise en place n'est pas le dernier mot. Les campagnes évoluent, les contenus doivent garder une direction, les parcours clients demandent des ajustements et les outils doivent suivre les pratiques de l'équipe. Sans suivi, même un système bien conçu peut finir par ne plus correspondre à la réalité de l'activité. Volka reste impliqué pour piloter les actions convenues, suivre leur fonctionnement et améliorer les éléments dont la progression compte.",
+        howItWorks:
+          "Nous définissons ensemble les priorités récurrentes, le périmètre suivi, les responsabilités de chacun et le rythme de collaboration. Volka intervient sur les activités convenues, fait le point sur leur fonctionnement et recommande les ajustements utiles. Le contenu de l'accompagnement évolue selon les besoins, mais reste encadré par un périmètre et des priorités explicites.",
+        priceMeaning:
+          "Ce tarif correspond au démarrage d'un accompagnement récurrent sur un périmètre défini. La proposition précise les priorités, les activités prises en charge, le rythme, les responsabilités, le suivi et les limites de l'intervention.",
         includes: [
           "Pilotage et optimisation continue des canaux prioritaires",
           "Itérations sur les campagnes d'acquisition, messages et contenus",
@@ -283,6 +319,12 @@ export const offers: Offer[] = [
           "Ongoing support to manage and improve a clearly agreed part of your growth system.",
         duration: "Monthly partnership",
         cta: "Discuss ongoing support",
+        pitch:
+          "Launch is not the finish line. Campaigns change, content needs direction, customer journeys need refinement and the tools behind the work have to keep up with how your team operates. Without ongoing attention, even a well-built system can drift out of step with the business. Volka stays involved to manage the agreed work, review how it is performing and improve the parts that matter.",
+        howItWorks:
+          "We agree on recurring priorities, the parts of the system Volka will look after, each party's responsibilities and the working rhythm. We carry out the agreed activities, review how they are working and identify where adjustments are needed. The work can evolve as the business does, while remaining governed by a clear scope and set of priorities.",
+        priceMeaning:
+          "This is the entry point for recurring support within an agreed scope. The proposal defines the priorities, activities covered, working rhythm, responsibilities, reporting and limits of the engagement.",
         includes: [
           "Continuous management and optimization of priority channels",
           "Targeted iterations on acquisition campaigns, messaging, and content",
@@ -362,6 +404,9 @@ export const getLocalizedOffer = (offer: Offer, locale: "fr" | "en" = "fr") => {
     duration: t.duration,
     cta: t.cta,
     includes: t.includes,
+    pitch: t.pitch,
+    howItWorks: t.howItWorks,
+    priceMeaning: t.priceMeaning,
     fitGuide: fit,
   };
 };

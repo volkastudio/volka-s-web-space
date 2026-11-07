@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowUpRight, Clock, Calendar, Share2, Check, ArrowRight } f
 
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { TealBackground } from "@/components/teal-background";
 import { Reveal } from "@/components/reveal";
 import { MarkdownContent } from "@/components/markdown-content";
 import { SocialContentLinks } from "@/components/social-content-links";
@@ -13,7 +14,7 @@ import { useI18n } from "@/i18n/context";
 import { useReadTracking } from "@/lib/analytics/use-read-tracking";
 import { track } from "@/lib/analytics/tracker";
 import { getPostDetail } from "@/lib/posts.functions";
-import { getStaticPost, getStaticPosts } from "@/data/posts";
+import { getStaticPost } from "@/data/posts";
 
 export const Route = createFileRoute("/journal/$slug")({
   loader: async ({ params }) => {
@@ -73,7 +74,7 @@ function ArticleNotFound() {
 }
 
 function JournalArticlePage() {
-  const { post: initialPost, next: initialNext } = Route.useLoaderData();
+  const { post: initialPost, next: initialNext, related: initialRelated } = Route.useLoaderData();
   const { locale, t } = useI18n();
   const isFr = locale === "fr";
 
@@ -81,11 +82,12 @@ function JournalArticlePage() {
   const post = getStaticPost(initialPost.slug, locale) || initialPost;
   const next = (initialNext?.slug ? getStaticPost(initialNext.slug, locale) : null) || initialNext;
 
-  // Related articles (other articles from the journal)
-  const relatedArticles = React.useMemo(() => {
-    const all = getStaticPosts(locale);
-    return all.filter((p) => p.slug !== post.slug).slice(0, 3);
-  }, [locale, post.slug]);
+  // Related articles come from the loader (back-office posts, or static ones as a fallback).
+  // Where a static translation exists it is swapped in so the language toggle applies instantly.
+  const relatedArticles = React.useMemo(
+    () => (initialRelated ?? []).map((rel) => getStaticPost(rel.slug, locale) || rel),
+    [initialRelated, locale],
+  );
 
   // Track engaged reading time and scroll completion per D17
   useReadTracking({
@@ -138,11 +140,7 @@ function JournalArticlePage() {
       <section className="relative isolate overflow-hidden bg-forest-black text-primary-foreground pt-36 pb-20 md:pt-44 md:pb-28 px-5 md:px-10 lg:px-14">
         <SiteHeader variant="overlay" />
 
-        {/* Ambient liquid glow */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-gold/10 blur-3xl animate-liquid-glow"
-        />
+        <TealBackground variant="quiet" />
 
         <div className="relative mx-auto max-w-4xl">
           {/* Back link */}
@@ -159,7 +157,7 @@ function JournalArticlePage() {
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full border border-gold/30 bg-gold/10 px-3 py-1 font-medium text-gold"
+                className="rounded-sm border border-gold/30 bg-gold/10 px-3 py-1 font-medium text-gold"
               >
                 {tag}
               </span>
@@ -203,8 +201,8 @@ function JournalArticlePage() {
             >
               {copied ? (
                 <>
-                  <Check className="size-3.5 text-emerald-400" />
-                  <span className="text-emerald-400">{isFr ? "Lien copié" : "Link copied"}</span>
+                  <Check className="size-3.5 text-mint" />
+                  <span className="text-mint">{isFr ? "Lien copié" : "Link copied"}</span>
                 </>
               ) : (
                 <>
@@ -347,10 +345,7 @@ function JournalArticlePage() {
 
       {/* ─── End of Article CTA: Points directly to Free Audit (Dark Closing Block) ─── */}
       <section className="relative isolate overflow-hidden bg-forest-black px-5 py-20 text-primary-foreground md:px-10 md:py-28 lg:px-14 border-t border-white/10">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-gold/10 blur-3xl animate-liquid-glow"
-        />
+        <TealBackground variant="quiet" />
 
         <div className="relative mx-auto max-w-3xl text-center">
           <Reveal>

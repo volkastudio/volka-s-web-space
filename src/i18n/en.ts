@@ -13,10 +13,10 @@ export const en: Translations = {
   },
   hero: {
     eyebrow: "VOLKA STUDIO · INTEGRATED DIGITAL SOLUTIONS",
-    titleLine1: "The right capabilities only matter",
-    titleLine2: "when they work together.",
+    titleLine1: "Your growth deserves more than",
+    titleLine2: "isolated efforts.",
     subtitle:
-      "Volka brings strategy, brand, technology, marketing, sales and automation together to solve business challenges and make the systems behind your growth work as one.",
+      "Volka brings strategy, brand, technology, marketing, sales and automation together, so your brand, website, marketing and sales move together instead of in separate corners.",
     cta: "Start a project",
     seeApproach: "Explore our approach",
   },

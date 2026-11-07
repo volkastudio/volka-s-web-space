@@ -37,7 +37,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Les bons leviers ne suffisent pas. Encore faut-il qu'ils travaillent ensemble. Découvrez l'approche intégrée de Volka Studio.",
+          "Avoir les bons éléments ne suffit pas. Encore faut-il qu'ils travaillent ensemble. Découvrez l'approche intégrée de Volka Studio.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
@@ -121,7 +121,7 @@ function Index() {
 
           <div className="mt-6 max-w-5xl">
             <h1
-              className="font-display text-[3.6rem] font-light leading-[0.96] tracking-[-0.03em] sm:text-7xl md:text-8xl lg:text-9xl text-balance"
+              className="font-display text-[2.9rem] font-light leading-[1.02] tracking-[-0.025em] sm:text-6xl md:text-7xl lg:text-[5.25rem] text-balance"
             >
               {/* Line 1 */}
               <motion.span
@@ -139,17 +139,7 @@ function Index() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.95, delay: 0.65, ease: easeOut }}
               >
-                {locale === "fr" ? (
-                  <>
-                    Encore faut-il qu'ils{" "}
-                    <span className="italic text-mint font-light">travaillent ensemble.</span>
-                  </>
-                ) : (
-                  <>
-                    when they{" "}
-                    <span className="italic text-mint font-light">work together.</span>
-                  </>
-                )}
+                <span className="italic text-mint font-light">{t.hero.titleLine2}</span>
               </motion.span>
             </h1>
           </div>
@@ -172,8 +162,9 @@ function Index() {
               <p className="text-base font-light leading-relaxed text-primary-foreground/80 md:text-lg">
                 {t.hero.subtitle}
               </p>
-              <div>
-                <Button asChild variant="volka" size="volka" className="rounded-sm">
+              {/* Phone: one clear action. The desktop header already has "Start a project". */}
+              <div className="md:hidden">
+                <Button asChild variant="volka" size="volka" className="w-full rounded-sm">
                   <Link to="/start">
                     <span>{t.hero.cta}</span>
                     <ArrowUpRight className="size-4" />
@@ -181,7 +172,10 @@ function Index() {
                 </Button>
               </div>
             </div>
-            <ScrollArrow label={t.hero.seeApproach} />
+            {/* Desktop: scroll to the approach */}
+            <div className="hidden md:block">
+              <ScrollArrow label={t.hero.seeApproach} />
+            </div>
           </motion.div>
         </div>
       </section>
@@ -195,15 +189,15 @@ function Index() {
                 <CountUp to={40} suffix="+" />
               </p>
               <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                {t.stats.projects}
+                {t.stats.stat1Label}
               </p>
             </div>
             <div className="flex flex-col gap-1">
               <p className="font-display text-4xl sm:text-5xl font-medium text-primary md:text-6xl">
-                <CountUp to={8} suffix=" yrs" />
+                <CountUp to={8} suffix={locale === "fr" ? " ans" : " yrs"} />
               </p>
               <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                {t.stats.experience}
+                {t.stats.stat2Label}
               </p>
             </div>
             <div className="flex flex-col gap-1">
@@ -211,7 +205,7 @@ function Index() {
                 <CountUp to={12} />
               </p>
               <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                {t.stats.countries}
+                {t.stats.stat3Label}
               </p>
             </div>
             <div className="flex flex-col gap-1">
@@ -219,7 +213,7 @@ function Index() {
                 <CountUp to={95} suffix="%" />
               </p>
               <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                {t.stats.satisfaction}
+                {t.stats.stat4Label}
               </p>
             </div>
           </div>
@@ -437,7 +431,7 @@ function Index() {
           </div>
 
           {/* 3-card clean architecture matching Strategy Document */}
-          <div className="grid gap-6 md:grid-cols-3 items-stretch">
+          <div className="grid gap-4 md:gap-6 md:grid-cols-3 items-stretch">
             {offers.slice(0, 3).map((offer, index) => {
               const localized = getLocalizedOffer(offer, locale);
               const p = formatOfferPriceStructured(offer);
@@ -447,15 +441,15 @@ function Index() {
                 <Reveal key={offer.id} delay={index * 100} className="h-full">
                   <LiquidGlassCard
                     variant="dark"
-                    className={`flex h-full flex-col p-6 sm:p-8 rounded-2xl border transition-all duration-300 ${
+                    className={`flex h-full flex-col p-5 sm:p-6 md:p-8 rounded-2xl border transition-all duration-300 ${
                       isFeatured
                         ? "ring-1 ring-mint/60 bg-pine/50 border-mint/50 shadow-2xl relative md:-translate-y-2 backdrop-blur-md"
                         : "bg-pine/20 border-paper/15 text-paper hover:border-mint/40 hover:bg-pine/30 backdrop-blur-md"
                     }`}
                   >
                     {/* Header: index + badge + duration */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded-full border border-paper/20 bg-paper/5 px-2.5 py-0.5 text-[11px] font-mono font-medium text-paper/70">
                           {offer.index}
                         </span>
@@ -472,12 +466,12 @@ function Index() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="mt-5 font-display text-2xl sm:text-3xl font-light leading-tight text-paper">
+                    <h3 className="mt-4 md:mt-5 font-display text-2xl md:text-3xl font-light leading-tight text-paper">
                       {localized.name}
                     </h3>
 
                     {/* Elevated Price Block */}
-                    <div className="my-5 rounded-xl border border-paper/15 bg-paper/5 p-4 transition-colors">
+                    <div className="my-4 md:my-5 md:rounded-xl md:border md:border-paper/15 md:bg-paper/5 md:p-4 transition-colors">
                       <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-paper/50">
                         {p.prefix}
                       </span>
@@ -499,12 +493,12 @@ function Index() {
                     </div>
 
                     {/* Tagline */}
-                    <p className="text-xs sm:text-sm leading-relaxed text-paper/75 min-h-[44px]">
+                    <p className="text-sm leading-relaxed text-paper/75 md:min-h-[44px]">
                       {localized.tagline}
                     </p>
 
                     {/* Key inclusions preview */}
-                    <div className="my-5 space-y-2 border-t border-paper/15 pt-4">
+                    <div className="my-5 hidden space-y-2 border-t border-paper/15 pt-4 md:block">
                       <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-paper/50">
                         {locale === "fr" ? "Ce que cela peut couvrir" : "What this can cover"}
                       </p>
@@ -521,7 +515,7 @@ function Index() {
                     </div>
 
                     {/* Action buttons (Ochre rectangular buttons) */}
-                    <div className="mt-auto flex flex-col gap-2.5 pt-2">
+                    <div className="mt-5 flex flex-col gap-2 md:mt-auto md:gap-2.5 md:pt-2">
                       <Button
                         asChild
                         className={`w-full justify-between transition-all rounded-sm min-h-12 px-6 active:scale-[0.98] ${

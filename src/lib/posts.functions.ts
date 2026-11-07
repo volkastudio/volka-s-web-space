@@ -21,6 +21,23 @@ async function getEffectiveLocale(explicitLocale?: "fr" | "en"): Promise<"fr" | 
   return "fr";
 }
 
+/**
+ * Up to `limit` other articles, preferring the ones that share the most tags with the current one.
+ * The input list is already ordered newest first, so ties keep the most recent article first.
+ */
+function pickRelated(all: ResolvedPost[], currentSlug: string, currentTags: string[], limit = 3): ResolvedPost[] {
+  return all
+    .filter((p) => p.slug !== currentSlug)
+    .map((p, order) => ({
+      p,
+      order,
+      shared: p.tags.filter((tag) => currentTags.includes(tag)).length,
+    }))
+    .sort((a, b) => b.shared - a.shared || a.order - b.order)
+    .slice(0, limit)
+    .map((item) => item.p);
+}
+
 export const getPostsList = createServerFn({ method: "GET" })
   .validator((data?: { locale?: "fr" | "en"; tag?: string }) =>
     z
@@ -86,7 +103,12 @@ export const getPostDetail = createServerFn({ method: "GET" })
           const post = resolvePost(records[index]!, locale);
           const nextIndex = (index + 1) % records.length;
           const next = records.length > 1 ? resolvePost(records[nextIndex]!, locale) : null;
-          return { post, next };
+          const related = pickRelated(
+            records.map((r) => resolvePost(r, locale)),
+            post.slug,
+            post.tags,
+          );
+          return { post, next, related };
         }
       }
     } catch (err) {
@@ -98,7 +120,8 @@ export const getPostDetail = createServerFn({ method: "GET" })
     const all = getStaticPosts(locale);
     const index = all.findIndex((p) => p.slug === input.slug);
     const next = all.length > 1 ? all[(index + 1) % all.length] ?? null : null;
-    return { post, next };
+    const related = pickRelated(all, post.slug, post.tags);
+    return { post, next, related };
   });
 
 export const getRecentPosts = createServerFn({ method: "GET" })

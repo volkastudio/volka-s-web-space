@@ -13,10 +13,10 @@ export const fr: Translations = {
   },
   hero: {
     eyebrow: "VOLKA STUDIO · SOLUTIONS DIGITALES INTÉGRÉES",
-    titleLine1: "Les bons leviers ne suffisent pas.",
-    titleLine2: "Encore faut-il qu'ils travaillent ensemble.",
+    titleLine1: "Votre croissance mérite mieux que",
+    titleLine2: "des actions isolées.",
     subtitle:
-      "Volka réunit stratégie, marque, technologie, marketing, vente et automatisation pour résoudre les points de friction de votre activité et faire fonctionner les bonnes solutions dans la même direction.",
+      "Volka réunit stratégie, marque, technologie, marketing, ventes et automatisation pour que votre marque, votre site, votre marketing et vos ventes avancent ensemble plutôt que chacun de leur côté.",
     cta: "Démarrer un projet",
     seeApproach: "Découvrir notre approche",
   },
@@ -40,7 +40,7 @@ export const fr: Translations = {
   stats: {
     stat1Val: "40+",
     stat1Label: "Projets livrés",
-    stat2Val: "8 yrs",
+    stat2Val: "8 ans",
     stat2Label: "Années d'expertise",
     stat3Val: "12",
     stat3Label: "Pays touchés",
@@ -55,7 +55,7 @@ export const fr: Translations = {
     eyebrow: "Le studio",
     title: "Les entreprises méritent d'être perçues à leur vrai niveau.",
     p1: "Une campagne peut attirer du monde sans générer de demandes. Un site peut présenter une belle image sans rendre l'offre convaincante. Des prospects peuvent montrer de l'intérêt, puis disparaître faute de suivi. Dans chaque cas, le problème ne se résout pas nécessairement en ajoutant une prestation. Il faut comprendre ce qui bloque, voir ce qui dépend de quoi, puis intervenir au bon endroit.",
-    p2: "C'est ainsi que travaille Volka : nous prenons du recul sur votre activité, identifions les leviers qui méritent d'être renforcés et réunissons les compétences nécessaires pour les faire fonctionner ensemble.",
+    p2: "C'est ainsi que travaille Volka : nous prenons du recul sur votre activité, identifions les éléments qui méritent d'être renforcés et réunissons les compétences nécessaires pour les faire fonctionner ensemble.",
   },
   work: {
     eyebrow: "Projets concepts",
@@ -166,7 +166,7 @@ export const fr: Translations = {
     rights: "Tous droits réservés.",
     quickLinks: "Navigation",
     ctaEyebrow: "Votre projet commence ici",
-    ctaHeadline: "Faisons travailler vos leviers dans la même direction.",
+    ctaHeadline: "Faisons avancer votre activité dans la même direction.",
     legalNotice: "Mentions légales",
   },
   caseStudy: {
