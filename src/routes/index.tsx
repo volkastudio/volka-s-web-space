@@ -120,13 +120,15 @@ function Index() {
             {t.hero.eyebrow}
           </motion.p>
 
-          <div className="mt-6 max-w-5xl">
+          {/* Desktop: exactly two lines, a little larger. The size follows the screen width so the
+              first line always fits; on phones and tablets the lines wrap naturally. */}
+          <div className="mt-6 max-w-5xl lg:max-w-none">
             <h1
-              className="font-display text-[2.9rem] font-light leading-[1.02] tracking-[-0.025em] sm:text-6xl md:text-7xl lg:text-[5.25rem] text-balance"
+              className="font-display text-[2.9rem] font-light leading-[1.02] tracking-[-0.025em] sm:text-6xl md:text-7xl lg:text-[clamp(3.25rem,6vw,5.75rem)] text-balance lg:text-wrap"
             >
               {/* Line 1 */}
               <motion.span
-                className="block overflow-hidden"
+                className="block overflow-hidden lg:whitespace-nowrap"
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.95, delay: 0.5, ease: easeOut }}
@@ -135,7 +137,7 @@ function Index() {
               </motion.span>
               {/* Line 2 — slightly delayed */}
               <motion.span
-                className="block overflow-hidden"
+                className="block overflow-hidden lg:whitespace-nowrap"
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.95, delay: 0.65, ease: easeOut }}
@@ -161,7 +163,8 @@ function Index() {
           >
             <div className="flex flex-col gap-5 max-w-xl">
               <p className="text-base font-light leading-relaxed text-primary-foreground/80 md:text-lg">
-                {t.hero.subtitle}
+                <span className="md:hidden">{t.hero.subtitleShort}</span>
+                <span className="hidden md:inline">{t.hero.subtitle}</span>
               </p>
               {/* Phone: one clear action. The desktop header already has "Start a project". */}
               <div className="md:hidden">

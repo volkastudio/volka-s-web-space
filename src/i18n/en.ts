@@ -17,6 +17,8 @@ export const en: Translations = {
     titleLine2: "isolated efforts.",
     subtitle:
       "Volka designs digital ecosystems where strategy, brand identity, marketing and technology work in the same direction: attracting the right clients, converting more opportunities and supporting the growth of your business.",
+    subtitleShort:
+      "Volka designs digital ecosystems where strategy, brand identity, marketing and technology work in the same direction.",
     cta: "Start a project",
     seeApproach: "Explore our approach",
   },

@@ -17,6 +17,8 @@ export const fr: Translations = {
     titleLine2: "des actions isolées.",
     subtitle:
       "Volka conçoit des écosystèmes digitaux où stratégie, image de marque, marketing et technologie travaillent dans une même direction : attirer les bons clients, convertir davantage d'opportunités et soutenir la croissance de votre entreprise.",
+    subtitleShort:
+      "Volka conçoit des écosystèmes digitaux où stratégie, image de marque, marketing et technologie travaillent dans une même direction.",
     cta: "Démarrer un projet",
     seeApproach: "Découvrir notre approche",
   },

@@ -16,6 +16,8 @@ export interface Translations {
     titleLine1: string;
     titleLine2: string;
     subtitle: string;
+    /** Shorter version of the subtitle, shown on phones */
+    subtitleShort: string;
     cta: string;
     seeApproach: string;
   };
