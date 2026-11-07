@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { TealBackground } from "@/components/teal-background";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/context";
 
@@ -164,24 +165,9 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" | 
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            {/* Dark gradient background */}
-            <motion.div
-              className="absolute inset-0 bg-primary"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            />
-
-            {/* Ambient orbs */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-gold/10 blur-3xl"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-mint/10 blur-3xl"
-            />
+            {/* Calm near-black with a faint teal glow, same as the forms */}
+            <div aria-hidden="true" className="absolute inset-0 bg-[#070a09]" />
+            <TealBackground variant="quiet" />
 
             {/* Header bar inside menu */}
             <div className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-primary-foreground/10">
@@ -252,7 +238,7 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" | 
                 <Link
                   to="/start"
                   onClick={close}
-                  className="inline-flex items-center gap-3 border border-gold bg-gold/10 px-7 py-4 text-xs font-medium uppercase tracking-[0.18em] text-gold transition-colors hover:bg-gold hover:text-primary"
+                  className="inline-flex h-14 items-center gap-3 rounded-sm bg-ochre px-8 text-xs font-semibold uppercase tracking-[0.18em] text-forest-black transition-colors hover:bg-ochre/90"
                 >
                   {t.nav.start} <ArrowUpRight className="size-4" />
                 </Link>
