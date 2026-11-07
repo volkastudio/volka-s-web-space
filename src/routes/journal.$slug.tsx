@@ -238,7 +238,7 @@ function JournalArticlePage() {
           {/* Cross-channel links: YouTube, LinkedIn, TikTok */}
           {post.social_links && (
             <div className="mt-16 border-t border-border/70 pt-8">
-              <SocialContentLinks socialLinks={post.social_links} />
+              <SocialContentLinks socialLinks={post.social_links} locale={locale} />
             </div>
           )}
 

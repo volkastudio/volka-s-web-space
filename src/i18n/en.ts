@@ -40,7 +40,7 @@ export const en: Translations = {
   stats: {
     stat1Val: "40+",
     stat1Label: "Projects delivered",
-    stat2Val: "8 yrs",
+    stat2Val: "5+",
     stat2Label: "Years of expertise",
     stat3Val: "12",
     stat3Label: "Countries reached",

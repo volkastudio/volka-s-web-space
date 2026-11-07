@@ -132,20 +132,17 @@ export function PerspectiveGallery({ images, clientName }: GalleryStyleComponent
       aria-label={`${clientName ? `${clientName} — ` : ""}Perspective 3D image gallery`}
       className="relative w-full select-none outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-4 rounded-xl"
     >
-      {/* 3D Perspective Curved Wall stage */}
-      <div
-        className="relative mx-auto flex h-[400px] sm:h-[480px] md:h-[540px] lg:h-[590px] w-full max-w-7xl items-center justify-center overflow-hidden py-4"
-        style={{
-          perspective: isMobile ? "900px" : "1300px",
-          transformStyle: "preserve-3d",
-        }}
-      >
-        {/* Ambient atmospheric backlight */}
+      {/*
+        Curved wall stage.
+        The outer box clips the sides. The perspective lives on its own inner box, because an
+        element with overflow:hidden flattens its children and would cancel the 3D rotation
+        (this is why both galleries used to look identical).
+      */}
+      <div className="relative mx-auto h-[400px] sm:h-[480px] md:h-[540px] lg:h-[590px] w-full max-w-7xl overflow-hidden">
         <div
-          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[320px] w-[500px] md:h-[420px] md:w-[700px] rounded-full bg-mint/5 blur-3xl"
-          aria-hidden="true"
-        />
-
+          className="absolute inset-0"
+          style={{ perspective: isMobile ? "900px" : "1300px" }}
+        >
         <div
           className="relative flex h-full w-full items-center justify-center"
           style={{ transformStyle: "preserve-3d" }}
@@ -233,7 +230,7 @@ export function PerspectiveGallery({ images, clientName }: GalleryStyleComponent
                   aria-hidden={!isCenter}
                 >
                   <div
-                    className={`group relative h-full w-full overflow-hidden rounded-2xl border border-border/70 bg-muted transition-transform duration-300 ${
+                    className={`group relative h-full w-full overflow-hidden rounded-md border border-border/70 bg-muted transition-transform duration-300 ${
                       isCenter
                         ? "shadow-[0_25px_50px_-12px_rgba(0,0,0,0.3)] ring-1 ring-border/80"
                         : "shadow-xl shadow-black/20 hover:scale-[1.01]"
@@ -271,7 +268,7 @@ export function PerspectiveGallery({ images, clientName }: GalleryStyleComponent
                     {/* Alt label on center image */}
                     {isCenter && image.alt && (
                       <div className="pointer-events-none absolute bottom-3 left-3 right-3 text-center">
-                        <span className="inline-block rounded-full bg-black/60 px-3 py-1 font-mono text-[11px] text-paper/90 backdrop-blur-md">
+                        <span className="inline-block rounded-sm bg-black/60 px-3 py-1 font-mono text-[11px] text-paper/90 backdrop-blur-md">
                           {image.alt}
                         </span>
                       </div>
@@ -281,6 +278,7 @@ export function PerspectiveGallery({ images, clientName }: GalleryStyleComponent
               );
             })}
           </AnimatePresence>
+        </div>
         </div>
       </div>
 

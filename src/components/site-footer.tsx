@@ -25,7 +25,7 @@ export function SiteFooter() {
             <h2 className="max-w-4xl font-display text-4xl sm:text-6xl md:text-7xl font-light leading-[1.05] tracking-tight text-balance">
               {locale === "fr" ? (
                 <>
-                  Faisons travailler vos leviers{" "}
+                  Faisons avancer votre activité{" "}
                   <span className="italic text-mint font-light">dans la même direction</span>.
                 </>
               ) : (

@@ -196,7 +196,7 @@ function OfferPage() {
                 <span
                   className={`inline-flex items-center rounded-sm border px-3 py-1 text-xs font-mono uppercase tracking-[0.18em] ${theme.badgeBg}`}
                 >
-                  {isFr ? `Offre ${offer.index}` : `Offer ${offer.index}`} · {offer.duration}
+                  {isFr ? `Offre ${offer.index}` : `Offer ${offer.index}`}
                 </span>
               </motion.div>
 
@@ -256,9 +256,14 @@ function OfferPage() {
               </div>
 
               {/* One clean rectangular button */}
-              <Button asChild variant="volka" size="volka" className="mt-2 w-full rounded-sm">
+              <Button
+                asChild
+                variant="volka"
+                size="volka"
+                className="mt-2 h-auto min-h-12 w-full whitespace-normal rounded-sm py-3 text-left"
+              >
                 <Link to="/start" search={{ offer: offer.id }}>
-                  <span>{offer.cta}</span>
+                  <span className="min-w-0">{offer.cta}</span>
                   <ArrowUpRight className="size-4" />
                 </Link>
               </Button>
@@ -274,7 +279,7 @@ function OfferPage() {
           showStickyBar ? "translate-y-0" : "translate-y-full pointer-events-none"
         }`}
       >
-        <div className="flex flex-col">
+        <div className="flex min-w-0 flex-col">
           <span className="text-[10px] font-mono uppercase tracking-wider text-primary-foreground/60">
             {priceStructured.prefix}
           </span>
@@ -293,9 +298,9 @@ function OfferPage() {
           </div>
         </div>
 
-        <Button asChild variant="volka" size="sm" className="rounded-sm px-5 py-2.5 text-xs">
+        <Button asChild variant="volka" size="sm" className="shrink-0 rounded-sm px-4 text-xs">
           <Link to="/start" search={{ offer: offer.id }}>
-            <span>{offer.cta}</span>
+            <span>{isFr ? "Démarrer" : "Start"}</span>
             <ArrowUpRight className="size-3.5" />
           </Link>
         </Button>
@@ -454,10 +459,10 @@ function OfferPage() {
                 <Button
                   asChild
                   variant="outline"
-                  className="shrink-0 border-gold/40 text-foreground hover:bg-gold hover:text-forest-black transition-colors rounded-sm"
+                  className="h-auto min-h-10 w-full justify-between whitespace-normal rounded-sm border-gold/40 py-2.5 text-left text-foreground transition-colors hover:bg-gold hover:text-forest-black md:w-auto md:shrink-0"
                 >
                   <Link to="/offres/$slug" params={{ slug: localizedRecommended.slug }}>
-                    <span>{localizedRecommended.name}</span>
+                    <span className="min-w-0">{localizedRecommended.name}</span>
                     <ArrowRight className="size-4" />
                   </Link>
                 </Button>
@@ -532,7 +537,7 @@ function OfferPage() {
           </Reveal>
 
           {/* 3-column side-by-side comparison strip */}
-          <div className="grid gap-6 md:grid-cols-3 items-stretch">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 items-stretch">
             {offers.map((item) => {
               const loc = getLocalizedOffer(item, locale);
               const p = formatOfferPriceStructured(item);
@@ -552,13 +557,9 @@ function OfferPage() {
                       <span className="font-mono text-xs font-medium text-gold">
                         {item.index}
                       </span>
-                      {isCurrent ? (
-                        <span className="rounded-full bg-gold/15 px-2.5 py-0.5 text-[11px] font-mono font-medium text-gold uppercase tracking-wider">
+                      {isCurrent && (
+                        <span className="rounded-sm bg-gold/15 px-2.5 py-0.5 text-[11px] font-mono font-medium text-gold uppercase tracking-wider">
                           {t.offerDetail.currentOffer}
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-                          {loc.duration}
                         </span>
                       )}
                     </div>

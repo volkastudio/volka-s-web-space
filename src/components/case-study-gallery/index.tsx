@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useI18n } from "@/i18n/context";
 import type { CaseStudyGalleryProps } from "./types";
 import { CoverflowGallery } from "./coverflow-gallery";
 import { PerspectiveGallery } from "./perspective-gallery";
@@ -12,6 +13,7 @@ export function CaseStudyGallery({
   clientName,
   className = "",
 }: CaseStudyGalleryProps) {
+  const { locale } = useI18n();
   // If gallery is disabled, missing, or has no valid images, render absolutely nothing
   if (!gallery || !gallery.enabled || !Array.isArray(gallery.images) || gallery.images.length === 0) {
     return null;
@@ -34,16 +36,16 @@ export function CaseStudyGallery({
         {/* Subtle section eyebrow matching Volka's editorial design system */}
         <div className="mb-6 md:mb-10 text-center">
           <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-gold">
-            Visual Portfolio
+            {locale === "fr" ? "Portfolio visuel" : "Visual portfolio"}
           </p>
           <h2 className="mt-2 font-display text-2xl sm:text-3xl md:text-4xl font-light text-foreground">
-            {isPerspective ? (
+            {locale === "fr" ? (
               <>
-                Perspective <span className="italic text-mint font-light">curated</span>
+                Le projet <span className="italic text-primary font-light">en images</span>
               </>
             ) : (
               <>
-                Immersive <span className="italic text-mint font-light">in focus</span>
+                The project <span className="italic text-primary font-light">in pictures</span>
               </>
             )}
           </h2>

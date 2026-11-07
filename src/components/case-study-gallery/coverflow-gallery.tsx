@@ -125,12 +125,6 @@ export function CoverflowGallery({ images, clientName }: GalleryStyleComponentPr
     >
       {/* 3D Coverflow stage */}
       <div className="relative mx-auto flex h-[420px] sm:h-[500px] md:h-[560px] lg:h-[620px] w-full max-w-7xl items-center justify-center overflow-hidden py-4">
-        {/* Subtle ambient light pool in center behind focal image */}
-        <div
-          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[340px] w-[340px] md:h-[460px] md:w-[460px] rounded-full bg-gold/5 blur-3xl"
-          aria-hidden="true"
-        />
-
         <div className="relative flex h-full w-full items-center justify-center">
           <AnimatePresence initial={false}>
             {offsets.map((offset) => {
@@ -208,7 +202,7 @@ export function CoverflowGallery({ images, clientName }: GalleryStyleComponentPr
                   aria-hidden={!isCenter}
                 >
                   <div
-                    className={`group relative h-full w-full overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted transition-transform duration-300 ${
+                    className={`group relative h-full w-full overflow-hidden rounded-md border border-border/60 bg-muted transition-transform duration-300 ${
                       isCenter
                         ? "shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35),0_12px_24px_-8px_rgba(0,0,0,0.2)] ring-1 ring-border/80"
                         : "shadow-lg shadow-black/15 hover:scale-[1.02]"
@@ -234,7 +228,7 @@ export function CoverflowGallery({ images, clientName }: GalleryStyleComponentPr
                     {/* Caption / Alt badge if provided on active center card */}
                     {isCenter && image.alt && (
                       <div className="pointer-events-none absolute bottom-3 left-3 right-3 text-center">
-                        <span className="inline-block rounded-full bg-black/60 px-3 py-1 font-mono text-[11px] text-paper/90 backdrop-blur-md">
+                        <span className="inline-block rounded-sm bg-black/60 px-3 py-1 font-mono text-[11px] text-paper/90 backdrop-blur-md">
                           {image.alt}
                         </span>
                       </div>

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowDown, ArrowUpRight, Check, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Check } from "lucide-react";
 
 import { CountUp } from "@/components/count-up";
 import { CurrencySwitcher } from "@/components/currency-switcher";
@@ -389,7 +389,7 @@ function Index() {
       </section>
 
       {/* ─── Pricing / The 3 Offers (Dark Glass Architecture) ─── */}
-      <section id="offers" className="relative isolate overflow-hidden border-b border-border bg-forest-black px-5 py-14 sm:py-20 md:py-28 lg:px-14 text-paper">
+      <section id="offers" className="relative isolate overflow-hidden border-b border-border bg-forest-black px-5 py-14 sm:py-20 md:px-10 md:py-28 lg:px-14 text-paper">
         {/* Soft liquid ambient lighting orbs */}
         <div
           aria-hidden="true"
@@ -431,38 +431,32 @@ function Index() {
           </div>
 
           {/* 3-card clean architecture matching Strategy Document */}
-          <div className="grid gap-4 md:gap-6 md:grid-cols-3 items-stretch">
+          <div className="grid grid-cols-1 gap-4 md:gap-6 md:grid-cols-3 items-stretch">
             {offers.slice(0, 3).map((offer, index) => {
               const localized = getLocalizedOffer(offer, locale);
               const p = formatOfferPriceStructured(offer);
               const isFeatured = index === 1;
 
               return (
-                <Reveal key={offer.id} delay={index * 100} className="h-full">
+                <Reveal key={offer.id} delay={index * 100} className="h-full min-w-0">
                   <LiquidGlassCard
                     variant="dark"
-                    className={`flex h-full flex-col p-5 sm:p-6 md:p-8 rounded-2xl border transition-all duration-300 ${
+                    className={`flex h-full w-full min-w-0 flex-col p-5 sm:p-6 md:p-8 rounded-xl border transition-all duration-300 ${
                       isFeatured
                         ? "ring-1 ring-mint/60 bg-pine/50 border-mint/50 shadow-2xl relative md:-translate-y-2 backdrop-blur-md"
                         : "bg-pine/20 border-paper/15 text-paper hover:border-mint/40 hover:bg-pine/30 backdrop-blur-md"
                     }`}
                   >
-                    {/* Header: index + badge + duration */}
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-paper/20 bg-paper/5 px-2.5 py-0.5 text-[11px] font-mono font-medium text-paper/70">
-                          {offer.index}
-                        </span>
-                        {isFeatured && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-mint/15 text-mint border border-mint/30 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
-                            <Sparkles className="size-3" />
-                            {locale === "fr" ? "Système complet" : "Core system"}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-[11px] font-mono uppercase tracking-[0.14em] text-paper/60">
-                        {localized.duration}
+                    {/* Header: index + recommended badge */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-sm border border-paper/20 bg-paper/5 px-2.5 py-0.5 text-[11px] font-mono font-medium text-paper/70">
+                        {offer.index}
                       </span>
+                      {isFeatured && (
+                        <span className="rounded-sm border border-mint/30 bg-mint/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-mint">
+                          {locale === "fr" ? "Recommandé" : "Recommended"}
+                        </span>
+                      )}
                     </div>
 
                     {/* Title */}
@@ -518,14 +512,14 @@ function Index() {
                     <div className="mt-5 flex flex-col gap-2 md:mt-auto md:gap-2.5 md:pt-2">
                       <Button
                         asChild
-                        className={`w-full justify-between transition-all rounded-sm min-h-12 px-6 active:scale-[0.98] ${
+                        className={`h-auto min-h-12 w-full justify-between whitespace-normal rounded-sm px-5 py-3 text-left transition-all active:scale-[0.98] md:px-6 ${
                           isFeatured
                             ? "bg-ochre text-forest-black font-semibold hover:bg-ochre/90 shadow-xl border-none"
                             : "bg-paper/10 border border-paper/20 text-paper font-medium hover:bg-paper/20 hover:border-mint/50"
                         }`}
                       >
                         <Link to="/start" search={{ offer: offer.id }}>
-                          <span>{localized.cta}</span>
+                          <span className="min-w-0">{localized.cta}</span>
                           <ArrowUpRight className="size-4" />
                         </Link>
                       </Button>
